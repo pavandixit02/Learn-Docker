@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Docker Introduction | Learn Docker</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #1d4ed8);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 18px;
+            max-width: 850px;
+            margin: auto;
+            color: #dbeafe;
+        }
+
+        nav {
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            margin-bottom: 30px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            margin-bottom: 18px;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+        }
+
+        h3 {
+            color: #111827;
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .problem {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .solution {
+            background: #f0fdf4;
+            border-left: 5px solid #22c55e;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .analogy {
+            background: #f5f3ff;
+            border-left: 5px solid #7c3aed;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .workflow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .workflow div {
+            background: #1d4ed8;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 25px;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 14px;
+            text-align: left;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .benefit-card {
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .benefit-card h3 {
+            color: #2563eb;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 700px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🐳 Docker Introduction</h1>
+    <p>
+        Understand Docker, the problems before containerization,
+        and how Docker provides a solution for modern application deployment.
+    </p>
+</header>
+
+<nav>
+    <a href="#introduction">Introduction</a>
+    <a href="#problem">Problems</a>
+    <a href="#solution">Solution</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#analogy">Analogy</a>
+    <a href="#workflow">Workflow</a>
+</nav>
+
+<div class="container">
+
+    <!-- Docker Introduction -->
+    <section id="introduction">
+
+        <h2>1. What is Docker?</h2>
+
+        <p>
+            <strong>Docker</strong> is an open-source platform used to
+            build, package, ship, and run applications inside
+            lightweight and isolated environments called
+            <strong>containers</strong>.
+        </p>
+
+        <p>
+            Docker allows developers and DevOps engineers to package an
+            application together with its required dependencies,
+            libraries, configuration, and runtime environment.
+        </p>
+
+        <div class="highlight">
+            <strong>Simple Definition:</strong><br>
+            Docker is a platform that packages an application and everything
+            it needs to run into a portable container.
+        </div>
+
+        <h3>Why was Docker introduced?</h3>
+
+        <p>
+            One of the biggest problems in software development was that
+            an application could work correctly on one machine but fail
+            on another machine because the environments were different.
+        </p>
+
+        <p>
+            Docker solves this problem by creating a consistent environment
+            where the application can run in a predictable way.
+        </p>
+
+        <h3>Docker in DevOps</h3>
+
+        <p>
+            Docker is widely used in DevOps because it makes application
+            development, testing, deployment, scaling, and automation easier.
+        </p>
+
+        <ul>
+            <li>Application containerization</li>
+            <li>CI/CD pipelines</li>
+            <li>Cloud deployment</li>
+            <li>Microservices</li>
+            <li>Development and testing environments</li>
+            <li>Application isolation</li>
+            <li>Infrastructure automation</li>
+            <li>Kubernetes-based deployments</li>
+        </ul>
+
+    </section>
+
+
+    <!-- Problems Before Docker -->
+    <section id="problem">
+
+        <h2>2. Problems Before Docker</h2>
+
+        <p>
+            Before containerization became popular, applications were
+            commonly installed directly on servers or developer machines.
+            This created several problems.
+        </p>
+
+        <div class="problem">
+            <h3>❌ Problem 1: "It Works on My Machine"</h3>
+
+            <p>
+                A developer may run an application successfully on their
+                laptop, but the same application may fail on another
+                developer's machine or on the production server.
+            </p>
+
+            <p>
+                The reason could be different operating systems,
+                library versions, runtime versions, configurations,
+                environment variables, or dependencies.
+            </p>
+        </div>
+
+        <div class="problem">
+            <h3>❌ Problem 2: Dependency Conflicts</h3>
+
+            <p>
+                Different applications may require different versions
+                of the same software.
+            </p>
+
+            <p>
+                For example, Application A may require Python 3.10 while
+                Application B requires Python 3.12. Installing both
+                applications on the same system can create conflicts.
+            </p>
+        </div>
+
+        <div class="problem">
+            <h3>❌ Problem 3: Difficult Deployment</h3>
+
+            <p>
+                Deploying an application manually requires installing
+                runtimes, libraries, dependencies, configuration files,
+                databases, and other required software.
+            </p>
+
+            <p>
+                This process can be time-consuming and error-prone.
+            </p>
+        </div>
+
+        <div class="problem">
+            <h3>❌ Problem 4: Environment Differences</h3>
+
+            <p>
+                Development, testing, staging, and production environments
+                can have different configurations.
+            </p>
+
+            <p>
+                This can cause an application to behave differently
+                at different stages of the deployment process.
+            </p>
+        </div>
+
+        <div class="problem">
+            <h3>❌ Problem 5: Slow Server Provisioning</h3>
+
+            <p>
+                Setting up a new server traditionally required installing
+                and configuring many software components manually.
+            </p>
+
+            <p>
+                This could take significant time when many servers were
+                required.
+            </p>
+        </div>
+
+        <div class="problem">
+            <h3>❌ Problem 6: Application Isolation</h3>
+
+            <p>
+                Multiple applications running directly on the same server
+                could interfere with each other through shared dependencies,
+                ports, configuration, or system resources.
+            </p>
+        </div>
+
+    </section>
+
+
+    <!-- Docker Solution -->
+    <section id="solution">
+
+        <h2>3. How Docker Solves These Problems</h2>
+
+        <p>
+            Docker introduces the concept of <strong>containerization</strong>.
+            Instead of installing an application and all its dependencies
+            directly on the host system, we package them inside a container.
+        </p>
+
+        <div class="solution">
+            <h3>✅ Solution: Containerization</h3>
+
+            <p>
+                A Docker container contains the application and the
+                dependencies required to run it.
+            </p>
+
+            <p>
+                This makes the application environment more consistent
+                across different machines.
+            </p>
+        </div>
+
+        <h3>Example</h3>
+
+        <p>
+            Suppose we have a Python application that requires:
+        </p>
+
+        <ul>
+            <li>Python 3.12</li>
+            <li>Flask</li>
+            <li>Requests</li>
+            <li>Specific configuration</li>
+        </ul>
+
+        <p>
+            Instead of manually installing everything on every server,
+            we can create a Docker image containing the required environment.
+        </p>
+
+        <pre><code>FROM python:3.12
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]</code></pre>
+
+        <p>
+            This Dockerfile can be used to build an image that contains
+            the required environment for the application.
+        </p>
+
+    </section>
+
+
+    <!-- Before vs After -->
+    <section>
+
+        <h2>4. Before Docker vs After Docker</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Before Docker</th>
+                    <th>With Docker</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Manual application setup</td>
+                    <td>Containerized application setup</td>
+                </tr>
+
+                <tr>
+                    <td>Dependency conflicts</td>
+                    <td>Dependencies isolated inside containers</td>
+                </tr>
+
+                <tr>
+                    <td>"Works on my machine" problem</td>
+                    <td>Consistent application environment</td>
+                </tr>
+
+                <tr>
+                    <td>Deployment can be complicated</td>
+                    <td>Deploy using container images</td>
+                </tr>
+
+                <tr>
+                    <td>Environment configuration differs</td>
+                    <td>Environment can be defined in code</td>
+                </tr>
+
+                <tr>
+                    <td>Application isolation is difficult</td>
+                    <td>Containers provide process and filesystem isolation</td>
+                </tr>
+
+                <tr>
+                    <td>Server setup takes more time</td>
+                    <td>Containers can start quickly</td>
+                </tr>
+
+                <tr>
+                    <td>Harder to reproduce environments</td>
+                    <td>Images can be versioned and reused</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- Benefits -->
+    <section id="benefits">
+
+        <h2>5. Benefits of Docker</h2>
+
+        <div class="benefits">
+
+            <div class="benefit-card">
+                <h3>🚀 Portability</h3>
+                <p>
+                    Containers can run across different environments
+                    as long as a compatible container runtime is available.
+                </p>
+            </div>
+
+            <div class="benefit-card">
+                <h3>⚡ Fast Startup</h3>
+                <p>
+                    Containers generally start much faster than
+                    traditional virtual machines.
+                </p>
+            </div>
+
+            <div class="benefit-card">
+                <h3>📦 Packaging</h3>
+                <p>
+                    Application code and dependencies can be packaged
+                    together into an image.
+                </p>
+            </div>
+
+            <div class="benefit-card">
+                <h3>🔒 Isolation</h3>
+                <p>
+                    Applications can run in isolated containers with
+                    separate processes, filesystems, and networking.
+                </p>
+            </div>
+
+            <div class="benefit-card">
+                <h3>🔄 CI/CD</h3>
+                <p>
+                    Docker works well with CI/CD systems such as
+                    GitHub Actions and Jenkins.
+                </p>
+            </div>
+
+            <div class="benefit-card">
+                <h3>☁️ Cloud Ready</h3>
+                <p>
+                    Docker containers can be deployed to many cloud
+                    platforms and container orchestration systems.
+                </p>
+            </div>
+
+            <div class="benefit-card">
+                <h3>📈 Scalability</h3>
+                <p>
+                    Containerized applications can be replicated and
+                    managed by orchestration platforms such as Kubernetes.
+                </p>
+            </div>
+
+            <div class="benefit-card">
+                <h3>🛠️ Automation</h3>
+                <p>
+                    Docker integrates with DevOps automation tools and
+                    helps standardize application delivery.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Analogy -->
+    <section id="analogy">
+
+        <h2>6. Real-Life Analogy</h2>
+
+        <div class="analogy">
+
+            <h3>📦 Shipping Container Example</h3>
+
+            <p>
+                Imagine a company needs to transport products from one
+                country to another.
+            </p>
+
+            <p>
+                Without standardized shipping containers, every transport
+                system would need to handle products differently.
+            </p>
+
+            <p>
+                A standardized shipping container solves this problem.
+                The same container can be moved between ships, trains,
+                and trucks.
+            </p>
+
+            <p>
+                Docker works with a similar concept for software.
+            </p>
+
+            <p>
+                The application and its dependencies are packaged into
+                a standardized container that can be moved between
+                different environments.
+            </p>
+
+            <strong>
+                Application + Dependencies → Docker Image → Container
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- Workflow -->
+    <section id="workflow">
+
+        <h2>7. Basic Docker Workflow</h2>
+
+        <div class="workflow">
+
+            <div>Application</div>
+            <span class="arrow">→</span>
+
+            <div>Dockerfile</div>
+            <span class="arrow">→</span>
+
+            <div>Docker Image</div>
+            <span class="arrow">→</span>
+
+            <div>Container</div>
+            <span class="arrow">→</span>
+
+            <div>Running Application</div>
+
+        </div>
+
+        <h3>Step 1: Create Application</h3>
+
+        <p>
+            Developer creates an application and its source code.
+        </p>
+
+        <h3>Step 2: Create Dockerfile</h3>
+
+        <p>
+            Dockerfile contains instructions for building the application's
+            Docker image.
+        </p>
+
+        <h3>Step 3: Build Image</h3>
+
+        <pre><code>docker build -t my-app .</code></pre>
+
+        <h3>Step 4: Create Container</h3>
+
+        <pre><code>docker run -d --name my-container my-app</code></pre>
+
+        <h3>Step 5: Application Runs Inside Container</h3>
+
+        <p>
+            The container provides the isolated environment in which
+            the application runs.
+        </p>
+
+    </section>
+
+
+    <!-- Important Terms -->
+    <section>
+
+        <h2>8. Important Docker Terms</h2>
+
+        <ul>
+            <li>
+                <strong>Docker Engine:</strong>
+                Technology that builds and runs containers.
+            </li>
+
+            <li>
+                <strong>Docker Image:</strong>
+                A read-only template used to create containers.
+            </li>
+
+            <li>
+                <strong>Docker Container:</strong>
+                A running or stopped instance created from an image.
+            </li>
+
+            <li>
+                <strong>Dockerfile:</strong>
+                A text file containing instructions to build an image.
+            </li>
+
+            <li>
+                <strong>Docker Hub:</strong>
+                A registry where Docker images can be stored and shared.
+            </li>
+
+            <li>
+                <strong>Docker Volume:</strong>
+                A mechanism for persisting container data.
+            </li>
+
+            <li>
+                <strong>Docker Network:</strong>
+                Allows containers and external systems to communicate.
+            </li>
+
+            <li>
+                <strong>Docker Compose:</strong>
+                Tool used to define and manage multi-container applications.
+            </li>
+        </ul>
+
+    </section>
+
+
+    <!-- Final Summary -->
+    <section>
+
+        <h2>9. Final Summary</h2>
+
+        <div class="highlight">
+
+            <p>
+                Docker solves many traditional application deployment
+                problems by providing a standardized way to package and
+                run applications.
+            </p>
+
+            <p>
+                The major idea behind Docker is:
+            </p>
+
+            <h3>
+                "Build Once → Package → Ship → Run Consistently"
+            </h3>
+
+            <p>
+                For a DevOps engineer, Docker is an important technology
+                because it connects application development with
+                automation, CI/CD, cloud infrastructure, and container
+                orchestration.
+            </p>
+
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    <p>
+        Docker Learning Journey | DevOps & Cloud Engineering
+    </p>
+
+    <p>
+        Learn → Practice → Build → Automate → Deploy
+    </p>
+</footer>
+
+</body>
+</html>
