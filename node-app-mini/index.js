@@ -18,6 +18,16 @@ app.get("/", (req, res) =>{
                 id: 3,
                 employeeName: "Pankaj",
                 employeeSalary: 80000
+            },
+            {
+                id: 4,
+                employeeName: "Priya",
+                employeeSalary: 70000
+            },
+            {
+                id: 5,
+                employeeName: "Payal",
+                employeeSalary: 60000
             }
         ]
     )  
