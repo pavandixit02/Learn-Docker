@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Docker Desktop Installation | Step-by-Step Guide</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            max-width: 900px;
+            margin: auto;
+            font-size: 18px;
+            color: #dbeafe;
+        }
+
+        nav {
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin: 22px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .error {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .analogy {
+            background: #f5f3ff;
+            border-left: 5px solid #7c3aed;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .flow-item {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .arrow {
+            font-size: 25px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #d1d5db;
+            padding: 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media (max-width: 700px) {
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+<!-- ===================================================== -->
+<!-- HEADER -->
+<!-- ===================================================== -->
+
+<header>
+
+    <h1>🐳 Docker Desktop Installation</h1>
+
+    <p>
+        Complete step-by-step guide to install Docker Desktop,
+        verify the installation, run your first container,
+        and troubleshoot common problems.
+    </p>
+
+</header>
+
+
+<!-- ===================================================== -->
+<!-- NAVIGATION -->
+<!-- ===================================================== -->
+
+<nav>
+
+    <a href="#intro">Introduction</a>
+    <a href="#requirements">Requirements</a>
+    <a href="#windows">Windows</a>
+    <a href="#ubuntu">Ubuntu</a>
+    <a href="#verify">Verification</a>
+    <a href="#example">Example</a>
+    <a href="#errors">Errors</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<!-- ===================================================== -->
+<!-- INTRODUCTION -->
+<!-- ===================================================== -->
+
+<section id="intro">
+
+    <h2>1. What is Docker Desktop?</h2>
+
+    <p>
+        Docker Desktop is a desktop application that provides tools
+        and a local environment for building, running, and managing
+        containerized applications.
+    </p>
+
+    <p>
+        It is commonly used by developers and DevOps learners to
+        work with Docker on their personal computers.
+    </p>
+
+    <div class="highlight">
+
+        <strong>Simple Definition:</strong>
+
+        <p>
+            Docker Desktop allows you to use Docker locally through
+            a graphical interface as well as the Docker command line.
+        </p>
+
+    </div>
+
+
+    <h3>Docker Desktop can help you:</h3>
+
+    <ul>
+
+        <li>Build Docker images</li>
+
+        <li>Create and run containers</li>
+
+        <li>Stop and restart containers</li>
+
+        <li>View container logs</li>
+
+        <li>Manage images</li>
+
+        <li>Work with Docker Compose</li>
+
+        <li>Manage Docker resources</li>
+
+        <li>Develop and test containerized applications locally</li>
+
+    </ul>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- REQUIREMENTS -->
+<!-- ===================================================== -->
+
+<section id="requirements">
+
+    <h2>2. Before Installing Docker Desktop</h2>
+
+    <p>
+        Before installation, make sure your system meets the
+        requirements for your operating system and Docker Desktop
+        version.
+    </p>
+
+
+    <div class="card-grid">
+
+        <div class="card">
+
+            <h3>💻 Hardware</h3>
+
+            <p>
+                A reasonably modern 64-bit computer with sufficient
+                RAM and storage for your containers and images.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🌐 Internet</h3>
+
+            <p>
+                Internet access is useful for downloading Docker
+                Desktop, images, updates, and dependencies.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🔐 Permissions</h3>
+
+            <p>
+                You may need administrator privileges to install
+                Docker Desktop.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>⚙️ Virtualization</h3>
+
+            <p>
+                Windows installations commonly require hardware
+                virtualization and WSL 2 or another supported backend.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="warning">
+
+        <strong>Important:</strong>
+
+        <p>
+            Docker Desktop requirements can change between versions.
+            Always check the current official Docker Desktop
+            documentation for your operating system before installation.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- WINDOWS -->
+<!-- ===================================================== -->
+
+<section id="windows">
+
+    <h2>3. Docker Desktop Installation on Windows</h2>
+
+
+    <!-- STEP 1 -->
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">1</span>
+            Download Docker Desktop
+        </h3>
+
+        <p>
+            Open the official Docker website and download the
+            Docker Desktop installer for Windows.
+        </p>
+
+        <p>
+            Choose the installer that matches your system and
+            current Docker documentation.
+        </p>
+
+        <div class="highlight">
+
+            <strong>Tip:</strong>
+
+            <p>
+                Always download Docker Desktop from the official
+                Docker website rather than an unknown third-party website.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- STEP 2 -->
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">2</span>
+            Run the Installer
+        </h3>
+
+        <p>
+            Open the downloaded Docker Desktop installer.
+        </p>
+
+        <p>
+            If Windows asks for administrator permission,
+            allow the installer to continue.
+        </p>
+
+    </div>
+
+
+    <!-- STEP 3 -->
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">3</span>
+            Choose the Backend
+        </h3>
+
+        <p>
+            During installation, Docker Desktop may provide
+            configuration options related to its Linux/WSL 2 backend.
+        </p>
+
+        <p>
+            For most Windows users learning Linux containers,
+            WSL 2 is the commonly used option.
+        </p>
+
+        <div class="warning">
+
+            <strong>Do not blindly change advanced options.</strong>
+
+            <p>
+                If you are a beginner, use the recommended configuration
+                unless you have a specific reason to change it.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- STEP 4 -->
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">4</span>
+            Complete Installation
+        </h3>
+
+        <p>
+            Allow the installer to copy the required files and
+            configure Docker Desktop.
+        </p>
+
+        <p>
+            Restart Windows if the installer requests it.
+        </p>
+
+    </div>
+
+
+    <!-- STEP 5 -->
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">5</span>
+            Start Docker Desktop
+        </h3>
+
+        <p>
+            Open Docker Desktop from the Windows Start Menu.
+        </p>
+
+        <p>
+            Wait until Docker Desktop indicates that the Docker
+            engine is running and ready.
+        </p>
+
+    </div>
+
+
+    <!-- STEP 6 -->
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">6</span>
+            Open PowerShell or Windows Terminal
+        </h3>
+
+        <p>
+            Open a terminal and check whether Docker is available.
+        </p>
+
+<pre><code>docker --version</code></pre>
+
+        <p>
+            You should see the installed Docker CLI version.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- UBUNTU -->
+<!-- ===================================================== -->
+
+<section id="ubuntu">
+
+    <h2>4. Docker Desktop Installation on Ubuntu/Linux</h2>
+
+    <p>
+        Docker Desktop can also be installed on supported Linux
+        distributions. The exact requirements and installation
+        commands depend on the distribution and Docker Desktop version.
+    </p>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">1</span>
+            Check Your Ubuntu Version
+        </h3>
+
+<pre><code>cat /etc/os-release</code></pre>
+
+        <p>
+            This command displays information about your Linux distribution.
+        </p>
+
+    </div>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">2</span>
+            Update Package Information
+        </h3>
+
+<pre><code>sudo apt update</code></pre>
+
+    </div>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">3</span>
+            Download the Official Docker Desktop Package
+        </h3>
+
+        <p>
+            Download the appropriate Docker Desktop package from
+            Docker's official documentation for your Ubuntu release.
+        </p>
+
+        <div class="warning">
+
+            <strong>Why not use a random command from an old tutorial?</strong>
+
+            <p>
+                Docker Desktop installation procedures can change.
+                Always verify the package and installation instructions
+                against the current official Docker documentation.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">4</span>
+            Install the Package
+        </h3>
+
+        <p>
+            After downloading the supported Debian package, install
+            it using the package manager.
+        </p>
+
+<pre><code>sudo apt install ./docker-desktop-*.deb</code></pre>
+
+        <p>
+            Use the actual downloaded package filename if the wildcard
+            does not match your file.
+        </p>
+
+    </div>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">5</span>
+            Start Docker Desktop
+        </h3>
+
+<pre><code>systemctl --user start docker-desktop</code></pre>
+
+        <p>
+            This starts Docker Desktop for the current user when
+            the installed version uses this service configuration.
+        </p>
+
+    </div>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">6</span>
+            Check Docker</h3>
+
+<pre><code>docker --version</code></pre>
+
+        <p>
+            If Docker is installed and available, the command should
+            display the Docker CLI version.
+        </p>
+
+    </div>
+
+
+    <div class="highlight">
+
+        <strong>For Ubuntu learners:</strong>
+
+        <p>
+            If your main goal is learning Docker and DevOps on Ubuntu,
+            Docker Engine can also be installed directly without Docker
+            Desktop. Docker Desktop is particularly useful when you want
+            its desktop UI and integrated local development experience.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- VERIFICATION -->
+<!-- ===================================================== -->
+
+<section id="verify">
+
+    <h2>5. Verify Docker Desktop Installation</h2>
+
+    <p>
+        After installation, do not assume Docker is working.
+        Always verify it using the CLI.
+    </p>
+
+
+    <h3>Check Docker Version</h3>
+
+<pre><code>docker --version</code></pre>
+
+
+    <h3>Check Docker Information</h3>
+
+<pre><code>docker info</code></pre>
+
+
+    <h3>Check Running Containers</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+    <h3>Check All Containers</h3>
+
+<pre><code>docker ps -a</code></pre>
+
+
+    <div class="success">
+
+        <h3>✅ Installation Verification</h3>
+
+        <p>
+            If Docker Desktop is running and commands such as
+            <code>docker info</code> work successfully, your local
+            Docker environment is generally ready for container work.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- FIRST CONTAINER EXAMPLE -->
+<!-- ===================================================== -->
+
+<section id="example">
+
+    <h2>6. First Docker Container — Practical Example</h2>
+
+    <p>
+        Now let's verify Docker by running a real container.
+        We will use the official Nginx image.
+    </p>
+
+
+    <h3>Step 1 — Pull Nginx Image</h3>
+
+<pre><code>docker pull nginx</code></pre>
+
+    <p>
+        Docker downloads the Nginx image from a container registry.
+    </p>
+
+
+    <h3>Step 2 — Check Image</h3>
+
+<pre><code>docker images</code></pre>
+
+
+    <h3>Step 3 — Run Nginx Container</h3>
+
+<pre><code>docker run -d --name my-nginx -p 8080:80 nginx</code></pre>
+
+
+    <h3>Command Explanation</h3>
+
+    <table>
+
+        <tr>
+
+            <th>Part</th>
+
+            <th>Meaning</th>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>docker run</code>
+            </td>
+
+            <td>
+                Creates and starts a container.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>-d</code>
+            </td>
+
+            <td>
+                Runs the container in detached/background mode.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>--name my-nginx</code>
+            </td>
+
+            <td>
+                Gives the container a custom name.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>-p 8080:80</code>
+            </td>
+
+            <td>
+                Maps host port 8080 to container port 80.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>nginx</code>
+            </td>
+
+            <td>
+                The image used to create the container.
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <h3>Step 4 — Check Container</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+    <h3>Step 5 — Open Browser</h3>
+
+    <p>
+        Open:
+    </p>
+
+<pre><code>http://localhost:8080</code></pre>
+
+    <p>
+        If the container is running correctly, you should see
+        the Nginx welcome page.
+    </p>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Docker Desktop
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Engine
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Nginx Container
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            localhost:8080
+        </div>
+
+    </div>
+
+
+    <h3>Step 6 — Stop Container</h3>
+
+<pre><code>docker stop my-nginx</code></pre>
+
+
+    <h3>Step 7 — Remove Container</h3>
+
+<pre><code>docker rm my-nginx</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- DOCKER DESKTOP UI -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>7. Using Docker Desktop GUI</h2>
+
+    <p>
+        Docker Desktop also provides a graphical interface.
+        You can use it to inspect and manage Docker resources
+        without entering every command manually.
+    </p>
+
+
+    <div class="card-grid">
+
+        <div class="card">
+
+            <h3>📦 Containers</h3>
+
+            <p>
+                View containers, their status, logs, ports,
+                and other information.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🖼️ Images</h3>
+
+            <p>
+                View locally stored Docker images.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>💾 Volumes</h3>
+
+            <p>
+                Manage Docker volumes used for persistent data.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🌐 Networks</h3>
+
+            <p>
+                Inspect Docker networks used by containers.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- COMMON ERRORS -->
+<!-- ===================================================== -->
+
+<section id="errors">
+
+    <h2>8. Common Installation & Runtime Problems</h2>
+
+
+    <div class="error">
+
+        <h3>❌ Error: Docker command not found</h3>
+
+        <p>
+            The Docker CLI may not be installed correctly, may not be
+            available in PATH, or Docker Desktop/Engine may not be running.
+        </p>
+
+        <p>
+            Check:
+        </p>
+
+<pre><code>docker --version</code></pre>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Error: Docker Engine is not running</h3>
+
+        <p>
+            Docker Desktop may be installed but its backend may not
+            currently be running.
+        </p>
+
+        <p>
+            Open Docker Desktop and wait until it reports that Docker
+            is running.
+        </p>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Error: WSL 2 related problem on Windows</h3>
+
+        <p>
+            Docker Desktop on Windows may depend on WSL 2 and
+            virtualization configuration.
+        </p>
+
+        <p>
+            Check that WSL is installed correctly and that hardware
+            virtualization is enabled in firmware when required.
+        </p>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Error: Permission denied on Linux</h3>
+
+        <p>
+            Linux users can sometimes encounter Docker socket
+            permission problems.
+        </p>
+
+        <p>
+            First verify whether Docker is working with appropriate
+            privileges and then configure Docker group access according
+            to Docker's official Linux instructions.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- IMPORTANT COMMANDS -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>9. Important Commands After Installation</h2>
+
+
+<pre><code># Check Docker version
+docker --version
+
+# Show Docker system information
+docker info
+
+# List images
+docker images
+
+# List running containers
+docker ps
+
+# List all containers
+docker ps -a
+
+# Pull an image
+docker pull nginx
+
+# Run a container
+docker run -d --name web nginx
+
+# Stop a container
+docker stop web
+
+# Start a stopped container
+docker start web
+
+# Remove a container
+docker rm web
+
+# Remove an image
+docker rmi nginx</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- DOCKER DESKTOP vs DOCKER ENGINE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>10. Docker Desktop vs Docker Engine</h2>
+
+    <table>
+
+        <tr>
+
+            <th>Docker Desktop</th>
+
+            <th>Docker Engine</th>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                Desktop application/development environment.
+            </td>
+
+            <td>
+                Core container technology used to build and run containers.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                Provides GUI and developer tooling.
+            </td>
+
+            <td>
+                Provides the core daemon/API/CLI-based container functionality.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                Commonly used on developer workstations.
+            </td>
+
+            <td>
+                Can be installed directly on supported Linux servers.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                Convenient for local development.
+            </td>
+
+            <td>
+                Common foundation for server-side container workloads.
+            </td>
+
+        </tr>
+
+    </table>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- BEST PRACTICES -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>11. Docker Installation Best Practices</h2>
+
+    <ul>
+
+        <li>
+            Download Docker software from official Docker sources.
+        </li>
+
+        <li>
+            Keep Docker Desktop updated when appropriate.
+        </li>
+
+        <li>
+            Do not install random Docker packages from unknown websites.
+        </li>
+
+        <li>
+            Learn both Docker GUI and Docker CLI.
+        </li>
+
+        <li>
+            Practice Docker commands regularly.
+        </li>
+
+        <li>
+            Understand images, containers, volumes, and networks
+            before moving to advanced topics.
+        </li>
+
+        <li>
+            For DevOps, focus especially on CLI, Dockerfile,
+            Docker Compose, registries, CI/CD, and troubleshooting.
+        </li>
+
+    </ul>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- INTERVIEW QUESTIONS -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>12. Interview Questions</h2>
+
+    <ol>
+
+        <li>What is Docker Desktop?</li>
+
+        <li>Why do we use Docker Desktop?</li>
+
+        <li>How do you install Docker Desktop on Windows?</li>
+
+        <li>What is WSL 2 and why is it commonly used with Docker Desktop on Windows?</li>
+
+        <li>Can Docker Desktop be used on Linux?</li>
+
+        <li>How do you verify Docker installation?</li>
+
+        <li>What is the difference between Docker Desktop and Docker Engine?</li>
+
+        <li>How do you run your first Docker container?</li>
+
+        <li>How do you check running containers?</li>
+
+        <li>How do you check installed Docker images?</li>
+
+        <li>What should you check if the Docker daemon is not running?</li>
+
+    </ol>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- FINAL SUMMARY -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>13. Final Summary</h2>
+
+    <div class="highlight">
+
+        <p>
+            Docker Desktop provides a convenient local environment
+            for working with containers.
+        </p>
+
+        <p>
+            The basic learning flow is:
+        </p>
+
+        <h3>
+            Install → Verify → Pull Image → Run Container → Test → Stop → Remove
+        </h3>
+
+    </div>
+
+
+    <div class="analogy">
+
+        <h3>🧠 Easy Memory Trick</h3>
+
+        <p>
+            <strong>
+                Docker Desktop = Your Local Docker Workspace
+            </strong>
+        </p>
+
+        <p>
+            <strong>
+                Docker Image = Application Package
+            </strong>
+        </p>
+
+        <p>
+            <strong>
+                Docker Container = Running Application Environment
+            </strong>
+        </p>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
+
+<footer>
+
+    <p>
+        🐳 Docker Learning Journey
+    </p>
+
+    <p>
+        Learn → Practice → Build → Automate → Deploy
+    </p>
+
+</footer>
+
+
+</body>
+</html>
