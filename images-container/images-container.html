@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Docker Images & Containers | Complete Notes</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            max-width: 850px;
+            margin: auto;
+            font-size: 18px;
+            color: #dbeafe;
+        }
+
+        nav {
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin: 22px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .image-box {
+            background: #eef2ff;
+            border-left: 5px solid #4f46e5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .container-box {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .analogy {
+            background: #f5f3ff;
+            border-left: 5px solid #7c3aed;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .flow-item {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .arrow {
+            font-size: 25px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media (max-width: 700px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>🐳 Docker Images & Containers</h1>
+
+    <p>
+        Complete beginner-friendly guide to Docker Images,
+        Docker Containers, their lifecycle, commands, relationship,
+        and differences.
+    </p>
+
+</header>
+
+
+<nav>
+
+    <a href="#images">Images</a>
+    <a href="#image-structure">Image Structure</a>
+    <a href="#containers">Containers</a>
+    <a href="#lifecycle">Lifecycle</a>
+    <a href="#relationship">Relationship</a>
+    <a href="#difference">Difference</a>
+    <a href="#commands">Commands</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<!-- ===================================================== -->
+<!-- DOCKER IMAGE -->
+<!-- ===================================================== -->
+
+<section id="images">
+
+    <h2>1. What is a Docker Image?</h2>
+
+    <p>
+        A <strong>Docker Image</strong> is a read-only template or
+        package that contains everything required to create and run
+        a container.
+    </p>
+
+    <p>
+        An image can contain application code, libraries,
+        dependencies, configuration files, environment information,
+        and instructions about how the application should start.
+    </p>
+
+    <div class="highlight">
+
+        <strong>Simple Definition:</strong>
+
+        <p>
+            Docker Image = A blueprint/template used to create Docker Containers.
+        </p>
+
+    </div>
+
+
+    <h3>Why do we need Docker Images?</h3>
+
+    <p>
+        Suppose you have a Python application. To run it successfully,
+        you may need Python, external libraries, application code,
+        configuration, and other dependencies.
+    </p>
+
+    <p>
+        Instead of installing all these things manually on every
+        machine, we can package the required environment into a
+        Docker Image.
+    </p>
+
+
+    <div class="image-box">
+
+        <h3>Example</h3>
+
+        <p>
+            Suppose your application requires:
+        </p>
+
+        <ul>
+            <li>Ubuntu Linux</li>
+            <li>Python 3.12</li>
+            <li>Flask</li>
+            <li>Requests</li>
+            <li>Application source code</li>
+            <li>Required configuration</li>
+        </ul>
+
+        <p>
+            These requirements can be defined while building an image.
+        </p>
+
+    </div>
+
+
+    <h3>Docker Image is Read-Only</h3>
+
+    <p>
+        A Docker Image itself is immutable/read-only. When a container
+        is started from an image, Docker adds a writable container layer
+        on top of the image.
+    </p>
+
+    <p>
+        Therefore, multiple containers can be created from the same image
+        while each container has its own writable layer.
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- IMAGE STRUCTURE -->
+<!-- ===================================================== -->
+
+<section id="image-structure">
+
+    <h2>2. Docker Image Structure</h2>
+
+    <p>
+        Docker images are built using multiple layers. Each instruction
+        in a Dockerfile can create a filesystem layer as part of the
+        image build process.
+    </p>
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Base Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Dependencies
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Application
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Image
+        </div>
+
+    </div>
+
+
+    <h3>Example Dockerfile</h3>
+
+<pre><code>FROM python:3.12
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]</code></pre>
+
+
+    <h3>What does each instruction do?</h3>
+
+    <table>
+
+        <tr>
+            <th>Instruction</th>
+            <th>Purpose</th>
+        </tr>
+
+        <tr>
+            <td><strong>FROM</strong></td>
+            <td>Defines the base image.</td>
+        </tr>
+
+        <tr>
+            <td><strong>WORKDIR</strong></td>
+            <td>Sets the working directory inside the image.</td>
+        </tr>
+
+        <tr>
+            <td><strong>COPY</strong></td>
+            <td>Copies files from the build context into the image.</td>
+        </tr>
+
+        <tr>
+            <td><strong>RUN</strong></td>
+            <td>Executes commands while building the image.</td>
+        </tr>
+
+        <tr>
+            <td><strong>CMD</strong></td>
+            <td>Provides the default command when a container starts.</td>
+        </tr>
+
+    </table>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- IMAGE COMMANDS -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>3. Important Docker Image Commands</h2>
+
+
+    <h3>List Images</h3>
+
+<pre><code>docker images</code></pre>
+
+
+    <h3>Pull an Image</h3>
+
+<pre><code>docker pull nginx</code></pre>
+
+    <p>
+        This downloads the Nginx image from a container registry,
+        such as Docker Hub.
+    </p>
+
+
+    <h3>Build an Image</h3>
+
+<pre><code>docker build -t my-app:1.0 .</code></pre>
+
+
+    <h3>Remove an Image</h3>
+
+<pre><code>docker rmi my-app:1.0</code></pre>
+
+
+    <h3>Inspect an Image</h3>
+
+<pre><code>docker image inspect nginx</code></pre>
+
+
+    <h3>View Image History</h3>
+
+<pre><code>docker history nginx</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- CONTAINER -->
+<!-- ===================================================== -->
+
+<section id="containers">
+
+    <h2>4. What is a Docker Container?</h2>
+
+    <p>
+        A <strong>Docker Container</strong> is an isolated runtime
+        environment created from a Docker Image.
+    </p>
+
+    <div class="container-box">
+
+        <strong>Simple Definition:</strong>
+
+        <p>
+            Container = A running/created instance of a Docker Image.
+        </p>
+
+    </div>
+
+
+    <h3>Image vs Running Application</h3>
+
+    <p>
+        An image is the packaged application environment.
+        A container is where that packaged application actually runs.
+    </p>
+
+
+    <div class="analogy">
+
+        <h3>🏠 Real-Life Analogy</h3>
+
+        <p>
+            Think of a house blueprint.
+        </p>
+
+        <ul>
+            <li>
+                <strong>Blueprint = Docker Image</strong>
+            </li>
+
+            <li>
+                <strong>Actual House = Docker Container</strong>
+            </li>
+        </ul>
+
+        <p>
+            One blueprint can be used to create multiple houses.
+            Similarly, one Docker image can be used to create multiple
+            containers.
+        </p>
+
+    </div>
+
+
+    <h3>What happens when a container starts?</h3>
+
+    <ol>
+
+        <li>
+            Docker finds the required image.
+        </li>
+
+        <li>
+            Docker creates a container filesystem and runtime configuration.
+        </li>
+
+        <li>
+            Docker adds a writable layer over the image layers.
+        </li>
+
+        <li>
+            Docker configures networking and other requested resources.
+        </li>
+
+        <li>
+            Docker starts the process specified by the image/container configuration.
+        </li>
+
+    </ol>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- CONTAINER LIFECYCLE -->
+<!-- ===================================================== -->
+
+<section id="lifecycle">
+
+    <h2>5. Docker Container Lifecycle</h2>
+
+    <div class="flow">
+
+        <div class="flow-item">Created</div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">Running</div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">Stopped</div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">Removed</div>
+
+    </div>
+
+
+    <h3>Create a Container</h3>
+
+<pre><code>docker create --name web nginx</code></pre>
+
+
+    <h3>Start a Container</h3>
+
+<pre><code>docker start web</code></pre>
+
+
+    <h3>Run a Container</h3>
+
+<pre><code>docker run -d --name web nginx</code></pre>
+
+    <p>
+        The <strong>-d</strong> option runs the container in detached mode.
+    </p>
+
+
+    <h3>Stop a Container</h3>
+
+<pre><code>docker stop web</code></pre>
+
+
+    <h3>Restart a Container</h3>
+
+<pre><code>docker restart web</code></pre>
+
+
+    <h3>Remove a Container</h3>
+
+<pre><code>docker rm web</code></pre>
+
+
+    <h3>List Running Containers</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+    <h3>List All Containers</h3>
+
+<pre><code>docker ps -a</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- RELATIONSHIP -->
+<!-- ===================================================== -->
+
+<section id="relationship">
+
+    <h2>6. Relationship Between Image and Container</h2>
+
+    <p>
+        The relationship between Docker Images and Containers is one
+        of the most important concepts to understand in Docker.
+    </p>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Dockerfile
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Application
+        </div>
+
+    </div>
+
+
+    <h3>One Image → Multiple Containers</h3>
+
+    <p>
+        The same image can be used to create multiple containers.
+    </p>
+
+
+<pre><code>docker run -d --name web1 nginx
+docker run -d --name web2 nginx
+docker run -d --name web3 nginx</code></pre>
+
+
+    <p>
+        In this example, all three containers are created from the
+        same Nginx image.
+    </p>
+
+
+    <div class="highlight">
+
+        <strong>Important Concept:</strong>
+
+        <p>
+            Image is the template. Container is the runtime instance.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- DIFFERENCE -->
+<!-- ===================================================== -->
+
+<section id="difference">
+
+    <h2>7. Difference Between Docker Image and Container</h2>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Docker Image</th>
+                <th>Docker Container</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>
+                    Image is a template/package.
+                </td>
+
+                <td>
+                    Container is a runtime instance created from an image.
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Images are immutable/read-only.
+                </td>
+
+                <td>
+                    Container has a writable layer on top of the image.
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Image is used to create containers.
+                </td>
+
+                <td>
+                    Container runs the application.
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Images are stored locally or in registries.
+                </td>
+
+                <td>
+                    Containers exist on a Docker host while they are created.
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    An image can have multiple versions/tags.
+                </td>
+
+                <td>
+                    Containers have their own names and IDs.
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Example: nginx:latest
+                </td>
+
+                <td>
+                    Example: my-nginx-container
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Created using Dockerfile/build process.
+                </td>
+
+                <td>
+                    Created using docker run/create commands.
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Does not normally represent a running process by itself.
+                </td>
+
+                <td>
+                    Runs a process/application.
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- SIMPLE DIFFERENCE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>8. Image vs Container — Easy Way to Remember</h2>
+
+    <div class="card-grid">
+
+        <div class="card">
+
+            <h3>📦 Image</h3>
+
+            <p>
+                Think of an image as a <strong>blueprint</strong>.
+            </p>
+
+            <p>
+                It tells Docker what should be inside the container.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🏠 Container</h3>
+
+            <p>
+                Think of a container as the
+                <strong>actual house created from the blueprint</strong>.
+            </p>
+
+            <p>
+                This is where the application runs.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🏭 Dockerfile</h3>
+
+            <p>
+                Think of Dockerfile as the
+                <strong>instructions used to create the blueprint</strong>.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- PRACTICAL EXAMPLE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>9. Complete Practical Example</h2>
+
+    <p>
+        Let's create an Nginx container from the Nginx image.
+    </p>
+
+
+    <h3>Step 1: Download Image</h3>
+
+<pre><code>docker pull nginx</code></pre>
+
+
+    <h3>Step 2: Check Image</h3>
+
+<pre><code>docker images</code></pre>
+
+
+    <h3>Step 3: Create and Start Container</h3>
+
+<pre><code>docker run -d --name my-nginx -p 8080:80 nginx</code></pre>
+
+
+    <h3>Step 4: Check Container</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+    <h3>Step 5: View Logs</h3>
+
+<pre><code>docker logs my-nginx</code></pre>
+
+
+    <h3>Step 6: Stop Container</h3>
+
+<pre><code>docker stop my-nginx</code></pre>
+
+
+    <h3>Step 7: Remove Container</h3>
+
+<pre><code>docker rm my-nginx</code></pre>
+
+
+    <div class="warning">
+
+        <strong>Remember:</strong>
+
+        <p>
+            Removing a container does not automatically mean the image
+            is removed. Images and containers are separate Docker objects.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- INTERVIEW -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>10. Interview Questions</h2>
+
+    <ol>
+
+        <li>What is a Docker Image?</li>
+
+        <li>What is a Docker Container?</li>
+
+        <li>What is the difference between an image and a container?</li>
+
+        <li>Can multiple containers be created from one image?</li>
+
+        <li>Is a Docker Image writable?</li>
+
+        <li>What happens when a container starts?</li>
+
+        <li>What is a Dockerfile?</li>
+
+        <li>How do you list Docker images?</li>
+
+        <li>How do you list running containers?</li>
+
+        <li>What is the difference between docker run and docker start?</li>
+
+        <li>What happens when a container is removed?</li>
+
+        <li>Can a container exist without an image?</li>
+
+        <li>What is the relationship between Dockerfile, Image and Container?</li>
+
+    </ol>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- FINAL SUMMARY -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>11. Final Summary</h2>
+
+    <div class="highlight">
+
+        <p>
+            <strong>Dockerfile</strong> contains instructions for building
+            an image.
+        </p>
+
+        <p>
+            <strong>Docker Image</strong> is the packaged template containing
+            the application environment.
+        </p>
+
+        <p>
+            <strong>Docker Container</strong> is the runtime instance created
+            from the image.
+        </p>
+
+        <br>
+
+        <h3>
+            Dockerfile → Image → Container → Running Application
+        </h3>
+
+    </div>
+
+
+    <div class="analogy">
+
+        <h3>🧠 Easy Memory Trick</h3>
+
+        <p>
+            <strong>Dockerfile = Recipe</strong>
+        </p>
+
+        <p>
+            <strong>Image = Prepared Package / Blueprint</strong>
+        </p>
+
+        <p>
+            <strong>Container = Running Application Environment</strong>
+        </p>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<footer>
+
+    <p>
+        🐳 Docker Learning Journey
+    </p>
+
+    <p>
+        Learn → Practice → Build → Automate → Deploy
+    </p>
+
+</footer>
+
+
+</body>
+</html>
