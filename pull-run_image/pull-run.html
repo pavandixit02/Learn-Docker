@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Docker Image Pull & Run | Practical Guide</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            max-width: 900px;
+            margin: auto;
+            font-size: 18px;
+            color: #dbeafe;
+        }
+
+        nav {
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin: 22px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .error {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .analogy {
+            background: #f5f3ff;
+            border-left: 5px solid #7c3aed;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .example {
+            border: 2px solid #dbeafe;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 12px;
+            background: #ffffff;
+        }
+
+        .example-title {
+            background: #2563eb;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .command {
+            background: #111827;
+            color: #60a5fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            margin: 12px 0;
+            overflow-x: auto;
+        }
+
+        .flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .flow-item {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .arrow {
+            font-size: 25px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #d1d5db;
+            padding: 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media (max-width: 700px) {
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
+
+<header>
+
+    <h1>🐳 Docker Image Pull & Run</h1>
+
+    <p>
+        Learn how to pull Docker images and run containers
+        with practical examples using Nginx, Ubuntu, and Redis.
+    </p>
+
+</header>
+
+
+<!-- ========================================================= -->
+<!-- NAVIGATION -->
+<!-- ========================================================= -->
+
+<nav>
+
+    <a href="#concept">Concept</a>
+    <a href="#pull">Pull</a>
+    <a href="#run">Run</a>
+    <a href="#example1">Nginx</a>
+    <a href="#example2">Ubuntu</a>
+    <a href="#example3">Redis</a>
+    <a href="#commands">Commands</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<!-- ========================================================= -->
+<!-- INTRODUCTION -->
+<!-- ========================================================= -->
+
+<section id="concept">
+
+    <h2>1. Docker Image Pull & Run — Basic Concept</h2>
+
+    <p>
+        Docker me kisi application ko run karne ke liye commonly
+        hume ek <strong>Docker Image</strong> ki zarurat hoti hai.
+    </p>
+
+    <p>
+        Agar image hamare local computer par available nahi hai,
+        to hum us image ko kisi container registry, jaise Docker Hub,
+        se <strong>pull</strong> kar sakte hain.
+    </p>
+
+    <p>
+        Image available hone ke baad hum us image se ek
+        <strong>container create aur start</strong> kar sakte hain
+        using <code>docker run</code>.
+    </p>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Docker Hub
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            docker pull
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Local Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            docker run
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container
+        </div>
+
+    </div>
+
+
+    <div class="highlight">
+
+        <strong>Easy Formula:</strong>
+
+        <p>
+            <code>docker pull</code> = Image ko download karo
+        </p>
+
+        <p>
+            <code>docker run</code> = Image se container create + start karo
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- DOCKER PULL -->
+<!-- ========================================================= -->
+
+<section id="pull">
+
+    <h2>2. Docker Image ko Pull Kaise Karte Hain?</h2>
+
+    <p>
+        <strong>docker pull</strong> command ka use kisi container
+        registry se Docker image ko local machine par download karne
+        ke liye kiya jata hai.
+    </p>
+
+
+    <h3>Basic Syntax</h3>
+
+<pre><code>docker pull IMAGE_NAME</code></pre>
+
+
+    <h3>Example</h3>
+
+<pre><code>docker pull nginx</code></pre>
+
+
+    <p>
+        Is command se Docker registry se Nginx image ka default
+        tag pull kiya jayega.
+    </p>
+
+
+    <h3>Specific Tag Pull Karna</h3>
+
+<pre><code>docker pull nginx:1.27</code></pre>
+
+
+    <p>
+        Yahan <code>1.27</code> image tag/version ko represent karta hai.
+    </p>
+
+
+    <h3>Pull ke Baad Image Check Karein</h3>
+
+<pre><code>docker images</code></pre>
+
+    <p>
+        Ye command local machine par available Docker images dikhati hai.
+    </p>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- DOCKER RUN -->
+<!-- ========================================================= -->
+
+<section id="run">
+
+    <h2>3. Docker Image ko Run Kaise Karte Hain?</h2>
+
+    <p>
+        <strong>docker run</strong> command Docker image se container
+        create aur start karne ke liye use hoti hai.
+    </p>
+
+
+    <h3>Basic Syntax</h3>
+
+<pre><code>docker run IMAGE_NAME</code></pre>
+
+
+    <h3>Simple Example</h3>
+
+<pre><code>docker run nginx</code></pre>
+
+
+    <p>
+        Docker image ko local machine par check karega. Agar image
+        available nahi hai, Docker registry se image pull kar sakta hai,
+        phir container create karke start karega.
+    </p>
+
+
+    <h3>Detached Mode</h3>
+
+<pre><code>docker run -d nginx</code></pre>
+
+    <p>
+        <code>-d</code> ka matlab detached mode hai. Container background
+        me run hota hai aur terminal immediately available rehta hai.
+    </p>
+
+
+    <h3>Container ko Custom Name Dena</h3>
+
+<pre><code>docker run -d --name my-nginx nginx</code></pre>
+
+
+    <h3>Port Mapping</h3>
+
+<pre><code>docker run -d --name my-nginx -p 8080:80 nginx</code></pre>
+
+    <p>
+        Isme:
+    </p>
+
+    <ul>
+
+        <li>
+            <strong>8080</strong> = host machine ka port
+        </li>
+
+        <li>
+            <strong>80</strong> = container ka port
+        </li>
+
+    </ul>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- EXAMPLE 1 NGINX -->
+<!-- ========================================================= -->
+
+<section id="example1">
+
+    <h2>4. Example 1 — Nginx Image Pull & Run</h2>
+
+
+    <div class="example">
+
+        <div class="example-title">
+            🌐 Nginx Web Server
+        </div>
+
+
+        <h3>Step 1 — Pull Nginx Image</h3>
+
+<pre><code>docker pull nginx</code></pre>
+
+
+        <h3>Step 2 — Verify Image</h3>
+
+<pre><code>docker images</code></pre>
+
+
+        <h3>Step 3 — Run Nginx Container</h3>
+
+<pre><code>docker run -d --name my-nginx -p 8080:80 nginx</code></pre>
+
+
+        <h3>Command Explanation</h3>
+
+        <table>
+
+            <tr>
+                <th>Part</th>
+                <th>Meaning</th>
+            </tr>
+
+            <tr>
+                <td><code>docker run</code></td>
+                <td>Container create aur start karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>-d</code></td>
+                <td>Container ko background me run karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>--name my-nginx</code></td>
+                <td>Container ko custom name deta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>-p 8080:80</code></td>
+                <td>Host port 8080 ko container port 80 se map karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>nginx</code></td>
+                <td>Use ki jane wali Docker image.</td>
+            </tr>
+
+        </table>
+
+
+        <h3>Step 4 — Check Container</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+        <h3>Step 5 — Browser Me Open Karein</h3>
+
+<pre><code>http://localhost:8080</code></pre>
+
+
+        <div class="success">
+
+            <strong>Expected Result:</strong>
+
+            <p>
+                Browser me Nginx ka welcome page display hona chahiye.
+            </p>
+
+        </div>
+
+
+        <h3>Step 6 — Container Logs</h3>
+
+<pre><code>docker logs my-nginx</code></pre>
+
+
+        <h3>Step 7 — Container Stop</h3>
+
+<pre><code>docker stop my-nginx</code></pre>
+
+
+        <h3>Step 8 — Container Remove</h3>
+
+<pre><code>docker rm my-nginx</code></pre>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- EXAMPLE 2 UBUNTU -->
+<!-- ========================================================= -->
+
+<section id="example2">
+
+    <h2>5. Example 2 — Ubuntu Image Pull & Run</h2>
+
+
+    <div class="example">
+
+        <div class="example-title">
+            🐧 Ubuntu Container
+        </div>
+
+
+        <h3>Step 1 — Pull Ubuntu Image</h3>
+
+<pre><code>docker pull ubuntu</code></pre>
+
+
+        <h3>Step 2 — Check Image</h3>
+
+<pre><code>docker images</code></pre>
+
+
+        <h3>Step 3 — Run Ubuntu Container</h3>
+
+<pre><code>docker run -it --name my-ubuntu ubuntu</code></pre>
+
+
+        <h3>Command Explanation</h3>
+
+        <ul>
+
+            <li>
+                <code>-i</code> = Interactive mode
+            </li>
+
+            <li>
+                <code>-t</code> = Allocate a terminal
+            </li>
+
+            <li>
+                <code>--name my-ubuntu</code> = Container ka custom name
+            </li>
+
+            <li>
+                <code>ubuntu</code> = Ubuntu image
+            </li>
+
+        </ul>
+
+
+        <h3>Container ke Andar Commands Run Karein</h3>
+
+<pre><code>cat /etc/os-release</code></pre>
+
+
+<pre><code>ls</code></pre>
+
+
+<pre><code>pwd</code></pre>
+
+
+        <h3>Container Se Exit</h3>
+
+<pre><code>exit</code></pre>
+
+
+        <h3>Stopped Container Check Karein</h3>
+
+<pre><code>docker ps -a</code></pre>
+
+
+        <div class="highlight">
+
+            <strong>Important:</strong>
+
+            <p>
+                Ubuntu container me agar primary process exit ho jata hai,
+                to container stop ho sakta hai. Ye normal container behavior
+                hai.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- EXAMPLE 3 REDIS -->
+<!-- ========================================================= -->
+
+<section id="example3">
+
+    <h2>6. Example 3 — Redis Image Pull & Run</h2>
+
+
+    <div class="example">
+
+        <div class="example-title">
+            ⚡ Redis Container
+        </div>
+
+
+        <h3>Step 1 — Pull Redis Image</h3>
+
+<pre><code>docker pull redis</code></pre>
+
+
+        <h3>Step 2 — Run Redis</h3>
+
+<pre><code>docker run -d --name my-redis -p 6379:6379 redis</code></pre>
+
+
+        <h3>Step 3 — Check Container</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+        <h3>Step 4 — Check Logs</h3>
+
+<pre><code>docker logs my-redis</code></pre>
+
+
+        <h3>Step 5 — Redis CLI Container ke Andar Run Karein</h3>
+
+<pre><code>docker exec -it my-redis redis-cli</code></pre>
+
+
+        <h3>Redis Test Karein</h3>
+
+<pre><code>SET name Pavan</code></pre>
+
+<pre><code>GET name</code></pre>
+
+
+        <div class="success">
+
+            <strong>Expected Result:</strong>
+
+            <p>
+                Redis me <code>name</code> key ke andar
+                <code>Pavan</code> value store hogi.
+            </p>
+
+        </div>
+
+
+        <h3>Redis Container Stop</h3>
+
+<pre><code>docker stop my-redis</code></pre>
+
+
+        <h3>Redis Container Remove</h3>
+
+<pre><code>docker rm my-redis</code></pre>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- PULL VS RUN -->
+<!-- ========================================================= -->
+
+<section>
+
+    <h2>7. docker pull vs docker run</h2>
+
+    <table>
+
+        <tr>
+            <th>docker pull</th>
+            <th>docker run</th>
+        </tr>
+
+        <tr>
+            <td>
+                Image ko registry se local machine par download karta hai.
+            </td>
+
+            <td>
+                Image se container create aur start karta hai.
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Container create nahi karta.
+            </td>
+
+            <td>
+                Container create karta hai.
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Example:
+                <code>docker pull nginx</code>
+            </td>
+
+            <td>
+                Example:
+                <code>docker run nginx</code>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Image management ke liye useful.
+            </td>
+
+            <td>
+                Application/container run karne ke liye useful.
+            </td>
+        </tr>
+
+    </table>
+
+
+    <div class="highlight">
+
+        <strong>Important:</strong>
+
+        <p>
+            <code>docker run</code> ko use karte waqt agar required image
+            local machine par available nahi hai, Docker normally us image
+            ko registry se pull karne ki koshish karta hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- USEFUL COMMANDS -->
+<!-- ========================================================= -->
+
+<section id="commands">
+
+    <h2>8. Important Commands After Running an Image</h2>
+
+
+    <h3>List Images</h3>
+
+<pre><code>docker images</code></pre>
+
+
+    <h3>List Running Containers</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+    <h3>List All Containers</h3>
+
+<pre><code>docker ps -a</code></pre>
+
+
+    <h3>View Container Logs</h3>
+
+<pre><code>docker logs CONTAINER_NAME</code></pre>
+
+
+    <h3>Execute Command Inside Container</h3>
+
+<pre><code>docker exec -it CONTAINER_NAME bash</code></pre>
+
+
+    <p>
+        Kuch minimal images me <code>bash</code> available nahi hota.
+        Aise cases me image ke according <code>sh</code> use karna pad sakta hai.
+    </p>
+
+<pre><code>docker exec -it CONTAINER_NAME sh</code></pre>
+
+
+    <h3>Stop Container</h3>
+
+<pre><code>docker stop CONTAINER_NAME</code></pre>
+
+
+    <h3>Start Existing Container</h3>
+
+<pre><code>docker start CONTAINER_NAME</code></pre>
+
+
+    <h3>Remove Container</h3>
+
+<pre><code>docker rm CONTAINER_NAME</code></pre>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- IMAGE TAG -->
+<!-- ========================================================= -->
+
+<section>
+
+    <h2>9. Specific Image Version Pull & Run</h2>
+
+    <p>
+        Production aur professional Docker workflows me image tags
+        ko samajhna important hai.
+    </p>
+
+
+    <h3>Specific Version Pull</h3>
+
+<pre><code>docker pull nginx:1.27</code></pre>
+
+
+    <h3>Specific Version Run</h3>
+
+<pre><code>docker run -d --name nginx-version -p 8080:80 nginx:1.27</code></pre>
+
+
+    <div class="warning">
+
+        <strong>Best Practice:</strong>
+
+        <p>
+            Learning ke liye <code>latest</code> tag convenient ho sakta hai,
+            lekin production deployments me intentionally selected,
+            tested aur controlled image versions/tags use karna generally
+            safer and more reproducible approach hota hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- COMPLETE WORKFLOW -->
+<!-- ========================================================= -->
+
+<section>
+
+    <h2>10. Complete Practical Workflow</h2>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Search Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Pull Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Check Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Run Container
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Test
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Stop / Remove
+        </div>
+
+    </div>
+
+
+<pre><code># 1. Pull
+docker pull nginx
+
+# 2. Check image
+docker images
+
+# 3. Run
+docker run -d --name web -p 8080:80 nginx
+
+# 4. Check container
+docker ps
+
+# 5. Check logs
+docker logs web
+
+# 6. Stop
+docker stop web
+
+# 7. Remove
+docker rm web</code></pre>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- COMMON ERRORS -->
+<!-- ========================================================= -->
+
+<section>
+
+    <h2>11. Common Problems</h2>
+
+
+    <div class="error">
+
+        <h3>❌ Port Already in Use</h3>
+
+        <p>
+            Agar host port 8080 already kisi application/container
+            ke dwara use ho raha hai, to port mapping fail ho sakti hai.
+        </p>
+
+        <p>
+            Different host port use kar sakte hain:
+        </p>
+
+<pre><code>docker run -d --name my-nginx -p 8081:80 nginx</code></pre>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Container Immediately Stops</h3>
+
+        <p>
+            Container ka main process exit ho gaya ho sakta hai.
+            Container tabhi running rehta hai jab uska primary process
+            active hota hai.
+        </p>
+
+        <p>
+            Check:
+        </p>
+
+<pre><code>docker ps -a</code></pre>
+
+<pre><code>docker logs CONTAINER_NAME</code></pre>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Image Not Found</h3>
+
+        <p>
+            Image name ya tag galat ho sakta hai.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+<pre><code>docker pull nginx</code></pre>
+
+    </div>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- INTERVIEW QUESTIONS -->
+<!-- ========================================================= -->
+
+<section>
+
+    <h2>12. Interview Questions</h2>
+
+    <ol>
+
+        <li>What is docker pull?</li>
+
+        <li>What is docker run?</li>
+
+        <li>What happens when you run docker run nginx?</li>
+
+        <li>What is the difference between docker pull and docker run?</li>
+
+        <li>What does the -d option do?</li>
+
+        <li>What does -p 8080:80 mean?</li>
+
+        <li>How do you give a custom name to a container?</li>
+
+        <li>How do you check running containers?</li>
+
+        <li>How do you check downloaded images?</li>
+
+        <li>Why does a container sometimes stop immediately?</li>
+
+        <li>How do you view container logs?</li>
+
+        <li>How do you execute a command inside a running container?</li>
+
+        <li>How do you pull a specific image version?</li>
+
+    </ol>
+
+</section>
+
+
+<!-- ========================================================= -->
+<!-- FINAL SUMMARY -->
+<!-- ========================================================= -->
+
+<section>
+
+    <h2>13. Final Summary</h2>
+
+
+    <div class="highlight">
+
+        <h3>📥 Pull</h3>
+
+        <p>
+            <code>docker pull nginx</code>
+        </p>
+
+        <p>
+            Registry se image ko local machine par download karta hai.
+        </p>
+
+
+        <h3>▶️ Run</h3>
+
+        <p>
+            <code>docker run -d --name web -p 8080:80 nginx</code>
+        </p>
+
+        <p>
+            Image se container create aur start karta hai.
+        </p>
+
+
+        <h3>🔍 Check</h3>
+
+        <p>
+            <code>docker images</code> → Images
+        </p>
+
+        <p>
+            <code>docker ps</code> → Running containers
+        </p>
+
+
+        <h3>🛑 Stop</h3>
+
+        <p>
+            <code>docker stop web</code>
+        </p>
+
+
+        <h3>🗑️ Remove</h3>
+
+        <p>
+            <code>docker rm web</code>
+        </p>
+
+    </div>
+
+
+    <div class="analogy">
+
+        <h3>🧠 Easy Memory Trick</h3>
+
+        <p>
+            <strong>Pull = Image ghar par lao 📥</strong>
+        </p>
+
+        <p>
+            <strong>Run = Image se container chalao ▶️</strong>
+        </p>
+
+        <p>
+            <strong>Stop = Container band karo 🛑</strong>
+        </p>
+
+        <p>
+            <strong>Remove = Container hatao 🗑️</strong>
+        </p>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- FOOTER -->
+<!-- ========================================================= -->
+
+<footer>
+
+    <p>
+        🐳 Docker Learning Journey
+    </p>
+
+    <p>
+        Learn → Practice → Build → Automate → Deploy
+    </p>
+
+</footer>
+
+
+</body>
+</html>
