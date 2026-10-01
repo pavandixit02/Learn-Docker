@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Docker Volume - Node.js Mini Project | Part 3</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
+            padding: 45px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 18px;
+            color: #dbeafe;
+        }
+
+        nav {
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            margin-bottom: 18px;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+        }
+
+        h3 {
+            color: #111827;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #e5e7eb;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: Consolas, monospace;
+            line-height: 1.6;
+        }
+
+        .command {
+            background: #020617;
+            color: #86efac;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #f0fdf4;
+            border-left: 5px solid #16a34a;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .danger {
+            background: #fef2f2;
+            border-left: 5px solid #dc2626;
+            padding: 18px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .diagram {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 25px;
+            border-radius: 10px;
+            font-family: Consolas, monospace;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 18px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .highlight {
+            color: #2563eb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Docker Volume</h1>
+    <p>Node.js Docker Mini Project — Part 3</p>
+    <p>Persistent Data Storage with Docker Volumes</p>
+</header>
+
+<nav>
+    <a href="#theory">Volume Theory</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#create">Create Volume</a>
+    <a href="#practical">Practical</a>
+    <a href="#update">Update</a>
+    <a href="#dockerfile">Dockerfile</a>
+    <a href="#errors">Errors</a>
+    <a href="#interview">Interview</a>
+</nav>
+
+<div class="container">
+
+    <!-- INTRODUCTION -->
+
+    <section>
+        <h2>1. Is Part Me Hum Kya Seekhenge?</h2>
+
+        <p>
+            Previous parts me humne Node.js application ko Docker image me convert karke
+            container ke andar run kiya tha.
+        </p>
+
+        <p>
+            Ab ek important problem aati hai:
+            <span class="highlight">Container ke andar jo data hai uska kya hoga?</span>
+        </p>
+
+        <p>
+            Agar container delete ho gaya, recreate ho gaya ya replace ho gaya,
+            to container ke writable layer me stored data normally persist nahi karta.
+        </p>
+
+        <p>
+            Isi problem ko solve karne ke liye Docker me
+            <strong>Volumes</strong> ka use hota hai.
+        </p>
+
+        <div class="note">
+            <strong>Main Concept:</strong><br>
+            Container application ko run karta hai, jabki Docker Volume
+            important persistent data ko container ke lifecycle se alag store kar sakta hai.
+        </div>
+    </section>
+
+
+    <!-- THEORY -->
+
+    <section id="theory">
+
+        <h2>2. Docker Volume Kya Hota Hai?</h2>
+
+        <p>
+            Docker Volume ek <strong>persistent storage mechanism</strong> hai
+            jo Docker containers ke data ko container ke lifecycle se independent
+            store karne ke liye use hota hai.
+        </p>
+
+        <p>
+            Simple words me:
+        </p>
+
+        <div class="success">
+            <strong>Container delete ho sakta hai, lekin Volume me stored data
+            container delete hone ke baad bhi available reh sakta hai.</strong>
+        </div>
+
+        <h3>Real-Life Analogy</h3>
+
+        <p>
+            Maan lo ek hotel room ek Docker Container hai.
+        </p>
+
+        <ul>
+            <li>Hotel room = Container</li>
+            <li>Room ka temporary furniture = Container writable layer</li>
+            <li>Locker = Docker Volume</li>
+            <li>Locker me rakha important data = Persistent Data</li>
+        </ul>
+
+        <p>
+            Agar hotel room change ho jaye, locker ka important data
+            continue kiya ja sakta hai.
+        </p>
+
+        <h3>Technical Definition</h3>
+
+        <p>
+            Docker Volume Docker Engine dwara managed storage location hota hai
+            jise container ke andar kisi directory par mount kiya ja sakta hai.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+<pre>
+Docker Volume
+     |
+     v
+/data
+     |
+     v
+Container ke andar
+</pre>
+
+    </section>
+
+
+    <!-- WHY -->
+
+    <section>
+
+        <h2>3. Docker Volume Ki Zarurat Kyu Hoti Hai?</h2>
+
+        <p>
+            Containers generally replaceable aur disposable design kiye jaate hain.
+            Lekin applications ka kuch data persistent hona chahiye.
+        </p>
+
+        <h3>Examples</h3>
+
+        <ul>
+            <li>Database data</li>
+            <li>User uploaded files</li>
+            <li>Application generated files</li>
+            <li>Logs</li>
+            <li>Cache data</li>
+            <li>Configuration data</li>
+        </ul>
+
+        <h3>Without Volume</h3>
+
+<pre>
+Container
+   |
+   +-- application
+   +-- temporary data
+   +-- writable layer
+            |
+            X
+       Container delete
+            |
+            X
+         Data lost
+</pre>
+
+        <h3>With Volume</h3>
+
+<pre>
+                Docker Volume
+                     |
+                     | persistent
+                     |
+Container ----------+
+     |
+     |
+     v
+Application
+
+Container delete
+       |
+       v
+Volume remains
+       |
+       v
+Data remains
+</pre>
+
+    </section>
+
+
+    <!-- ARCHITECTURE -->
+
+    <section id="architecture">
+
+        <h2>4. Docker Volume Architecture</h2>
+
+        <p>
+            Docker Volume container ke filesystem ke kisi specific directory
+            ke saath mount kiya ja sakta hai.
+        </p>
+
+        <div class="diagram">
+
+Host Machine
+│
+├── Docker Engine
+│
+├── Container
+│     │
+│     └── /app/data
+│             ▲
+│             │ mount
+│             ▼
+│     Docker Volume
+│
+└── Other Files
+        </div>
+
+        <p>
+            Yahan <code>/app/data</code> container ke andar ka path hai,
+            aur Docker Volume us path par mounted hai.
+        </p>
+    </section>
+
+
+    <!-- TYPES -->
+
+    <section>
+
+        <h2>5. Docker Storage Ke Main Types</h2>
+
+        <table>
+
+            <tr>
+                <th>Storage Type</th>
+                <th>Managed By</th>
+                <th>Common Use</th>
+            </tr>
+
+            <tr>
+                <td>Volume</td>
+                <td>Docker</td>
+                <td>Persistent application/database data</td>
+            </tr>
+
+            <tr>
+                <td>Bind Mount</td>
+                <td>User / Host</td>
+                <td>Development, source code sharing</td>
+            </tr>
+
+            <tr>
+                <td>tmpfs</td>
+                <td>Host memory</td>
+                <td>Temporary sensitive/runtime data</td>
+            </tr>
+
+        </table>
+
+        <div class="note">
+            Is chapter me hum mainly <strong>Docker Named Volume</strong>
+            par focus karenge.
+        </div>
+
+    </section>
+
+
+    <!-- CREATE -->
+
+    <section id="create">
+
+        <h2>6. Docker Volume Create Kaise Kare?</h2>
+
+        <p>
+            Sabse pehle Docker CLI se ek volume create karte hain.
+        </p>
+
+<pre class="command">
+docker volume create node-app-data
+</pre>
+
+        <p>
+            Yahan:
+        </p>
+
+        <ul>
+            <li><code>docker volume</code> = Docker volume command</li>
+            <li><code>create</code> = new volume create karna</li>
+            <li><code>node-app-data</code> = volume ka naam</li>
+        </ul>
+
+        <h3>Check Volume</h3>
+
+<pre class="command">
+docker volume ls
+</pre>
+
+        <p>
+            Output me kuch aisa aa sakta hai:
+        </p>
+
+<pre>
+DRIVER    VOLUME NAME
+local     node-app-data
+</pre>
+
+    </section>
+
+
+    <!-- INSPECT -->
+
+    <section>
+
+        <h2>7. Volume Inspect Kaise Kare?</h2>
+
+<pre class="command">
+docker volume inspect node-app-data
+</pre>
+
+        <p>
+            Is command se Docker volume ki detailed information milti hai.
+        </p>
+
+        <p>
+            Isme volume ka name, driver aur host-side storage information
+            jaise details mil sakti hain.
+        </p>
+
+    </section>
+
+
+    <!-- PRACTICAL -->
+
+    <section id="practical">
+
+        <h2>8. Practical: Node.js Container Ke Saath Volume Use Karna</h2>
+
+        <p>
+            Ab hum apne existing Node.js Docker project ko use karenge.
+        </p>
+
+        <h3>Existing Project</h3>
+
+<pre>
+node-docker-app/
+│
+├── package.json
+├── package-lock.json
+├── server.js
+├── Dockerfile
+└── .dockerignore
+</pre>
+
+        <h3>Step 1 — Existing Image Check</h3>
+
+<pre class="command">
+docker images node-docker-app
+</pre>
+
+        <h3>Step 2 — Volume Create</h3>
+
+<pre class="command">
+docker volume create node-app-data
+</pre>
+
+        <h3>Step 3 — Container Run With Volume</h3>
+
+<pre class="command">
+docker run -d \
+  --name node-app-volume \
+  -p 3000:3000 \
+  -v node-app-data:/app/data \
+  node-docker-app:1.0
+</pre>
+
+        <h3>Command Breakdown</h3>
+
+        <table>
+
+            <tr>
+                <th>Part</th>
+                <th>Meaning</th>
+            </tr>
+
+            <tr>
+                <td><code>-d</code></td>
+                <td>Detached/background mode</td>
+            </tr>
+
+            <tr>
+                <td><code>--name node-app-volume</code></td>
+                <td>Container name</td>
+            </tr>
+
+            <tr>
+                <td><code>-p 3000:3000</code></td>
+                <td>Host port 3000 → container port 3000</td>
+            </tr>
+
+            <tr>
+                <td><code>-v node-app-data:/app/data</code></td>
+                <td>Volume ko container ke /app/data par mount karta hai</td>
+            </tr>
+
+            <tr>
+                <td><code>node-docker-app:1.0</code></td>
+                <td>Docker image</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- DATA DEMO -->
+
+    <section>
+
+        <h2>9. Container Ke Andar Data Create Karke Test Kare</h2>
+
+        <p>
+            Ab hum container ke andar <code>/app/data</code> directory me
+            ek file create karenge.
+        </p>
+
+<pre class="command">
+docker exec node-app-volume sh
+</pre>
+
+        <p>
+            Ab container ke andar:
+        </p>
+
+<pre class="command">
+cd /app/data
+
+echo "Hello Docker Volume" > message.txt
+
+cat message.txt
+</pre>
+
+        <p>
+            Output:
+        </p>
+
+<pre>
+Hello Docker Volume
+</pre>
+
+        <p>
+            Ab container se bahar aao:
+        </p>
+
+<pre class="command">
+exit
+</pre>
+
+    </section>
+
+
+    <!-- PERSISTENCE -->
+
+    <section>
+
+        <h2>10. Sabse Important Test — Container Delete Karo</h2>
+
+        <p>
+            Ab hum container ko delete karenge.
+        </p>
+
+<pre class="command">
+docker stop node-app-volume
+docker rm node-app-volume
+</pre>
+
+        <p>
+            Normally container delete hone par container ke writable layer ka
+            data remove ho sakta hai.
+        </p>
+
+        <p>
+            Lekin hamara data Docker Volume me stored tha.
+        </p>
+
+        <h3>Same Volume Ke Saath New Container</h3>
+
+<pre class="command">
+docker run -d \
+  --name node-app-volume-new \
+  -p 3000:3000 \
+  -v node-app-data:/app/data \
+  node-docker-app:1.0
+</pre>
+
+        <p>
+            Ab check karo:
+        </p>
+
+<pre class="command">
+docker exec node-app-volume-new cat /app/data/message.txt
+</pre>
+
+        <p>
+            Output:
+        </p>
+
+<pre>
+Hello Docker Volume
+</pre>
+
+        <div class="success">
+            <strong>Result:</strong>
+            Container delete hone ke baad bhi data available hai,
+            kyunki data Docker Volume me stored tha.
+        </div>
+
+    </section>
+
+
+    <!-- IMPORTANT DIFFERENCE -->
+
+    <section>
+
+        <h2>11. Container vs Volume</h2>
+
+        <table>
+
+            <tr>
+                <th>Container</th>
+                <th>Volume</th>
+            </tr>
+
+            <tr>
+                <td>Application run karta hai</td>
+                <td>Persistent data store karta hai</td>
+            </tr>
+
+            <tr>
+                <td>Replaceable/disposable ho sakta hai</td>
+                <td>Container se independent ho sakta hai</td>
+            </tr>
+
+            <tr>
+                <td>Writable layer temporary ho sakti hai</td>
+                <td>Long-term data persistence ke liye useful</td>
+            </tr>
+
+            <tr>
+                <td>Image se create hota hai</td>
+                <td>Docker volume command se create ho sakta hai</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- DOCKERFILE UPDATE -->
+
+    <section id="update">
+
+        <h2>12. Volume Update Karne Par Dockerfile Update Karna Padta Hai?</h2>
+
+        <div class="warning">
+
+            <strong>Important:</strong><br>
+
+            Agar aap sirf existing Docker Volume ke andar
+            data add/update/delete kar rahe ho,
+            to normally Dockerfile ko update karne ki zarurat nahi hoti.
+        </div>
+
+        <p>
+            Example:
+        </p>
+
+<pre class="command">
+echo "New Data" > /app/data/new.txt
+</pre>
+
+        <p>
+            Ye Dockerfile change nahi hai.
+            Ye runtime data change hai.
+        </p>
+
+        <h3>Simple Rule</h3>
+
+<pre>
+Application / Image change
+        |
+        v
+Dockerfile change?
+        |
+        +---- YES → docker build
+        |
+        +---- NO
+
+Volume data change
+        |
+        v
+Dockerfile change?
+        |
+        +---- NO
+</pre>
+
+    </section>
+
+
+    <!-- WHEN DOCKERFILE UPDATE -->
+
+    <section id="dockerfile">
+
+        <h2>13. Kab Dockerfile Update Karna Padta Hai?</h2>
+
+        <p>
+            Dockerfile tab update karna padta hai jab aap
+            <strong>image build process</strong> me change karna chahte ho.
+        </p>
+
+        <h3>Example 1 — New Dependency</h3>
+
+        <p>
+            Agar application me new npm package add karte ho:
+        </p>
+
+<pre class="command">
+npm install mongoose
+</pre>
+
+        <p>
+            To <code>package.json</code> aur
+            <code>package-lock.json</code> change honge.
+        </p>
+
+        <p>
+            Existing Docker image ko update karne ke liye image rebuild karna hoga:
+        </p>
+
+<pre class="command">
+docker build -t node-docker-app:1.1 .
+</pre>
+
+        <h3>Example 2 — Dockerfile Change</h3>
+
+        <p>
+            Agar Dockerfile me:
+        </p>
+
+<pre>
+FROM node:22-alpine
+</pre>
+
+        <p>
+            ko change karke:
+        </p>
+
+<pre>
+FROM node:22
+</pre>
+
+        <p>
+            karte ho, to new image build karni hogi.
+        </p>
+
+<pre class="command">
+docker build -t node-docker-app:1.1 .
+</pre>
+
+        <h3>Example 3 — Application Code Change</h3>
+
+        <p>
+            Agar <code>server.js</code> me change kiya:
+        </p>
+
+<pre>
+res.send("Hello from Node.js Docker Container! 🚀");
+</pre>
+
+        <p>
+            ko change karke:
+        </p>
+
+<pre>
+res.send("Hello from Node.js Docker Volume App! 🚀");
+</pre>
+
+        <p>
+            Agar application code image ke andar COPY kiya ja raha hai,
+            to new image build karni padegi.
+        </p>
+
+<pre class="command">
+docker build -t node-docker-app:1.1 .
+</pre>
+
+    </section>
+
+
+    <!-- VOLUME + DOCKERFILE -->
+
+    <section>
+
+        <h2>14. Dockerfile Me Volume Declare Karna</h2>
+
+        <p>
+            Dockerfile me <code>VOLUME</code> instruction bhi use ki ja sakti hai.
+        </p>
+
+<pre>
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+VOLUME ["/app/data"]
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
+</pre>
+
+        <p>
+            Yahan:
+        </p>
+
+<pre>
+VOLUME ["/app/data"]
+</pre>
+
+        <p>
+            Docker ko indicate karta hai ki
+            <code>/app/data</code> ko volume mount point ke roop me treat kiya ja sakta hai.
+        </p>
+
+        <div class="warning">
+            <strong>Important:</strong>
+            Dockerfile me VOLUME declare karna aur runtime par
+            named volume ko explicitly mount karna alag concepts hain.
+            Production workflows me volume management ko explicit rakhna
+            generally easier hota hai.
+        </div>
+
+    </section>
+
+
+    <!-- BEST PRACTICE -->
+
+    <section>
+
+        <h2>15. Recommended Approach — Is Project Me Kya Kare?</h2>
+
+        <p>
+            Hamare Node.js learning project ke liye hum named volume ko
+            explicitly container run command me mount karenge.
+        </p>
+
+<pre class="command">
+docker volume create node-app-data
+
+docker run -d \
+  --name node-app-volume \
+  -p 3000:3000 \
+  -v node-app-data:/app/data \
+  node-docker-app:1.0
+</pre>
+
+        <p>
+            Is approach me:
+        </p>
+
+        <ul>
+            <li>Dockerfile application image define karega.</li>
+            <li>Volume persistent data manage karega.</li>
+            <li>Container application run karega.</li>
+        </ul>
+
+    </section>
+
+
+    <!-- UPDATE SCENARIO -->
+
+    <section>
+
+        <h2>16. Real Project Update Scenario</h2>
+
+        <div class="diagram">
+
+        ┌─────────────────────┐
+        │      Dockerfile     │
+        │  Application Image  │
+        └──────────┬──────────┘
+                   │
+                   │ docker build
+                   ▼
+        ┌─────────────────────┐
+        │   Image v1.0        │
+        └──────────┬──────────┘
+                   │
+                   │ docker run
+                   ▼
+        ┌─────────────────────┐
+        │     Container       │
+        │      App v1         │
+        └──────────┬──────────┘
+                   │
+                   │ mount
+                   ▼
+        ┌─────────────────────┐
+        │   Docker Volume     │
+        │   Persistent Data   │
+        └─────────────────────┘
+
+        Application Update
+                │
+                ▼
+        Dockerfile / Code Change
+                │
+                ▼
+        Build Image v1.1
+                │
+                ▼
+        New Container
+                │
+                ▼
+        Same Volume
+                │
+                ▼
+        Old Data Still Available
+
+        </div>
+
+        <p>
+            Yahi Docker ka major advantage hai:
+            <strong>Application lifecycle aur data lifecycle ko separate rakhna.</strong>
+        </p>
+
+    </section>
+
+
+    <!-- COMMANDS -->
+
+    <section>
+
+        <h2>17. Important Volume Commands</h2>
+
+        <table>
+
+            <tr>
+                <th>Command</th>
+                <th>Purpose</th>
+            </tr>
+
+            <tr>
+                <td><code>docker volume ls</code></td>
+                <td>All volumes list</td>
+            </tr>
+
+            <tr>
+                <td><code>docker volume create NAME</code></td>
+                <td>New volume create</td>
+            </tr>
+
+            <tr>
+                <td><code>docker volume inspect NAME</code></td>
+                <td>Volume details</td>
+            </tr>
+
+            <tr>
+                <td><code>docker volume rm NAME</code></td>
+                <td>Volume delete</td>
+            </tr>
+
+            <tr>
+                <td><code>docker volume prune</code></td>
+                <td>Unused volumes cleanup</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- DELETE -->
+
+    <section>
+
+        <h2>18. Volume Delete Karna</h2>
+
+        <p>
+            Volume ko delete karne se pehle ensure karo ki
+            usme required data nahi hai.
+        </p>
+
+<pre class="command">
+docker volume rm node-app-data
+</pre>
+
+        <div class="danger">
+            <strong>Warning:</strong>
+            Volume delete karne ke baad usme stored persistent data
+            lose ho sakta hai.
+        </div>
+
+        <p>
+            Unused volumes clean karne ke liye:
+        </p>
+
+<pre class="command">
+docker volume prune
+</pre>
+
+        <p>
+            Is command ko carefully use karo.
+        </p>
+
+    </section>
+
+
+    <!-- COMMON MISTAKES -->
+
+    <section id="errors">
+
+        <h2>19. Common Mistakes</h2>
+
+        <h3>Mistake 1 — Volume create nahi kiya</h3>
+
+<pre class="command">
+docker run -v node-app-data:/app/data node-docker-app:1.0
+</pre>
+
+        <p>
+            Docker named volume ko automatically create kar sakta hai
+            agar specified named volume exist nahi karta.
+            Learning ke liye manually create karna clearer hai.
+        </p>
+
+        <h3>Mistake 2 — Wrong Mount Path</h3>
+
+<pre>
+-v node-app-data:/wrong/path
+</pre>
+
+        <p>
+            Application <code>/app/data</code> expect kar rahi hai
+            aur aapne volume kisi aur path par mount kar diya.
+        </p>
+
+        <h3>Mistake 3 — Container delete karte waqt volume bhi delete samajhna</h3>
+
+<p>
+    Normal <code>docker rm</code> se named volume automatically remove nahi hota.
+    Volume ko separately remove karna padta hai.
+</p>
+
+        <h3>Mistake 4 — Dockerfile change aur Volume data change ko same samajhna</h3>
+
+        <div class="note">
+            <strong>Remember:</strong><br>
+            Code/Image change → image rebuild ho sakti hai.<br>
+            Volume data change → normally image rebuild ki zarurat nahi.
+        </div>
+
+    </section>
+
+
+    <!-- FINAL FLOW -->
+
+    <section>
+
+        <h2>20. Complete Practical Flow</h2>
+
+<pre>
+1. Node.js Project
+       ↓
+2. Dockerfile
+       ↓
+3. Build Image
+       ↓
+4. Create Docker Volume
+       ↓
+5. Run Container
+       ↓
+6. Mount Volume
+       ↓
+7. Application Uses /app/data
+       ↓
+8. Data Stored in Volume
+       ↓
+9. Container Delete
+       ↓
+10. New Container
+       ↓
+11. Same Volume Mount
+       ↓
+12. Old Data Available
+</pre>
+
+    </section>
+
+
+    <!-- INTERVIEW -->
+
+    <section id="interview">
+
+        <h2>21. Docker Volume Interview Questions</h2>
+
+        <h3>Q1. Docker Volume kya hota hai?</h3>
+        <p>
+            Docker Volume Docker-managed persistent storage mechanism hai
+            jo container ke data ko container lifecycle se separate rakhne me help karta hai.
+        </p>
+
+        <h3>Q2. Docker Volume ki zarurat kyu hoti hai?</h3>
+        <p>
+            Important data ko container delete/recreate hone ke baad bhi
+            preserve karne ke liye.
+        </p>
+
+        <h3>Q3. Container delete karne par named volume delete hota hai?</h3>
+        <p>
+            Normally nahi. Named volume ko separately remove kiya ja sakta hai.
+        </p>
+
+        <h3>Q4. Volume update karne ke liye Dockerfile update karna padta hai?</h3>
+        <p>
+            Normally nahi. Agar sirf volume ke andar data change kar rahe ho,
+            Dockerfile rebuild ki zarurat nahi hoti.
+        </p>
+
+        <h3>Q5. Dockerfile kab update karna padega?</h3>
+        <p>
+            Jab application image ke build process me change ho,
+            jaise base image, dependencies, application files,
+            environment configuration etc.
+        </p>
+
+        <h3>Q6. Volume aur Bind Mount me difference kya hai?</h3>
+
+        <table>
+
+            <tr>
+                <th>Volume</th>
+                <th>Bind Mount</th>
+            </tr>
+
+            <tr>
+                <td>Docker managed</td>
+                <td>Host path directly specified</td>
+            </tr>
+
+            <tr>
+                <td>Production data ke liye common</td>
+                <td>Development me useful</td>
+            </tr>
+
+            <tr>
+                <td>Docker volume command se manage</td>
+                <td>Host filesystem location manage karta hai</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- PRACTICE -->
+
+    <section>
+
+        <h2>22. Your Practice Assignment</h2>
+
+        <p>
+            Ab khud ye practical complete karo:
+        </p>
+
+        <ol>
+            <li><code>node-app-data</code> naam ka volume create karo.</li>
+            <li>Volume inspect karo.</li>
+            <li>Node.js container ko volume ke saath run karo.</li>
+            <li><code>/app/data</code> me <code>user.txt</code> create karo.</li>
+            <li>Usme apna naam save karo.</li>
+            <li>Container stop karo.</li>
+            <li>Container remove karo.</li>
+            <li>Same volume ke saath new container run karo.</li>
+            <li>Check karo ki <code>user.txt</code> abhi bhi available hai.</li>
+            <li>Dockerfile ko change kiye bina volume data update karo.</li>
+        </ol>
+
+        <h3>Bonus Challenge</h3>
+
+<pre class="command">
+docker volume inspect node-app-data
+</pre>
+
+        <p>
+            Inspect output ko samjho aur identify karo ki Docker volume
+            host machine par kaha manage kar raha hai.
+        </p>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+
+    <section>
+
+        <h2>23. Final Summary</h2>
+
+        <ul>
+            <li><strong>Docker Volume</strong> persistent storage ke liye use hota hai.</li>
+            <li>Volume container ke lifecycle se independent data preserve kar sakta hai.</li>
+            <li><code>docker volume create</code> se volume create kar sakte hain.</li>
+            <li><code>-v volume:/container/path</code> se volume mount kar sakte hain.</li>
+            <li>Container delete hone ke baad named volume normally available rehta hai.</li>
+            <li>Volume ke data ko update karne ke liye normally Dockerfile rebuild nahi karna padta.</li>
+            <li>Application/image change ke liye Dockerfile ya source change ke according image rebuild karni pad sakti hai.</li>
+            <li>Dockerfile ka <code>VOLUME</code> instruction mount point declare kar sakta hai.</li>
+            <li>Application lifecycle aur data lifecycle ko separate rakhna Docker ka important concept hai.</li>
+        </ul>
+
+        <div class="success">
+            <strong>DevOps Mindset:</strong><br>
+            Container ko disposable rakho, lekin important data ko persistent storage
+            me rakho.
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    <p>Docker Learning Series — Node.js Mini Project</p>
+    <p>Part 3: Docker Volumes & Persistent Storage</p>
+</footer>
+
+</body>
+</html>

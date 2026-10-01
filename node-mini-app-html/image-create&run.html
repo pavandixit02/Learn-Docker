@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Docker Image - Node.js Mini Project</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            max-width: 900px;
+            margin: auto;
+            font-size: 18px;
+            color: #dbeafe;
+        }
+
+        nav {
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin: 22px 0 10px;
+        }
+
+        h4 {
+            color: #2563eb;
+            margin: 18px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .error {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .analogy {
+            background: #f5f3ff;
+            border-left: 5px solid #7c3aed;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 7px 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .folder {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            line-height: 1.9;
+            margin: 15px 0;
+        }
+
+        .command-title {
+            color: #2563eb;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #d1d5db;
+            padding: 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .flow-item {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .arrow {
+            font-size: 25px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media (max-width: 700px) {
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- ===================================================== -->
+<!-- HEADER -->
+<!-- ===================================================== -->
+
+<header>
+
+    <h1>🐳 Create Docker Image with Node.js</h1>
+
+    <p>
+        Complete practical guide: Node.js Mini Project →
+        Dockerfile → Docker Image → Docker Container →
+        Browser Testing
+    </p>
+
+</header>
+
+
+<!-- ===================================================== -->
+<!-- NAVIGATION -->
+<!-- ===================================================== -->
+
+<nav>
+
+    <a href="#concept">Concept</a>
+    <a href="#project">Node Project</a>
+    <a href="#dockerfile">Dockerfile</a>
+    <a href="#build">Build Image</a>
+    <a href="#run">Run</a>
+    <a href="#test">Test</a>
+    <a href="#troubleshoot">Troubleshooting</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<!-- ===================================================== -->
+<!-- 1. CONCEPT -->
+<!-- ===================================================== -->
+
+<section id="concept">
+
+    <h2>1. What Are We Going to Build?</h2>
+
+    <p>
+        Is practical example me hum ek simple
+        <strong>Node.js mini web application</strong> banayenge.
+    </p>
+
+    <p>
+        Uske baad hum us application ke liye ek
+        <strong>Dockerfile</strong> create karenge.
+    </p>
+
+    <p>
+        Dockerfile ki help se hum apni application ka
+        <strong>Docker Image</strong> build karenge.
+    </p>
+
+    <p>
+        Finally, isi image se ek
+        <strong>Docker Container</strong> run karenge.
+    </p>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Node.js Project
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Dockerfile
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Container
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Browser
+        </div>
+
+    </div>
+
+
+    <div class="highlight">
+
+        <strong>Goal:</strong>
+
+        <p>
+            Humari Node.js application Docker ke andar run hogi,
+            bina host machine par Node.js application environment
+            manually configure kiye.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 2. PROJECT DIRECTORY -->
+<!-- ===================================================== -->
+
+<section id="project">
+
+    <h2>2. Step 1 — Node.js Mini Project Create Karna</h2>
+
+    <p>
+        Sabse pehle hum ek simple Node.js project create karenge.
+    </p>
+
+
+    <h3>Project Directory Create Karein</h3>
+
+<pre><code>mkdir node-docker-app
+
+cd node-docker-app</code></pre>
+
+
+    <p>
+        Yahan:
+    </p>
+
+    <ul>
+
+        <li>
+            <code>mkdir node-docker-app</code>
+            → new project folder create karta hai.
+        </li>
+
+        <li>
+            <code>cd node-docker-app</code>
+            → project directory ke andar enter karta hai.
+        </li>
+
+    </ul>
+
+
+    <h3>Node.js Project Initialize Karein</h3>
+
+<pre><code>npm init -y</code></pre>
+
+
+    <p>
+        Ye command automatically
+        <strong>package.json</strong> file create karegi.
+    </p>
+
+
+    <h3>Express Install Karein</h3>
+
+<pre><code>npm install express</code></pre>
+
+
+    <p>
+        Hum is example me Express framework use karenge.
+    </p>
+
+
+    <h3>Project Structure</h3>
+
+    <div class="folder">
+
+        node-docker-app/<br>
+        ├── node_modules/<br>
+        ├── package.json<br>
+        ├── package-lock.json<br>
+        └── server.js
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 3. SERVER.JS -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>3. Step 2 — Node.js Application Create Karna</h2>
+
+    <p>
+        Ab project ke andar
+        <strong>server.js</strong> file create karein.
+    </p>
+
+
+    <h3>server.js</h3>
+
+<pre><code>const express = require("express");
+
+const app = express();
+
+const PORT = 3000;
+
+app.get("/", (req, res) => {
+    res.send("Hello from Node.js Docker Container! 🚀");
+});
+
+app.get("/about", (req, res) => {
+    res.send("This application is running inside Docker.");
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});</code></pre>
+
+
+    <h3>Code Explanation</h3>
+
+    <table>
+
+        <tr>
+            <th>Code</th>
+            <th>Purpose</th>
+        </tr>
+
+        <tr>
+            <td>
+                <code>require("express")</code>
+            </td>
+
+            <td>
+                Express framework ko application me import karta hai.
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <code>express()</code>
+            </td>
+
+            <td>
+                Express application create karta hai.
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <code>PORT = 3000</code>
+            </td>
+
+            <td>
+                Application port 3000 par listen karegi.
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <code>app.get("/", ...)</code>
+            </td>
+
+            <td>
+                Root URL ke liye response define karta hai.
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <code>app.listen()</code>
+            </td>
+
+            <td>
+                Node.js server ko start karta hai.
+            </td>
+        </tr>
+
+    </table>
+
+
+    <h3>Local Machine Par Test Karein</h3>
+
+<pre><code>node server.js</code></pre>
+
+
+    <p>
+        Browser me open karein:
+    </p>
+
+<pre><code>http://localhost:3000</code></pre>
+
+
+    <div class="success">
+
+        <strong>Expected Output:</strong>
+
+        <p>
+            Hello from Node.js Docker Container! 🚀
+        </p>
+
+    </div>
+
+
+    <p>
+        Agar local application successfully chal rahi hai,
+        to <code>Ctrl + C</code> se server stop kar dein.
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 4. DOCKERIGNORE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>4. Step 3 — .dockerignore Create Karna</h2>
+
+    <p>
+        Docker image build karte waqt unnecessary files ko image
+        ke build context me bhejne se bachane ke liye
+        <strong>.dockerignore</strong> file useful hoti hai.
+    </p>
+
+
+    <h3>.dockerignore</h3>
+
+<pre><code>node_modules
+npm-debug.log
+.git
+.gitignore
+Dockerfile
+README.md</code></pre>
+
+
+    <div class="warning">
+
+        <strong>Why node_modules ignore kar rahe hain?</strong>
+
+        <p>
+            Hum host machine ke existing
+            <code>node_modules</code> ko image me copy nahi karna chahte.
+            Docker image ke andar dependencies
+            <code>npm install</code> ke through install karna better hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 5. DOCKERFILE -->
+<!-- ===================================================== -->
+
+<section id="dockerfile">
+
+    <h2>5. Step 4 — Dockerfile Create Karna</h2>
+
+    <p>
+        Ab hum project ke root directory me ek file create karenge
+        jiska exact naam hoga:
+    </p>
+
+
+    <div class="highlight">
+
+        <strong>Dockerfile</strong>
+
+        <p>
+            Dockerfile me koi extension nahi hoti.
+        </p>
+
+    </div>
+
+
+    <h3>Dockerfile</h3>
+
+<pre><code># Use official Node.js image
+FROM node:22-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy application source code
+COPY . .
+
+# Application port
+EXPOSE 3000
+
+# Start application
+CMD ["node", "server.js"]</code></pre>
+
+
+    <h3>Dockerfile ko Line-by-Line Samjho</h3>
+
+
+    <table>
+
+        <tr>
+            <th>Instruction</th>
+            <th>Explanation</th>
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>FROM node:22-alpine</code>
+            </td>
+
+            <td>
+                Node.js 22 Alpine based image ko base image
+                ke roop me use karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>WORKDIR /app</code>
+            </td>
+
+            <td>
+                Container ke andar
+                <code>/app</code> working directory set karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>COPY package*.json ./</code>
+            </td>
+
+            <td>
+                package.json aur package-lock.json ko
+                container ke <code>/app</code> me copy karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>RUN npm install</code>
+            </td>
+
+            <td>
+                Container image build karte waqt Node.js
+                dependencies install karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>COPY . .</code>
+            </td>
+
+            <td>
+                Project ki remaining files image ke andar copy karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>EXPOSE 3000</code>
+            </td>
+
+            <td>
+                Document karta hai ki application container ke andar
+                port 3000 use karti hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>CMD ["node", "server.js"]</code>
+            </td>
+
+            <td>
+                Container start hone par Node.js application run karta hai.
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <div class="analogy">
+
+        <h3>🧠 Easy Analogy</h3>
+
+        <p>
+            Dockerfile ko ek
+            <strong>recipe/instruction manual</strong> samjho.
+        </p>
+
+        <p>
+            Isme hum Docker ko batate hain:
+        </p>
+
+        <ul>
+
+            <li>
+                Kaunsi base image use karni hai.
+            </li>
+
+            <li>
+                Files kahan copy karni hain.
+            </li>
+
+            <li>
+                Dependencies kaise install karni hain.
+            </li>
+
+            <li>
+                Application kaunsi port use karegi.
+            </li>
+
+            <li>
+                Container start hone par kya command run hogi.
+            </li>
+
+        </ul>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 6. PROJECT STRUCTURE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>6. Final Project Structure</h2>
+
+    <div class="folder">
+
+        node-docker-app/<br>
+        ├── node_modules/<br>
+        ├── package.json<br>
+        ├── package-lock.json<br>
+        ├── server.js<br>
+        ├── .dockerignore<br>
+        └── Dockerfile
+
+    </div>
+
+
+    <div class="warning">
+
+        <strong>Important:</strong>
+
+        <p>
+            Dockerfile ka naam exactly
+            <code>Dockerfile</code> hona chahiye.
+            Default case me isme <code>.txt</code> ya koi extension nahi hoti.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 7. BUILD IMAGE -->
+<!-- ===================================================== -->
+
+<section id="build">
+
+    <h2>7. Step 5 — Docker Image Create Karna</h2>
+
+    <p>
+        Ab hum Dockerfile ki help se Docker Image build karenge.
+    </p>
+
+
+    <h3>Build Command</h3>
+
+<pre><code>docker build -t node-docker-app:1.0 .</code></pre>
+
+
+    <h3>Command Breakdown</h3>
+
+    <table>
+
+        <tr>
+            <th>Part</th>
+            <th>Meaning</th>
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>docker build</code>
+            </td>
+
+            <td>
+                Dockerfile se image build karne ka command.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>-t</code>
+            </td>
+
+            <td>
+                Image ko name aur optional tag dene ke liye.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>node-docker-app:1.0</code>
+            </td>
+
+            <td>
+                Image name = node-docker-app<br>
+                Tag = 1.0
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>.</code>
+            </td>
+
+            <td>
+                Current directory ko Docker build context banata hai.
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <h3>Build Process Conceptually</h3>
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Dockerfile
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Base Node Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Dependencies
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Source Code
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            node-docker-app:1.0
+        </div>
+
+    </div>
+
+
+    <h3>Build Complete Hone Ke Baad</h3>
+
+    <p>
+        Local images check karein:
+    </p>
+
+<pre><code>docker images</code></pre>
+
+
+    <p>
+        Ya:
+    </p>
+
+<pre><code>docker image ls</code></pre>
+
+
+    <div class="success">
+
+        <strong>Expected:</strong>
+
+        <p>
+            List me <code>node-docker-app</code> image
+            aur tag <code>1.0</code> दिखाई dena chahiye.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 8. INSPECT IMAGE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>8. Step 6 — Docker Image Inspect Karna</h2>
+
+    <p>
+        Image build hone ke baad hum uski details check kar sakte hain.
+    </p>
+
+
+    <h3>Image Details</h3>
+
+<pre><code>docker image inspect node-docker-app:1.0</code></pre>
+
+
+    <h3>Image History</h3>
+
+<pre><code>docker history node-docker-app:1.0</code></pre>
+
+
+    <p>
+        <code>docker history</code> se image ki layers aur
+        build history ko samajhne me help milti hai.
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 9. RUN IMAGE -->
+<!-- ===================================================== -->
+
+<section id="run">
+
+    <h2>9. Step 7 — Docker Image ko Run Karna</h2>
+
+    <p>
+        Ab hum newly created Docker image se container create
+        aur start karenge.
+    </p>
+
+
+    <h3>Run Command</h3>
+
+<pre><code>docker run -d --name node-app-container -p 3000:3000 node-docker-app:1.0</code></pre>
+
+
+    <h3>Command Breakdown</h3>
+
+    <table>
+
+        <tr>
+            <th>Option</th>
+            <th>Purpose</th>
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>-d</code>
+            </td>
+
+            <td>
+                Container ko detached/background mode me run karta hai.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>--name node-app-container</code>
+            </td>
+
+            <td>
+                Container ko custom name deta hai.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>-p 3000:3000</code>
+            </td>
+
+            <td>
+                Host port 3000 ko container port 3000 se map karta hai.
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+                <code>node-docker-app:1.0</code>
+            </td>
+
+            <td>
+                Jis image se container create karna hai.
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <div class="highlight">
+
+        <strong>Port Mapping:</strong>
+
+        <p>
+            <code>HOST_PORT:CONTAINER_PORT</code>
+        </p>
+
+        <p>
+            Yahan:
+            <code>3000:3000</code>
+        </p>
+
+        <p>
+            Browser → Host Port 3000 → Container Port 3000
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 10. VERIFY CONTAINER -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>10. Step 8 — Check Container</h2>
+
+    <p>
+        Container running hai ya nahi check karne ke liye:
+    </p>
+
+<pre><code>docker ps</code></pre>
+
+
+    <p>
+        Agar container stop ho gaya ho to:
+    </p>
+
+<pre><code>docker ps -a</code></pre>
+
+
+    <h3>Example Output Concept</h3>
+
+<pre><code>CONTAINER ID   IMAGE                  STATUS
+abc123         node-docker-app:1.0   Up 10 seconds</code></pre>
+
+
+    <div class="success">
+
+        <strong>Container Status:</strong>
+
+        <p>
+            Agar STATUS me <code>Up</code> aa raha hai,
+            to container currently running hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 11. LOGS -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>11. Step 9 — Container Logs Check Karna</h2>
+
+    <p>
+        Node.js application ke logs dekhne ke liye:
+    </p>
+
+<pre><code>docker logs node-app-container</code></pre>
+
+
+    <p>
+        Expected log:
+    </p>
+
+<pre><code>Server running on port 3000</code></pre>
+
+
+    <h3>Live Logs Dekhne Ke Liye</h3>
+
+<pre><code>docker logs -f node-app-container</code></pre>
+
+    <p>
+        <code>-f</code> logs ko follow karta hai.
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 12. BROWSER TEST -->
+<!-- ===================================================== -->
+
+<section id="test">
+
+    <h2>12. Step 10 — Browser Se Application Test Karna</h2>
+
+    <p>
+        Ab hum check karenge ki Node.js application Docker container
+        ke andar successfully run ho rahi hai ya nahi.
+    </p>
+
+
+    <h3>Browser Open Karein</h3>
+
+<pre><code>http://localhost:3000</code></pre>
+
+
+    <div class="success">
+
+        <h3>Expected Result</h3>
+
+        <p>
+            <strong>
+                Hello from Node.js Docker Container! 🚀
+            </strong>
+        </p>
+
+    </div>
+
+
+    <h3>/about Route Test Karein</h3>
+
+<pre><code>http://localhost:3000/about</code></pre>
+
+
+    <div class="success">
+
+        <p>
+            This application is running inside Docker.
+        </p>
+
+    </div>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Browser
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            localhost:3000
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Port
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Node Container
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Express App
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 13. COMPLETE COMMAND FLOW -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>13. Complete Commands — One by One</h2>
+
+    <p>
+        Agar tum poora practical example terminal se karna chahte ho,
+        to commands ka complete flow ye hai:
+    </p>
+
+
+<pre><code># 1. Create project
+mkdir node-docker-app
+
+# 2. Enter project
+cd node-docker-app
+
+# 3. Initialize Node.js project
+npm init -y
+
+# 4. Install Express
+npm install express
+
+# 5. Create your server.js
+# Add the Node.js application code
+
+# 6. Create .dockerignore
+# Add node_modules etc.
+
+# 7. Create Dockerfile
+# Add Docker instructions
+
+# 8. Build Docker image
+docker build -t node-docker-app:1.0 .
+
+# 9. Check image
+docker images
+
+# 10. Run container
+docker run -d \
+  --name node-app-container \
+  -p 3000:3000 \
+  node-docker-app:1.0
+
+# 11. Check running container
+docker ps
+
+# 12. Check logs
+docker logs node-app-container
+
+# 13. Test in browser
+# http://localhost:3000</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 14. STOP AND REMOVE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>14. Step 11 — Container Stop & Remove</h2>
+
+
+    <h3>Container Stop</h3>
+
+<pre><code>docker stop node-app-container</code></pre>
+
+
+    <h3>Container Remove</h3>
+
+<pre><code>docker rm node-app-container</code></pre>
+
+
+    <h3>Image Check</h3>
+
+<pre><code>docker images</code></pre>
+
+
+    <div class="highlight">
+
+        <strong>Important:</strong>
+
+        <p>
+            Container remove karne se image automatically remove nahi hoti.
+        </p>
+
+        <p>
+            Image ko separately remove karna ho to:
+        </p>
+
+<pre><code>docker rmi node-docker-app:1.0</code></pre>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 15. TROUBLESHOOTING -->
+<!-- ===================================================== -->
+
+<section id="troubleshoot">
+
+    <h2>15. Common Problems & Solutions</h2>
+
+
+    <div class="error">
+
+        <h3>❌ Problem 1: Port Already in Use</h3>
+
+        <p>
+            Agar host machine ka port 3000 already kisi application
+            ke dwara use ho raha hai, container start nahi hoga.
+        </p>
+
+
+        <h4>Solution</h4>
+
+<pre><code>docker run -d \
+  --name node-app-container \
+  -p 3001:3000 \
+  node-docker-app:1.0</code></pre>
+
+        <p>
+            Ab browser me:
+        </p>
+
+<pre><code>http://localhost:3001</code></pre>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Problem 2: Container Immediately Stops</h3>
+
+        <p>
+            Sabse pehle logs check karein:
+        </p>
+
+<pre><code>docker logs node-app-container</code></pre>
+
+        <p>
+            Isse application ke startup error ko identify karne me help milegi.
+        </p>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Problem 3: Image Build Fail</h3>
+
+        <p>
+            Dockerfile aur project files check karein.
+        </p>
+
+<pre><code>docker build -t node-docker-app:1.0 .</code></pre>
+
+        <p>
+            Build output me jis step par error aaye,
+            us instruction ko check karein.
+        </p>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Problem 4: Docker Daemon/Engine Not Running</h3>
+
+        <p>
+            Agar Docker engine running nahi hai to commands fail ho sakti hain.
+        </p>
+
+        <p>
+            Docker Desktop use kar rahe hain to Docker Desktop open karke
+            ensure karein ki Docker engine ready hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 16. WHY DOCKERFILE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>16. Why Do We Create a Dockerfile?</h2>
+
+    <p>
+        Dockerfile ka main purpose application ke Docker image
+        build process ko reproducible aur automated banana hai.
+    </p>
+
+
+    <p>
+        Agar Dockerfile nahi ho to hume container environment manually
+        configure karna pad sakta hai.
+    </p>
+
+
+    <p>
+        Dockerfile me hum clearly define kar sakte hain:
+    </p>
+
+    <ul>
+
+        <li>Base image</li>
+
+        <li>Working directory</li>
+
+        <li>Dependencies</li>
+
+        <li>Application files</li>
+
+        <li>Ports</li>
+
+        <li>Startup command</li>
+
+    </ul>
+
+
+    <div class="highlight">
+
+        <strong>DevOps Concept:</strong>
+
+        <p>
+            Dockerfile ko Infrastructure/Environment configuration
+            ko code ke form me define karne ka practical example
+            samjha ja sakta hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 17. FINAL ARCHITECTURE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>17. Complete Architecture</h2>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Node.js Code
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            package.json
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Dockerfile
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            docker build
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            docker run
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Browser
+        </div>
+
+    </div>
+
+
+    <div class="analogy">
+
+        <h3>🧠 Easy Memory Trick</h3>
+
+        <p>
+            <strong>Node.js Project</strong>
+            = Tumhara actual application
+        </p>
+
+        <p>
+            <strong>Dockerfile</strong>
+            = Application ko package karne ki recipe
+        </p>
+
+        <p>
+            <strong>Docker Image</strong>
+            = Ready-to-use application package
+        </p>
+
+        <p>
+            <strong>Docker Container</strong>
+            = Image ka running instance
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 18. INTERVIEW QUESTIONS -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>18. Interview Questions</h2>
+
+    <ol>
+
+        <li>
+            How do you create a Docker image from a Node.js application?
+        </li>
+
+        <li>
+            What is a Dockerfile?
+        </li>
+
+        <li>
+            Why do we use a Dockerfile?
+        </li>
+
+        <li>
+            What does the FROM instruction do?
+        </li>
+
+        <li>
+            What is the purpose of WORKDIR?
+        </li>
+
+        <li>
+            What is the difference between COPY and RUN?
+        </li>
+
+        <li>
+            What does EXPOSE 3000 mean?
+        </li>
+
+        <li>
+            What does CMD do in a Dockerfile?
+        </li>
+
+        <li>
+            What does docker build -t do?
+        </li>
+
+        <li>
+            What does the dot "." mean in docker build?
+        </li>
+
+        <li>
+            How do you run a container from a custom image?
+        </li>
+
+        <li>
+            What does -p 3000:3000 mean?
+        </li>
+
+        <li>
+            How do you check whether a container is running?
+        </li>
+
+        <li>
+            How do you check container logs?
+        </li>
+
+        <li>
+            What is the purpose of .dockerignore?
+        </li>
+
+    </ol>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- 19. FINAL SUMMARY -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>19. Final Summary</h2>
+
+
+    <div class="highlight">
+
+        <h3>Complete Process:</h3>
+
+        <p>
+            <strong>
+                Node.js Project
+            </strong>
+        </p>
+
+        <p>
+            ↓
+        </p>
+
+        <p>
+            <strong>
+                Dockerfile Create
+            </strong>
+        </p>
+
+        <p>
+            ↓
+        </p>
+
+        <p>
+            <strong>
+                docker build
+            </strong>
+        </p>
+
+        <p>
+            ↓
+        </p>
+
+        <p>
+            <strong>
+                Docker Image
+            </strong>
+        </p>
+
+        <p>
+            ↓
+        </p>
+
+        <p>
+            <strong>
+                docker run
+            </strong>
+        </p>
+
+        <p>
+            ↓
+        </p>
+
+        <p>
+            <strong>
+                Docker Container
+            </strong>
+        </p>
+
+        <p>
+            ↓
+        </p>
+
+        <p>
+            <strong>
+                http://localhost:3000
+            </strong>
+        </p>
+
+    </div>
+
+
+    <div class="success">
+
+        <h3>🎯 Final Commands to Remember</h3>
+
+<pre><code># Build image
+docker build -t node-docker-app:1.0 .
+
+# Check image
+docker images
+
+# Run container
+docker run -d --name node-app-container -p 3000:3000 node-docker-app:1.0
+
+# Check container
+docker ps
+
+# Check logs
+docker logs node-app-container
+
+# Stop container
+docker stop node-app-container
+
+# Remove container
+docker rm node-app-container</code></pre>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
+
+<footer>
+
+    <p>
+        🐳 Docker Learning Journey
+    </p>
+
+    <p>
+        Node.js → Dockerfile → Image → Container → Deployment
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Docker Node.js Project - Dockerignore & Versioning</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+        }
+
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            max-width: 900px;
+            margin: auto;
+            color: #dbeafe;
+            font-size: 18px;
+        }
+
+        nav {
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin: 22px 0 10px;
+        }
+
+        h4 {
+            color: #2563eb;
+            margin: 18px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .error {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .analogy {
+            background: #f5f3ff;
+            border-left: 5px solid #7c3aed;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 7px 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+        }
+
+        .folder {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            line-height: 1.9;
+            margin: 15px 0;
+        }
+
+        .flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .flow-item {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .arrow {
+            font-size: 25px;
+            color: #2563eb;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #d1d5db;
+            padding: 14px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .version-card {
+            background: #f8fafc;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .version-card h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media (max-width: 700px) {
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ===================================================== -->
+<!-- HEADER -->
+<!-- ===================================================== -->
+
+<header>
+
+    <h1>🐳 Docker Node.js Project — Part 2</h1>
+
+    <p>
+        .dockerignore, Multiple Docker Image Versions,
+        Tags, Containers and Version Management
+    </p>
+
+</header>
+
+
+<!-- ===================================================== -->
+<!-- NAVIGATION -->
+<!-- ===================================================== -->
+
+<nav>
+
+    <a href="#previous">Previous Project</a>
+    <a href="#dockerignore">.dockerignore</a>
+    <a href="#versioning">Versioning</a>
+    <a href="#tags">Image Tags</a>
+    <a href="#multiple">Multiple Versions</a>
+    <a href="#containers">Multiple Containers</a>
+    <a href="#workflow">Complete Workflow</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<!-- ===================================================== -->
+<!-- PREVIOUS PROJECT -->
+<!-- ===================================================== -->
+
+<section id="previous">
+
+    <h2>1. Previous Node.js Docker Project</h2>
+
+    <p>
+        Previous part me humne ek Node.js mini project banaya tha
+        aur uski Docker image create ki thi.
+    </p>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Node.js App
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Dockerfile
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container
+        </div>
+
+    </div>
+
+
+    <h3>Previous Project Structure</h3>
+
+    <div class="folder">
+
+        node-docker-app/<br>
+        ├── node_modules/<br>
+        ├── package.json<br>
+        ├── package-lock.json<br>
+        ├── server.js<br>
+        └── Dockerfile
+
+    </div>
+
+
+    <p>
+        Ab hum isi project ko modify karke
+        <strong>.dockerignore</strong> aur
+        <strong>image versioning</strong> samjhenge.
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- DOCKERIGNORE -->
+<!-- ===================================================== -->
+
+<section id="dockerignore">
+
+    <h2>2. What is .dockerignore?</h2>
+
+    <p>
+        <strong>.dockerignore</strong> ek special Docker file hai
+        jisme hum un files aur directories ko define karte hain
+        jinhe Docker image build ke context me include nahi karna chahiye.
+    </p>
+
+
+    <div class="highlight">
+
+        <strong>Simple Definition:</strong>
+
+        <p>
+            <code>.dockerignore</code> Docker ko batata hai:
+            "In files ko Docker build context me mat bhejo."
+        </p>
+
+    </div>
+
+
+    <h3>Why do we need .dockerignore?</h3>
+
+    <p>
+        Jab hum command run karte hain:
+    </p>
+
+<pre><code>docker build -t node-docker-app:1.0 .</code></pre>
+
+    <p>
+        Last ka <code>.</code> current directory ko
+        <strong>build context</strong> banata hai.
+    </p>
+
+    <p>
+        Docker build ke liye context me unnecessary files bhi ho sakti hain.
+        `.dockerignore` un files ko exclude karne me help karta hai.
+    </p>
+
+
+    <div class="card-grid">
+
+        <div class="card">
+
+            <h3>🚫 Unnecessary Files</h3>
+
+            <p>
+                Files jo image ke liye required nahi hain,
+                unhe exclude kar sakte hain.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>⚡ Smaller Context</h3>
+
+            <p>
+                Build context ko unnecessary files se free rakhne me
+                help karta hai.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🔐 Sensitive Files</h3>
+
+            <p>
+                Local secrets aur configuration files ko
+                build context se exclude karne me help karta hai.
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>🧹 Cleaner Builds</h3>
+
+            <p>
+                Sirf required project files ko image build process
+                me include karna easier hota hai.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- CREATE DOCKERIGNORE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>3. .dockerignore File Kaise Create Karein?</h2>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">1</span>
+            Project Directory Me Jayein
+        </h3>
+
+<pre><code>cd node-docker-app</code></pre>
+
+    </div>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">2</span>
+            .dockerignore File Create Karein
+        </h3>
+
+<pre><code>touch .dockerignore</code></pre>
+
+        <p>
+            Windows PowerShell me:
+        </p>
+
+<pre><code>New-Item .dockerignore -ItemType File</code></pre>
+
+    </div>
+
+
+    <div class="step">
+
+        <h3>
+            <span class="step-number">3</span>
+            File Open Karein</h3>
+
+<pre><code>nano .dockerignore</code></pre>
+
+        <p>
+            Ya VS Code me:
+        </p>
+
+<pre><code>code .dockerignore</code></pre>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- DOCKERIGNORE CONTENT -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>4. .dockerignore File Me Kya Likhein?</h2>
+
+    <p>
+        Humare Node.js project ke liye basic
+        <code>.dockerignore</code> kuch is tarah ho sakti hai:
+    </p>
+
+
+<pre><code>node_modules
+npm-debug.log
+
+.git
+.gitignore
+
+.env
+.env.*
+
+Dockerfile
+README.md
+
+.vscode
+.idea
+
+coverage
+dist</code></pre>
+
+
+    <h3>Har Entry Ka Meaning</h3>
+
+    <table>
+
+        <tr>
+
+            <th>Entry</th>
+
+            <th>Purpose</th>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>node_modules</code>
+            </td>
+
+            <td>
+                Local machine ke installed Node.js dependencies ko
+                build context se exclude karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>npm-debug.log</code>
+            </td>
+
+            <td>
+                npm ke debug logs ko exclude karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>.git</code>
+            </td>
+
+            <td>
+                Git repository metadata ko build context se exclude karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>.gitignore</code>
+            </td>
+
+            <td>
+                Git configuration file ko exclude karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>.env</code>
+            </td>
+
+            <td>
+                Local environment variables file ko exclude karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>.env.*</code>
+            </td>
+
+            <td>
+                Environment-specific .env files ko exclude karne ke liye pattern.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>Dockerfile</code>
+            </td>
+
+            <td>
+                Dockerfile ko build context se exclude karna possible hai,
+                lekin Dockerfile khud build instruction ke roop me separately
+                read karta hai. Isliye ise ignore karna optional hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>README.md</code>
+            </td>
+
+            <td>
+                Documentation ko image me copy hone se rokta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>.vscode</code>
+            </td>
+
+            <td>
+                VS Code local settings ko exclude karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>coverage</code>
+            </td>
+
+            <td>
+                Testing coverage output ko exclude karta hai.
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <div class="warning">
+
+        <strong>Important:</strong>
+
+        <p>
+            `.dockerignore` security ka complete replacement nahi hai.
+            Sensitive data ko image me include na karna important hai,
+            aur secrets ko Dockerfile me hard-code nahi karna chahiye.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- NODE MODULES -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>5. node_modules ko .dockerignore me Kyun Add Karein?</h2>
+
+    <p>
+        Ye Node.js projects me bahut important concept hai.
+    </p>
+
+
+    <p>
+        Agar local project me:
+    </p>
+
+<pre><code>node_modules/</code></pre>
+
+    <p>
+        already present hai aur hum:
+    </p>
+
+<pre><code>COPY . .</code></pre>
+
+    <p>
+        use kar rahe hain, to unwanted local
+        <code>node_modules</code> build context me aa sakta hai.
+    </p>
+
+
+    <p>
+        Isliye hum:
+    </p>
+
+<pre><code>node_modules</code></pre>
+
+    <p>
+        ko `.dockerignore` me add karte hain.
+    </p>
+
+
+    <p>
+        Dockerfile ke andar dependencies fresh install karenge:
+    </p>
+
+<pre><code>RUN npm install</code></pre>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            package.json
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Image
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            npm install
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container Dependencies
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- UPDATED STRUCTURE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>6. Updated Project Structure</h2>
+
+    <div class="folder">
+
+        node-docker-app/<br>
+        ├── node_modules/<br>
+        ├── package.json<br>
+        ├── package-lock.json<br>
+        ├── server.js<br>
+        ├── .dockerignore<br>
+        └── Dockerfile
+
+    </div>
+
+
+    <p>
+        Local <code>node_modules</code> project me ho sakta hai,
+        lekin `.dockerignore</code> ki wajah se Docker build context
+        se exclude ho jayega.
+    </p>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- REBUILD IMAGE -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>7. .dockerignore Add Karne Ke Baad Image Rebuild</h2>
+
+    <p>
+        `.dockerignore` create/change karne ke baad image ko dobara
+        build karna chahiye.
+    </p>
+
+
+<pre><code>docker build -t node-docker-app:1.0 .</code></pre>
+
+
+    <p>
+        Existing image ko automatically update nahi kiya jata.
+        Build command dobara chalane se new image build process execute hota hai.
+    </p>
+
+
+    <h3>Images Check Karein</h3>
+
+<pre><code>docker images</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- VERSIONING -->
+<!-- ===================================================== -->
+
+<section id="versioning">
+
+    <h2>8. Docker Image Versioning Kya Hai?</h2>
+
+    <p>
+        Docker images ko versions/tags dena image management ka
+        important part hai.
+    </p>
+
+
+    <div class="highlight">
+
+        <strong>Example:</strong>
+
+<pre><code>node-docker-app:1.0
+node-docker-app:1.1
+node-docker-app:2.0</code></pre>
+
+    </div>
+
+
+    <p>
+        Yahan:
+    </p>
+
+    <ul>
+
+        <li>
+            <code>node-docker-app</code> = image name
+        </li>
+
+        <li>
+            <code>1.0</code> = image tag/version
+        </li>
+
+        <li>
+            <code>1.1</code> = updated version
+        </li>
+
+        <li>
+            <code>2.0</code> = major version
+        </li>
+
+    </ul>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- TAGS -->
+<!-- ===================================================== -->
+
+<section id="tags">
+
+    <h2>9. Docker Image Tags Kya Hote Hain?</h2>
+
+    <p>
+        Tag image ke different versions ya variants ko identify
+        karne ke liye use hota hai.
+    </p>
+
+
+    <h3>Image Name Format</h3>
+
+<pre><code>IMAGE_NAME:TAG</code></pre>
+
+
+    <h3>Example</h3>
+
+<pre><code>node-docker-app:1.0</code></pre>
+
+
+    <table>
+
+        <tr>
+
+            <th>Part</th>
+
+            <th>Meaning</th>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>node-docker-app</code>
+            </td>
+
+            <td>
+                Docker image ka naam.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>:</code>
+            </td>
+
+            <td>
+                Image name aur tag ko separate karta hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>1.0</code>
+            </td>
+
+            <td>
+                Image ka tag/version.
+            </td>
+
+        </tr>
+
+    </table>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- VERSION 1 -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>10. Version 1.0 Create Karna</h2>
+
+    <p>
+        Maan lo humara first Node.js application ready hai.
+    </p>
+
+
+<pre><code>docker build -t node-docker-app:1.0 .</code></pre>
+
+
+    <p>
+        Ab humare paas:
+    </p>
+
+<pre><code>node-docker-app:1.0</code></pre>
+
+
+    <h3>Version 1.0 Run Karein</h3>
+
+<pre><code>docker run -d \
+    --name node-app-v1 \
+    -p 3000:3000 \
+    node-docker-app:1.0</code></pre>
+
+
+    <p>
+        Browser:
+    </p>
+
+<pre><code>http://localhost:3000</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- VERSION 1.1 -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>11. Same Project Ki Version 1.1 Create Karna</h2>
+
+    <p>
+        Ab hum Node.js project me change karte hain.
+    </p>
+
+
+    <h3>server.js — Version 1.1</h3>
+
+<pre><code>const express = require("express");
+
+const app = express();
+
+const PORT = 3000;
+
+app.get("/", (req, res) => {
+    res.send("Hello from Node.js Docker App - Version 1.1 🚀");
+});
+
+app.get("/about", (req, res) => {
+    res.send("This is Docker Image Version 1.1");
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});</code></pre>
+
+
+    <p>
+        Ab hum new image tag ke saath build karenge:
+    </p>
+
+<pre><code>docker build -t node-docker-app:1.1 .</code></pre>
+
+
+    <p>
+        Ab local machine par dono versions available ho sakte hain:
+    </p>
+
+<pre><code>node-docker-app:1.0
+node-docker-app:1.1</code></pre>
+
+
+    <div class="success">
+
+        <strong>Important:</strong>
+
+        <p>
+            Same project ka updated code hone ke baad
+            new image tag create karna possible hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- VERSION 2 -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>12. Version 2.0 Create Karna</h2>
+
+    <p>
+        Ab maan lo application me ek major change aaya.
+        Hum version 2.0 create karte hain.
+    </p>
+
+
+<pre><code>docker build -t node-docker-app:2.0 .</code></pre>
+
+
+    <p>
+        Ab images:
+    </p>
+
+<pre><code>node-docker-app:1.0
+node-docker-app:1.1
+node-docker-app:2.0</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- MULTIPLE SAME PROJECT -->
+<!-- ===================================================== -->
+
+<section id="multiple">
+
+    <h2>13. Multiple Versions Ko Ek Saath Kaise Manage Karein?</h2>
+
+    <p>
+        Docker ka ek powerful concept ye hai ki same image ke
+        different tagged versions ko local machine par rakha ja sakta hai.
+    </p>
+
+
+    <div class="version-card">
+
+        <h3>Version 1.0</h3>
+
+<pre><code>node-docker-app:1.0</code></pre>
+
+    </div>
+
+
+    <div class="version-card">
+
+        <h3>Version 1.1</h3>
+
+<pre><code>node-docker-app:1.1</code></pre>
+
+    </div>
+
+
+    <div class="version-card">
+
+        <h3>Version 2.0</h3>
+
+<pre><code>node-docker-app:2.0</code></pre>
+
+    </div>
+
+
+    <h3>All Images Check Karein</h3>
+
+<pre><code>docker images node-docker-app</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- MULTIPLE CONTAINERS -->
+<!-- ===================================================== -->
+
+<section id="containers">
+
+    <h2>14. Different Versions Ke Multiple Containers Run Karna</h2>
+
+    <p>
+        Ab hum version 1.0 aur version 1.1 ko simultaneously run
+        kar sakte hain.
+    </p>
+
+
+    <h3>Version 1.0 Container</h3>
+
+<pre><code>docker run -d \
+    --name node-app-v1 \
+    -p 3000:3000 \
+    node-docker-app:1.0</code></pre>
+
+
+    <h3>Version 1.1 Container</h3>
+
+<pre><code>docker run -d \
+    --name node-app-v11 \
+    -p 3001:3000 \
+    node-docker-app:1.1</code></pre>
+
+
+    <div class="highlight">
+
+        <strong>Notice the ports:</strong>
+
+        <p>
+            Version 1.0 → <code>localhost:3000</code>
+        </p>
+
+        <p>
+            Version 1.1 → <code>localhost:3001</code>
+        </p>
+
+    </div>
+
+
+    <h3>Check Both Containers</h3>
+
+<pre><code>docker ps</code></pre>
+
+
+    <h3>Browser Testing</h3>
+
+<pre><code>http://localhost:3000</code></pre>
+
+<pre><code>http://localhost:3001</code></pre>
+
+
+    <div class="success">
+
+        <strong>Result:</strong>
+
+        <p>
+            Dono containers same application ke different versions
+            run kar sakte hain, provided their host ports do not conflict.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- VERSION MANAGEMENT -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>15. Version Management Strategy</h2>
+
+    <p>
+        Docker image versions ke liye commonly structured tags use
+        kiye ja sakte hain.
+    </p>
+
+
+    <table>
+
+        <tr>
+
+            <th>Version</th>
+
+            <th>Example</th>
+
+            <th>Meaning</th>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Patch
+            </td>
+
+            <td>
+                <code>1.0.1</code>
+            </td>
+
+            <td>
+                Small bug fixes or backward-compatible changes.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Minor
+            </td>
+
+            <td>
+                <code>1.1.0</code>
+            </td>
+
+            <td>
+                New backward-compatible features.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Major
+            </td>
+
+            <td>
+                <code>2.0.0</code>
+            </td>
+
+            <td>
+                Major changes that may not remain backward compatible.
+            </td>
+
+        </tr>
+
+    </table>
+
+
+    <div class="warning">
+
+        <strong>Important:</strong>
+
+        <p>
+            Docker tags themselves are just labels. Docker does not
+            automatically enforce Semantic Versioning rules.
+            Your team should define and follow its own tagging policy.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- DOCKER TAG COMMAND -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>16. Existing Image Ko New Tag Dena</h2>
+
+    <p>
+        Agar image already build hai, to <code>docker tag</code>
+        command se usi image ko ek additional tag diya ja sakta hai.
+    </p>
+
+
+    <h3>Example</h3>
+
+<pre><code>docker tag node-docker-app:1.0 node-docker-app:stable</code></pre>
+
+
+    <p>
+        Ab same image ko:
+    </p>
+
+<pre><code>node-docker-app:1.0
+node-docker-app:stable</code></pre>
+
+    <p>
+        dono tags se reference kiya ja sakta hai.
+    </p>
+
+
+    <div class="highlight">
+
+        <strong>Important:</strong>
+
+        <p>
+            Tagging normally image ko duplicate karke poori nayi copy
+            nahi banata; tag image ko reference karta hai.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- RUN TAG -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>17. Specific Version Run Karna</h2>
+
+
+    <h3>Version 1.0</h3>
+
+<pre><code>docker run -d \
+    --name app-v1 \
+    -p 3000:3000 \
+    node-docker-app:1.0</code></pre>
+
+
+    <h3>Version 1.1</h3>
+
+<pre><code>docker run -d \
+    --name app-v11 \
+    -p 3001:3000 \
+    node-docker-app:1.1</code></pre>
+
+
+    <h3>Version 2.0</h3>
+
+<pre><code>docker run -d \
+    --name app-v2 \
+    -p 3002:3000 \
+    node-docker-app:2.0</code></pre>
+
+
+    <h3>Final Architecture</h3>
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Image 1.0
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container 1
+        </div>
+
+
+        <div class="flow-item">
+            Image 1.1
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container 2
+        </div>
+
+
+        <div class="flow-item">
+            Image 2.0
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Container 3
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- DOCKER HUB -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>18. Versioned Image Ko Docker Hub Par Push Karna</h2>
+
+    <p>
+        Agar tum image ko Docker Hub par upload karna chahte ho,
+        to image ko Docker Hub username ke saath tag karna hota hai.
+    </p>
+
+
+    <h3>Example</h3>
+
+<pre><code>docker tag node-docker-app:1.0 pavandixit/node-docker-app:1.0</code></pre>
+
+
+    <p>
+        Login:
+    </p>
+
+<pre><code>docker login</code></pre>
+
+
+    <p>
+        Push:
+    </p>
+
+<pre><code>docker push pavandixit/node-docker-app:1.0</code></pre>
+
+
+    <h3>Version 1.1 Push</h3>
+
+<pre><code>docker tag node-docker-app:1.1 pavandixit/node-docker-app:1.1
+
+docker push pavandixit/node-docker-app:1.1</code></pre>
+
+
+    <div class="flow">
+
+        <div class="flow-item">
+            Node.js Code
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Image 1.0
+        </div>
+
+        <span class="arrow">→</span>
+
+        <div class="flow-item">
+            Docker Hub
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- COMPLETE WORKFLOW -->
+<!-- ===================================================== -->
+
+<section id="workflow">
+
+    <h2>19. Complete Practical Workflow</h2>
+
+
+    <pre><code># Enter project
+cd node-docker-app
+
+# Create .dockerignore
+touch .dockerignore
+
+# Build Version 1.0
+docker build -t node-docker-app:1.0 .
+
+# Run Version 1.0
+docker run -d \
+    --name node-app-v1 \
+    -p 3000:3000 \
+    node-docker-app:1.0
+
+# Update server.js
+
+# Build Version 1.1
+docker build -t node-docker-app:1.1 .
+
+# Run Version 1.1
+docker run -d \
+    --name node-app-v11 \
+    -p 3001:3000 \
+    node-docker-app:1.1
+
+# Check images
+docker images node-docker-app
+
+# Check containers
+docker ps
+
+# Test Version 1.0
+# http://localhost:3000
+
+# Test Version 1.1
+# http://localhost:3001</code></pre>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- IMAGE VS CONTAINER -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>20. Image Version vs Container Version</h2>
+
+    <table>
+
+        <tr>
+
+            <th>Image</th>
+
+            <th>Container</th>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                <code>node-docker-app:1.0</code>
+            </td>
+
+            <td>
+                <code>node-app-v1</code>
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Application ka packaged version.
+            </td>
+
+            <td>
+                Us image ka running instance.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Multiple containers create kar sakti hai.
+            </td>
+
+            <td>
+                Ek specific runtime instance hai.
+            </td>
+
+        </tr>
+
+
+        <tr>
+
+            <td>
+                Tag se version identify kar sakte hain.
+            </td>
+
+            <td>
+                Name/ID se specific container identify hota hai.
+            </td>
+
+        </tr>
+
+    </table>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- COMMON MISTAKES -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>21. Common Mistakes</h2>
+
+
+    <div class="error">
+
+        <h3>❌ Mistake 1 — .dockerignore ko Dockerfile samajhna</h3>
+
+        <p>
+            Dono files ka purpose different hai.
+        </p>
+
+        <p>
+            Dockerfile → Image build instructions
+        </p>
+
+        <p>
+            .dockerignore → Build context se files exclude karna
+        </p>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Mistake 2 — Har Version Ka Same Container Name</h3>
+
+        <p>
+            Ek hi host par same naam ke multiple containers nahi
+            banaye ja sakte.
+        </p>
+
+        <p>
+            Use:
+        </p>
+
+<pre><code>node-app-v1
+node-app-v11
+node-app-v2</code></pre>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Mistake 3 — Same Host Port Use Karna</h3>
+
+        <p>
+            Agar do containers ko same host port par bind karoge,
+            port conflict ho sakta hai.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+<pre><code>Version 1.0 → 3000:3000
+Version 1.1 → 3001:3000
+Version 2.0 → 3002:3000</code></pre>
+
+    </div>
+
+
+    <div class="error">
+
+        <h3>❌ Mistake 4 — Secrets Image Me Copy Karna</h3>
+
+        <p>
+            Passwords, API keys aur secrets ko Dockerfile ya image
+            ke andar hard-code nahi karna chahiye.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ===================================================== -->
+<!-- FINAL SUMMARY -->
+<!-- ===================================================== -->
+
+<section>
+
+    <h2>22. Final Summary</h2>
+
+
+    <div class="highlight">
+
+        <h3>.dockerignore</h3>
+
+        <p>
+            Unnecessary files ko Docker build context se exclude karta hai.
+        </p>
+
+
+        <h3>Docker Image Versioning</h3>
+
+        <p>
+            Different image versions ko tags ke through identify kiya
+            ja sakta hai.
+        </p>
+
+
+        <h3>Example</h3>
+
+<pre><code>node-docker-app:1.0
+node-docker-app:1.1
+node-docker-app:2.0</code></pre>
+
+
+        <h3>Multiple Containers</h3>
+
+<pre><code>Version 1.0 → localhost:3000
+Version 1.1 → localhost:3001
+Version 2.0 → localhost:3002</code></pre>
+
+    </div>
+
+
+    <div class="analogy">
+
+        <h3>🧠 Easy Memory Trick</h3>
+
+        <p>
+            <strong>.dockerignore</strong>
+            → "Ye files Docker ko mat do."
+        </p>
+
+        <p>
+            <strong>Dockerfile</strong>
+            → "Image kaise banao."
+        </p>
+
+        <p>
+            <strong>Tag</strong>
+            → "Image ka kaunsa version hai."
+        </p>
+
+        <p>
+            <strong>Container</strong>
+            → "Kaunsa version actually run ho raha hai."
+        </p>
+
+    </div>
+
+
+    <div class="success">
+
+        <h3>🎯 DevOps Learning Flow</h3>
+
+<pre><code>Node.js Project
+      ↓
+.dockerignore
+      ↓
+Dockerfile
+      ↓
+Build Image
+      ↓
+node-docker-app:1.0
+      ↓
+Code Update
+      ↓
+Build Image
+      ↓
+node-docker-app:1.1
+      ↓
+Run Different Containers
+      ↓
+Test Different Versions
+      ↓
+Push Versioned Images to Docker Hub</code></pre>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
+
+<footer>
+
+    <p>
+        🐳 Docker Learning Journey
+    </p>
+
+    <p>
+        Node.js → Dockerfile → .dockerignore → Image Versioning → Containers
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>
