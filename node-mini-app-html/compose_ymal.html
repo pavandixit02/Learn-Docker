@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Docker Compose - Node.js Mini Project | Part 4</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #1d4ed8);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #dbeafe;
+            font-size: 18px;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1150px;
+            margin: 30px auto;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #e5e7eb;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 18px 0;
+            font-family: Consolas, monospace;
+            line-height: 1.6;
+        }
+
+        .command {
+            background: #020617;
+            color: #86efac;
+        }
+
+        .yaml {
+            background: #111827;
+            color: #fde68a;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #f0fdf4;
+            border-left: 5px solid #16a34a;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .danger {
+            background: #fef2f2;
+            border-left: 5px solid #dc2626;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .diagram {
+            background: #020617;
+            color: #e5e7eb;
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            white-space: pre;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .keyword {
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 30px;
+        }
+
+        @media (max-width: 700px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Docker Compose</h1>
+    <p>Node.js Docker Mini Project — Part 4</p>
+    <p>compose.yaml + Image Build + Container Run + Docker Hub Pull</p>
+</header>
+
+<nav>
+    <a href="#intro">Compose</a>
+    <a href="#yaml">YAML</a>
+    <a href="#keywords">Keywords</a>
+    <a href="#project">Project</a>
+    <a href="#build">Build</a>
+    <a href="#run">Run</a>
+    <a href="#pull">Pull</a>
+    <a href="#commands">Commands</a>
+    <a href="#errors">Errors</a>
+    <a href="#interview">Interview</a>
+</nav>
+
+<div class="container">
+
+    <!-- INTRO -->
+
+    <section id="intro">
+
+        <h2>1. Docker Compose Kya Hai?</h2>
+
+        <p>
+            Docker Compose ek tool hai jiske through hum multiple containers,
+            services, networks aur volumes ko ek YAML configuration file me define
+            karke manage kar sakte hain.
+        </p>
+
+        <p>
+            Simple words me:
+        </p>
+
+        <div class="success">
+            <strong>Docker Compose = Docker application ka configuration ek file me define karke
+            build, create, start aur manage karne ka convenient way.</strong>
+        </div>
+
+        <p>
+            Normal Docker commands me hume baar-baar long commands likhni pad sakti hain.
+            Compose me hum configuration ko <code>compose.yaml</code> me define kar dete hain.
+        </p>
+
+        <h3>Without Compose</h3>
+
+<pre class="command">
+docker build -t node-docker-app:1.0 .
+
+docker volume create node-app-data
+
+docker run -d \
+  --name node-app-volume \
+  -p 3000:3000 \
+  -v node-app-data:/app/data \
+  node-docker-app:1.0
+</pre>
+
+        <h3>With Compose</h3>
+
+<pre class="command">
+docker compose up -d
+</pre>
+
+        <div class="note">
+            Compose ka major advantage ye hai ki application ki configuration
+            repeatable aur easily manageable ho jati hai.
+        </div>
+
+    </section>
+
+
+    <!-- COMPOSE YAML -->
+
+    <section id="yaml">
+
+        <h2>2. compose.yaml File Kya Hoti Hai?</h2>
+
+        <p>
+            <code>compose.yaml</code> ek YAML configuration file hoti hai jisme
+            hum Docker application ke required services aur unki configuration
+            define karte hain.
+        </p>
+
+        <p>
+            Is file ka naam commonly:
+        </p>
+
+<pre>
+compose.yaml
+</pre>
+
+        <p>
+            ho sakta hai.
+        </p>
+
+        <p>
+            Traditional projects me <code>docker-compose.yml</code> bhi bahut common
+            naam hai. Modern Docker Compose workflows me <code>compose.yaml</code>
+            preferred filename ke roop me use kiya ja sakta hai.
+        </p>
+
+    </section>
+
+
+    <!-- YAML -->
+
+    <section>
+
+        <h2>3. YAML Kya Hai?</h2>
+
+        <p>
+            YAML ka full form commonly
+            <strong>YAML Ain't Markup Language</strong> diya jata hai.
+        </p>
+
+        <p>
+            YAML ek human-readable configuration/data format hai.
+            Docker Compose YAML syntax ka use karta hai.
+        </p>
+
+        <h3>Basic YAML Example</h3>
+
+<pre class="yaml">
+name: my-app
+version: 1.0
+</pre>
+
+        <p>
+            YAML me indentation important hoti hai.
+        </p>
+
+        <div class="warning">
+            <strong>Important:</strong>
+            YAML me indentation ke liye tabs avoid karo.
+            Spaces ka consistent use karo.
+        </div>
+
+    </section>
+
+
+    <!-- BASIC COMPOSE -->
+
+    <section>
+
+        <h2>4. Basic compose.yaml Structure</h2>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+
+    ports:
+      - "3000:3000"
+</pre>
+
+        <p>
+            Is small example me hum ek service define kar rahe hain.
+        </p>
+
+    </section>
+
+
+    <!-- KEYWORDS -->
+
+    <section id="keywords">
+
+        <h2>5. compose.yaml Ke Important Keywords</h2>
+
+        <table>
+
+            <tr>
+                <th>Keyword</th>
+                <th>Purpose</th>
+            </tr>
+
+            <tr>
+                <td><code>services</code></td>
+                <td>Application ke containers/services define karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>build</code></td>
+                <td>Local Dockerfile se image build karne ke liye.</td>
+            </tr>
+
+            <tr>
+                <td><code>context</code></td>
+                <td>Build context specify karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>dockerfile</code></td>
+                <td>Kaunsa Dockerfile use karna hai, ye specify kar sakta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>image</code></td>
+                <td>Use/build/run hone wali image ka naam/tag specify karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>container_name</code></td>
+                <td>Container ka custom name specify karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>ports</code></td>
+                <td>Host aur container ports map karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>volumes</code></td>
+                <td>Persistent storage ya mounts define karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>environment</code></td>
+                <td>Environment variables define karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>command</code></td>
+                <td>Container start hone par command override/run kar sakta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>restart</code></td>
+                <td>Container restart policy define karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>depends_on</code></td>
+                <td>Services ke startup dependency relationship ko define karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>networks</code></td>
+                <td>Services ke network configuration ko define karta hai.</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- SERVICES -->
+
+    <section>
+
+        <h2>6. services Keyword</h2>
+
+        <p>
+            <code>services</code> Compose file ka sabse important section hai.
+        </p>
+
+        <p>
+            Iske andar hum application ke individual services define karte hain.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    image: node-docker-app:1.0
+</pre>
+
+        <p>
+            Yahan <code>app</code> service ka naam hai.
+        </p>
+
+        <div class="note">
+            Service name ko aap apne project ke according choose kar sakte ho,
+            jaise <code>app</code>, <code>web</code>, <code>backend</code>,
+            <code>database</code> etc.
+        </div>
+
+    </section>
+
+
+    <!-- BUILD -->
+
+    <section>
+
+        <h2>7. build Keyword</h2>
+
+        <p>
+            <code>build</code> ka use Dockerfile ke through image build karne ke liye hota hai.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+</pre>
+
+        <p>
+            Iska meaning:
+        </p>
+
+<pre>
+Current directory
+      ↓
+Build Context
+      ↓
+Dockerfile
+      ↓
+Docker Image
+</pre>
+
+    </section>
+
+
+    <!-- CONTEXT -->
+
+    <section>
+
+        <h2>8. context Keyword</h2>
+
+        <p>
+            <code>context</code> Docker build context specify karta hai.
+        </p>
+
+<pre class="yaml">
+build:
+  context: .
+</pre>
+
+        <p>
+            <code>.</code> ka meaning current directory hai.
+        </p>
+
+        <p>
+            Agar <code>compose.yaml</code> project root me hai aur Dockerfile bhi
+            current directory me hai, to:
+        </p>
+
+<pre>
+context: .
+</pre>
+
+        <p>
+            common configuration hai.
+        </p>
+
+    </section>
+
+
+    <!-- DOCKERFILE -->
+
+    <section>
+
+        <h2>9. dockerfile Keyword</h2>
+
+        <p>
+            Agar Dockerfile ka naam/location default se different ho,
+            to <code>dockerfile</code> specify kar sakte hain.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+      dockerfile: dockerfile
+</pre>
+
+        <p>
+            Hamare project me Dockerfile ka naam lowercase
+            <code>dockerfile</code> hai, isliye ye explicitly specify karna useful hai.
+        </p>
+
+    </section>
+
+
+    <!-- IMAGE -->
+
+    <section>
+
+        <h2>10. image Keyword</h2>
+
+        <p>
+            <code>image</code> ke through hum Docker image ka naam aur tag define kar sakte hain.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    image: node-docker-app:1.0
+</pre>
+
+        <p>
+            Iska meaning:
+        </p>
+
+<pre>
+Repository / Image Name
+        :
+       Tag
+
+node-docker-app:1.0
+</pre>
+
+        <div class="note">
+            <strong>Difference:</strong><br>
+            <code>build</code> = image banane ka process.<br>
+            <code>image</code> = image ka naam/reference.
+        </div>
+
+    </section>
+
+
+    <!-- PROJECT -->
+
+    <section id="project">
+
+        <h2>11. Hamare Node.js Mini Project Me Compose Add Karna</h2>
+
+        <p>
+            Ab hum previous Node.js Docker project ko continue karenge.
+        </p>
+
+<pre>
+node-app-mini/
+│
+├── .dockerignore
+├── dockerfile
+├── index.js
+├── package.json
+├── package-lock.json
+├── p1.txt
+├── p2.txt
+└── p3.txt
+</pre>
+
+        <p>
+            Project root me <code>compose.yaml</code> create karo.
+        </p>
+
+<pre class="command">
+touch compose.yaml
+</pre>
+
+        <p>
+            Ya VS Code me:
+        </p>
+
+<pre class="command">
+code compose.yaml
+</pre>
+
+    </section>
+
+
+    <!-- FIRST COMPOSE -->
+
+    <section>
+
+        <h2>12. Hamara First compose.yaml</h2>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+      dockerfile: dockerfile
+
+    image: node-docker-app:1.0
+
+    container_name: node-app-compose
+
+    ports:
+      - "3000:3000"
+</pre>
+
+        <h3>Is File Ka Meaning</h3>
+
+        <ol>
+            <li><code>services</code> → application service define karta hai.</li>
+            <li><code>app</code> → service ka naam.</li>
+            <li><code>build</code> → Docker image build hogi.</li>
+            <li><code>context: .</code> → current directory build context hai.</li>
+            <li><code>dockerfile: dockerfile</code> → hamara Dockerfile use hoga.</li>
+            <li><code>image</code> → generated image ka naam/tag.</li>
+            <li><code>container_name</code> → container ka custom name.</li>
+            <li><code>ports</code> → port mapping.</li>
+        </ol>
+
+    </section>
+
+
+    <!-- VOLUME -->
+
+    <section>
+
+        <h2>13. volumes Keyword</h2>
+
+        <p>
+            Previous part me humne Docker Volume padha tha.
+            Ab usi volume ko Compose ke through define karenge.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+      dockerfile: dockerfile
+
+    image: node-docker-app:1.0
+
+    container_name: node-app-compose
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - node-app-data:/app/data
+
+volumes:
+
+  node-app-data:
+</pre>
+
+        <p>
+            Yahan:
+        </p>
+
+<pre>
+node-app-data
+      ↓
+Docker Volume
+
+/app/data
+      ↓
+Container ke andar mount point
+</pre>
+
+        <div class="success">
+            Compose required named volume ko manage karne me help karega.
+        </div>
+
+    </section>
+
+
+    <!-- ENVIRONMENT -->
+
+    <section>
+
+        <h2>14. environment Keyword</h2>
+
+        <p>
+            Application ke environment variables define karne ke liye
+            <code>environment</code> use kiya ja sakta hai.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+      dockerfile: dockerfile
+
+    environment:
+      NODE_ENV: production
+      APP_NAME: node-docker-app
+</pre>
+
+        <p>
+            Container ke andar application in variables ko access kar sakti hai.
+        </p>
+
+        <p>
+            Node.js example:
+        </p>
+
+<pre>
+console.log(process.env.NODE_ENV);
+console.log(process.env.APP_NAME);
+</pre>
+
+    </section>
+
+
+    <!-- COMMAND -->
+
+    <section>
+
+        <h2>15. command Keyword</h2>
+
+        <p>
+            <code>command</code> container ke default command ko override kar sakta hai.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    image: node-docker-app:1.0
+
+    command: node index.js
+</pre>
+
+        <p>
+            Agar Dockerfile me already:
+        </p>
+
+<pre>
+CMD ["node", "index.js"]
+</pre>
+
+        <p>
+            hai aur Compose me different command define kiya hai,
+            to Compose wala command use ho sakta hai.
+        </p>
+
+    </section>
+
+
+    <!-- RESTART -->
+
+    <section>
+
+        <h2>16. restart Keyword</h2>
+
+        <p>
+            Container ke restart behavior ko control karne ke liye
+            <code>restart</code> use hota hai.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    restart: unless-stopped
+</pre>
+
+        <p>
+            Common policies:
+        </p>
+
+        <ul>
+            <li><code>no</code></li>
+            <li><code>always</code></li>
+            <li><code>on-failure</code></li>
+            <li><code>unless-stopped</code></li>
+        </ul>
+
+    </section>
+
+
+    <!-- DEPENDS -->
+
+    <section>
+
+        <h2>17. depends_on Keyword</h2>
+
+        <p>
+            Jab ek application multiple services use karti hai,
+            tab service dependency define karne ke liye <code>depends_on</code>
+            use kiya ja sakta hai.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    depends_on:
+      - database
+
+  database:
+
+    image: mongo:latest
+</pre>
+
+        <p>
+            Is example me <code>app</code> service ka dependency relationship
+            <code>database</code> ke saath define kiya gaya hai.
+        </p>
+
+        <div class="warning">
+            <strong>Important:</strong>
+            depends_on ko service-start ordering ke concept ke roop me samjho.
+            Iska matlab ye automatically guarantee nahi karta ki database
+            application requests accept karne ke liye fully ready hai.
+        </div>
+
+    </section>
+
+
+    <!-- NETWORK -->
+
+    <section>
+
+        <h2>18. networks Keyword</h2>
+
+        <p>
+            Multiple services ke communication ke liye custom Docker network
+            define kiya ja sakta hai.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    image: node-docker-app:1.0
+
+    networks:
+      - app-network
+
+networks:
+
+  app-network:
+</pre>
+
+        <p>
+            Compose services ko same network par connect kar sakta hai.
+        </p>
+
+    </section>
+
+
+    <!-- COMPLETE FILE -->
+
+    <section>
+
+        <h2>19. Complete compose.yaml — Our Mini Project</h2>
+
+        <p>
+            Ab tak ke important concepts ko combine karke complete Compose file:
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+      dockerfile: dockerfile
+
+    image: node-docker-app:1.0
+
+    container_name: node-app-compose
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - node-app-data:/app/data
+
+    environment:
+      NODE_ENV: production
+      APP_NAME: node-docker-app
+
+    restart: unless-stopped
+
+volumes:
+
+  node-app-data:
+</pre>
+
+        <div class="success">
+            Ye hamare Node.js mini-project ka Compose-based configuration hai.
+        </div>
+
+    </section>
+
+
+    <!-- CONFIG VALIDATE -->
+
+    <section>
+
+        <h2>20. Compose File Validate Karna</h2>
+
+        <p>
+            Compose file ko run karne se pehle configuration check kar sakte hain:
+        </p>
+
+<pre class="command">
+docker compose config
+</pre>
+
+        <p>
+            Agar configuration valid hai, Docker parsed configuration show karega.
+        </p>
+
+    </section>
+
+
+    <!-- BUILD -->
+
+    <section id="build">
+
+        <h2>21. compose.yaml Se Image Create Karna</h2>
+
+        <p>
+            Ab Compose file ke <code>build</code> section ka use karke image build karenge.
+        </p>
+
+<pre class="command">
+docker compose build
+</pre>
+
+        <p>
+            Ye approximately ye flow follow karega:
+        </p>
+
+<div class="diagram">
+compose.yaml
+     |
+     v
+build:
+     |
+     v
+Dockerfile
+     |
+     v
+Docker Build
+     |
+     v
+node-docker-app:1.0
+</div>
+
+        <h3>Image Check</h3>
+
+<pre class="command">
+docker images
+</pre>
+
+        <p>
+            Ab <code>node-docker-app:1.0</code> image list me mil sakti hai.
+        </p>
+
+    </section>
+
+
+    <!-- UP -->
+
+    <section id="run">
+
+        <h2>22. Compose Se Container Run Karna</h2>
+
+        <p>
+            Ab sabse important command:
+        </p>
+
+<pre class="command">
+docker compose up -d
+</pre>
+
+        <p>
+            Ye Compose configuration ke according services ko create/start karega.
+        </p>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker compose ps
+</pre>
+
+        <p>
+            Ya:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <h3>Application Test</h3>
+
+<pre>
+http://localhost:3000
+</pre>
+
+    </section>
+
+
+    <!-- LOGS -->
+
+    <section>
+
+        <h2>23. Compose Logs</h2>
+
+        <p>
+            Application ke logs dekhne ke liye:
+        </p>
+
+<pre class="command">
+docker compose logs
+</pre>
+
+        <p>
+            Specific service:
+        </p>
+
+<pre class="command">
+docker compose logs app
+</pre>
+
+        <p>
+            Live logs:
+        </p>
+
+<pre class="command">
+docker compose logs -f app
+</pre>
+
+    </section>
+
+
+    <!-- STOP -->
+
+    <section>
+
+        <h2>24. Compose Application Stop Karna</h2>
+
+<pre class="command">
+docker compose stop
+</pre>
+
+        <p>
+            Ye containers ko stop karta hai.
+        </p>
+
+        <p>
+            Resources ko remove karne ke liye:
+        </p>
+
+<pre class="command">
+docker compose down
+</pre>
+
+        <div class="note">
+            <code>down</code> containers aur Compose-created resources ko remove
+            kar sakta hai, lekin named volumes ko remove karne ke liye
+            <code>-v</code> explicitly use karna hota hai.
+        </div>
+
+    </section>
+
+
+    <!-- PULL -->
+
+    <section id="pull">
+
+        <h2>25. Docker Hub Se Image Pull Karna</h2>
+
+        <p>
+            Ab ek important difference samjho.
+        </p>
+
+        <p>
+            Agar image Docker Hub par available hai, to hum usse
+            <code>docker pull</code> se download kar sakte hain.
+        </p>
+
+<pre class="command">
+docker pull pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            Yahan:
+        </p>
+
+<pre>
+pavandixit
+     ↓
+Docker Hub Username
+
+node-docker-app
+     ↓
+Repository
+
+1.0
+     ↓
+Tag
+</pre>
+
+        <h3>Check Image</h3>
+
+<pre class="command">
+docker images
+</pre>
+
+    </section>
+
+
+    <!-- COMPOSE PULL -->
+
+    <section>
+
+        <h2>26. Compose Se Image Pull Karna</h2>
+
+        <p>
+            Agar Compose file me local <code>build</code> ke instead
+            Docker Hub image use karni hai, to <code>image</code> specify kar sakte hain.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    image: pavandixit/node-docker-app:1.0
+
+    container_name: node-app-compose
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - node-app-data:/app/data
+
+volumes:
+
+  node-app-data:
+</pre>
+
+        <p>
+            Ab:
+        </p>
+
+<pre class="command">
+docker compose pull
+</pre>
+
+        <p>
+            Docker Hub se required image pull karega.
+        </p>
+
+    </section>
+
+
+    <!-- PULL + RUN -->
+
+    <section>
+
+        <h2>27. Pull Karke Compose Se Run Karna</h2>
+
+        <p>
+            Complete flow:
+        </p>
+
+<pre class="command">
+docker compose pull
+docker compose up -d
+</pre>
+
+        <p>
+            Ya agar image already available nahi hai aur Compose configuration
+            image ko reference karti hai:
+        </p>
+
+<pre class="command">
+docker compose up -d
+</pre>
+
+        <p>
+            Compose required image ko available karne ke liye pull kar sakta hai,
+            depending on the configuration and local image state.
+        </p>
+
+    </section>
+
+
+    <!-- BUILD VS PULL -->
+
+    <section>
+
+        <h2>28. Build vs Pull</h2>
+
+        <table>
+
+            <tr>
+                <th>Build</th>
+                <th>Pull</th>
+            </tr>
+
+            <tr>
+                <td>Local Dockerfile se image create karta hai.</td>
+                <td>Registry/Docker Hub se existing image download karta hai.</td>
+            </tr>
+
+            <tr>
+                <td>Source code available hona chahiye.</td>
+                <td>Registry par image available honi chahiye.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose build</code></td>
+                <td><code>docker compose pull</code></td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- BUILD AND RUN -->
+
+    <section>
+
+        <h2>29. Build + Run Ek Saath</h2>
+
+        <p>
+            Agar local Dockerfile se image build karke service start karni hai:
+        </p>
+
+<pre class="command">
+docker compose up -d --build
+</pre>
+
+        <p>
+            Ye useful hai jab Dockerfile ya application code me changes kiye gaye hain
+            aur latest image build karke container start karna hai.
+        </p>
+
+    </section>
+
+
+    <!-- SCALE -->
+
+    <section>
+
+        <h2>30. Multiple Containers / Scaling Concept</h2>
+
+        <p>
+            Compose services ko multiple instances ke concept ke saath run kar sakta hai.
+        </p>
+
+<pre class="command">
+docker compose up -d --scale app=2
+</pre>
+
+        <div class="warning">
+            Agar service me fixed <code>container_name</code> diya hua hai,
+            scaling ke saath conflict ho sakta hai. Scaling practice ke liye
+            usually <code>container_name</code> avoid karna better hota hai.
+        </div>
+
+    </section>
+
+
+    <!-- COMPLETE FLOW -->
+
+    <section>
+
+        <h2>31. Complete Docker Compose Flow</h2>
+
+<div class="diagram">
+                    compose.yaml
+                         |
+          ┌──────────────┴──────────────┐
+          |                             |
+        build                          image
+          |                             |
+          v                             v
+     Dockerfile                    Docker Hub
+          |                             |
+          v                             |
+     Docker Image <---------------------+
+          |
+          v
+     docker compose up
+          |
+          v
+      Container
+          |
+          +------ Port 3000
+          |
+          +------ Volume
+          |
+          +------ Network
+</div>
+
+    </section>
+
+
+    <!-- COMMAND CHEATSHEET -->
+
+    <section id="commands">
+
+        <h2>32. Docker Compose Command Cheat Sheet</h2>
+
+        <table>
+
+            <tr>
+                <th>Command</th>
+                <th>Purpose</th>
+            </tr>
+
+            <tr>
+                <td><code>docker compose config</code></td>
+                <td>Compose configuration validate/render karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose build</code></td>
+                <td>Image build karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose up</code></td>
+                <td>Services start karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose up -d</code></td>
+                <td>Background me services start karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose up -d --build</code></td>
+                <td>Image rebuild karke services start karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose ps</code></td>
+                <td>Compose services ka status</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose logs</code></td>
+                <td>Logs dekhna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose stop</code></td>
+                <td>Services stop karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose down</code></td>
+                <td>Compose resources remove karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose pull</code></td>
+                <td>Registry se images pull karna</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose restart</code></td>
+                <td>Services restart karna</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- COMMON ERRORS -->
+
+    <section id="errors">
+
+        <h2>33. Common Errors</h2>
+
+        <h3>Error 1 — Compose file nahi mil rahi</h3>
+
+<pre>
+no configuration file provided
+</pre>
+
+        <p>
+            Ensure karo ki terminal us directory me hai jahan
+            <code>compose.yaml</code> present hai.
+        </p>
+
+<pre class="command">
+ls
+</pre>
+
+        <h3>Error 2 — YAML indentation problem</h3>
+
+        <p>
+            YAML indentation carefully check karo.
+        </p>
+
+        <h3>Error 3 — Port already in use</h3>
+
+<pre>
+Bind for 0.0.0.0:3000 failed:
+port is already allocated
+</pre>
+
+        <p>
+            Existing container check:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            Ya host port change karo:
+        </p>
+
+<pre class="yaml">
+ports:
+  - "3001:3000"
+</pre>
+
+        <h3>Error 4 — Image nahi mil rahi</h3>
+
+        <p>
+            Docker Hub image ka exact repository name aur tag check karo.
+        </p>
+
+<pre class="command">
+docker pull pavandixit/node-docker-app:1.0
+</pre>
+
+        <h3>Error 5 — Docker daemon issue</h3>
+
+        <p>
+            Agar Docker daemon running nahi hai to Compose commands bhi fail ho sakti hain.
+        </p>
+
+<pre class="command">
+docker info
+</pre>
+
+    </section>
+
+
+    <!-- PRACTICE -->
+
+    <section>
+
+        <h2>34. Practical Assignment</h2>
+
+        <ol>
+            <li>Node.js project ke root me <code>compose.yaml</code> create karo.</li>
+            <li><code>services</code> ke andar <code>app</code> service banao.</li>
+            <li><code>build</code> ke andar <code>context</code> aur <code>dockerfile</code> define karo.</li>
+            <li>Image ka naam <code>node-docker-app:1.0</code> rakho.</li>
+            <li>Container name define karo.</li>
+            <li>Port <code>3000:3000</code> map karo.</li>
+            <li><code>node-app-data</code> volume mount karo.</li>
+            <li><code>environment</code> me <code>NODE_ENV=production</code> add karo.</li>
+            <li><code>docker compose config</code> run karo.</li>
+            <li><code>docker compose build</code> run karo.</li>
+            <li><code>docker compose up -d</code> run karo.</li>
+            <li><code>docker compose ps</code> se status check karo.</li>
+            <li>Browser me application test karo.</li>
+            <li><code>docker compose logs</code> se logs check karo.</li>
+            <li><code>docker compose down</code> run karo.</li>
+        </ol>
+
+    </section>
+
+
+    <!-- INTERVIEW -->
+
+    <section id="interview">
+
+        <h2>35. Docker Compose Interview Questions</h2>
+
+        <h3>Q1. Docker Compose kya hai?</h3>
+
+        <p>
+            Docker Compose ek tool hai jo YAML configuration ke through
+            multi-container applications ko define aur manage karne me help karta hai.
+        </p>
+
+        <h3>Q2. compose.yaml kya hoti hai?</h3>
+
+        <p>
+            Ye YAML configuration file hoti hai jisme services, images,
+            builds, ports, volumes, networks aur other settings define ki ja sakti hain.
+        </p>
+
+        <h3>Q3. build aur image me kya difference hai?</h3>
+
+        <p>
+            <code>build</code> local Dockerfile/context se image create karne ke liye hota hai,
+            jabki <code>image</code> image name/tag ko reference karta hai.
+        </p>
+
+        <h3>Q4. docker compose build kya karta hai?</h3>
+
+        <p>
+            Compose configuration ke build instructions ke according Docker image build karta hai.
+        </p>
+
+        <h3>Q5. docker compose up kya karta hai?</h3>
+
+        <p>
+            Compose application ke defined services ko create/start karta hai
+            aur required resources configure karta hai.
+        </p>
+
+        <h3>Q6. docker compose pull kya karta hai?</h3>
+
+        <p>
+            Compose file me referenced registry images ko pull karta hai.
+        </p>
+
+        <h3>Q7. docker compose down kya karta hai?</h3>
+
+        <p>
+            Compose application ke containers aur associated resources ko remove/stop
+            karne ke workflow me use hota hai.
+        </p>
+
+        <h3>Q8. Volume Compose me kaise define karte hain?</h3>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    volumes:
+      - node-app-data:/app/data
+
+volumes:
+
+  node-app-data:
+</pre>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+
+    <section>
+
+        <h2>36. Final Summary</h2>
+
+        <ul>
+            <li><code>compose.yaml</code> Docker application configuration file hai.</li>
+            <li>Compose YAML syntax use karta hai.</li>
+            <li><code>services</code> application services define karta hai.</li>
+            <li><code>build</code> Dockerfile se image build karne ke liye use hota hai.</li>
+            <li><code>context</code> build context define karta hai.</li>
+            <li><code>dockerfile</code> Dockerfile specify kar sakta hai.</li>
+            <li><code>image</code> image name/tag specify karta hai.</li>
+            <li><code>ports</code> host aur container ports map karta hai.</li>
+            <li><code>volumes</code> persistent storage mount kar sakta hai.</li>
+            <li><code>environment</code> environment variables define karta hai.</li>
+            <li><code>restart</code> restart policy define karta hai.</li>
+            <li><code>depends_on</code> service dependency ordering define karne me help karta hai.</li>
+            <li><code>networks</code> service networking configure karta hai.</li>
+            <li><code>docker compose build</code> image build karta hai.</li>
+            <li><code>docker compose up -d</code> application ko background me run karta hai.</li>
+            <li><code>docker compose pull</code> registry se images pull karta hai.</li>
+            <li><code>docker compose down</code> Compose application ko tear down karne ke liye use hota hai.</li>
+        </ul>
+
+        <div class="success">
+            <strong>Core DevOps Concept:</strong><br>
+            Dockerfile application image banane ka recipe hai,
+            jabki Compose file application ke services aur unki runtime configuration
+            ko define karne ka convenient way hai.
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    <p>Docker Learning Series — Node.js Mini Project</p>
+    <p>Part 4: Docker Compose</p>
+</footer>
+
+</body>
+</html>
