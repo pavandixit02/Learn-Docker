@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GitLab on Docker - Setup & Run | Docker Learning Part 6</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #7c2d12);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #fed7aa;
+            font-size: 18px;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 9px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #fb923c;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1150px;
+            margin: 30px auto;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            color: #c2410c;
+            border-left: 5px solid #ea580c;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #e5e7eb;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 18px 0;
+            font-family: Consolas, monospace;
+            line-height: 1.6;
+        }
+
+        .command {
+            background: #020617;
+            color: #86efac;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #f0fdf4;
+            border-left: 5px solid #16a34a;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .danger {
+            background: #fef2f2;
+            border-left: 5px solid #dc2626;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .diagram {
+            background: #020617;
+            color: #e5e7eb;
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            white-space: pre;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        th {
+            background: #9a3412;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #ea580c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .highlight {
+            color: #c2410c;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 30px;
+        }
+
+        @media (max-width: 700px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>GitLab on Docker</h1>
+    <p>Docker Learning Series — Part 6</p>
+    <p>Pull GitLab Image → Run Container → Open GitLab → Get Root Password → Login</p>
+</header>
+
+<nav>
+    <a href="#gitlab">GitLab</a>
+    <a href="#image">Image</a>
+    <a href="#pull">Pull</a>
+    <a href="#run">Run</a>
+    <a href="#browser">Browser</a>
+    <a href="#password">Password</a>
+    <a href="#login">Login</a>
+    <a href="#errors">Errors</a>
+    <a href="#commands">Commands</a>
+    <a href="#interview">Interview</a>
+</nav>
+
+<div class="container">
+
+    <!-- INTRODUCTION -->
+
+    <section id="gitlab">
+
+        <h2>1. GitLab Kya Hai?</h2>
+
+        <p>
+            GitLab ek DevOps platform hai jisme source code management,
+            Git repositories, collaboration, CI/CD aur software development
+            lifecycle ke multiple features available hote hain.
+        </p>
+
+        <p>
+            Is practical me hum GitLab ko directly apne Ubuntu system par
+            install karne ke bajay <strong>Docker container</strong> ke andar run karenge.
+        </p>
+
+        <div class="success">
+            <strong>Goal:</strong><br>
+            Docker Hub se GitLab Community Edition image pull karna →
+            Container run karna →
+            Browser se GitLab open karna →
+            Initial root password nikalna →
+            GitLab me root user se login karna.
+        </div>
+
+    </section>
+
+
+    <!-- WHY DOCKER -->
+
+    <section>
+
+        <h2>2. GitLab Ko Docker Me Kyu Run Kare?</h2>
+
+        <ul>
+            <li>Installation process relatively isolated hota hai.</li>
+            <li>GitLab ko container ke andar run kar sakte hain.</li>
+            <li>Host operating system ko directly modify karne ki requirement kam hoti hai.</li>
+            <li>Docker commands se container lifecycle manage kar sakte hain.</li>
+            <li>DevOps learning ke liye practical environment milta hai.</li>
+        </ul>
+
+        <div class="diagram">
+Ubuntu Host
+    |
+    v
+Docker Engine
+    |
+    v
+GitLab Container
+    |
+    +---- GitLab Web UI
+    |
+    +---- Git Repository
+    |
+    +---- CI/CD Features
+        </div>
+
+    </section>
+
+
+    <!-- REQUIREMENTS -->
+
+    <section>
+
+        <h2>3. Requirements</h2>
+
+        <p>
+            GitLab container run karne se pehle ensure karo ki Docker working hai.
+        </p>
+
+<pre class="command">
+docker --version
+</pre>
+
+        <p>
+            Docker information check:
+        </p>
+
+<pre class="command">
+docker info
+</pre>
+
+        <div class="warning">
+            Agar Docker daemon running nahi hai to GitLab container bhi run nahi hoga.
+        </div>
+
+    </section>
+
+
+    <!-- GITLAB IMAGE -->
+
+    <section id="image">
+
+        <h2>4. GitLab Docker Image</h2>
+
+        <p>
+            Docker Hub par GitLab ki official container images available hoti hain.
+            Is practical me hum:
+        </p>
+
+<pre>
+gitlab/gitlab-ce
+</pre>
+
+        <p>
+            image use karenge.
+        </p>
+
+        <p>
+            <code>ce</code> ka meaning hai:
+        </p>
+
+<pre>
+Community Edition
+</pre>
+
+        <div class="note">
+            <strong>Image:</strong>
+            <code>gitlab/gitlab-ce</code>
+        </div>
+
+    </section>
+
+
+    <!-- PULL -->
+
+    <section id="pull">
+
+        <h2>5. Step 1 — GitLab Image Pull Karna</h2>
+
+        <p>
+            Sabse pehle Docker Hub se GitLab image pull karenge.
+        </p>
+
+<pre class="command">
+docker pull gitlab/gitlab-ce
+</pre>
+
+        <p>
+            Docker:
+        </p>
+
+<pre>
+Docker Hub
+    |
+    v
+gitlab/gitlab-ce
+    |
+    v
+Local Docker Images
+</pre>
+
+        <p>
+            Image download hone ke baad verify karo:
+        </p>
+
+<pre class="command">
+docker images
+</pre>
+
+        <p>
+            Output me GitLab image dikh sakti hai:
+        </p>
+
+<pre>
+REPOSITORY          TAG       IMAGE ID       CREATED       SIZE
+gitlab/gitlab-ce    latest    ........       ........      ....
+</pre>
+
+    </section>
+
+
+    <!-- RUN -->
+
+    <section id="run">
+
+        <h2>6. Step 2 — GitLab Container Run Karna</h2>
+
+        <p>
+            Ab GitLab image se container create aur start karenge.
+        </p>
+
+<pre class="command">
+docker run -p 8000:80 gitlab/gitlab-ce
+</pre>
+
+        <h3>Command Breakdown</h3>
+
+        <table>
+
+            <tr>
+                <th>Part</th>
+                <th>Meaning</th>
+            </tr>
+
+            <tr>
+                <td><code>docker</code></td>
+                <td>Docker CLI.</td>
+            </tr>
+
+            <tr>
+                <td><code>run</code></td>
+                <td>Image se container create/start karna.</td>
+            </tr>
+
+            <tr>
+                <td><code>-p</code></td>
+                <td>Port mapping.</td>
+            </tr>
+
+            <tr>
+                <td><code>8000:80</code></td>
+                <td>Host port 8000 → Container port 80.</td>
+            </tr>
+
+            <tr>
+                <td><code>gitlab/gitlab-ce</code></td>
+                <td>GitLab Docker image.</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- PORT -->
+
+    <section>
+
+        <h2>7. 8000:80 Ka Meaning</h2>
+
+        <p>
+            Is command me:
+        </p>
+
+<pre>
+-p 8000:80
+</pre>
+
+        <p>
+            do ports hain:
+        </p>
+
+<pre>
+8000
+  ↓
+Host Machine Port
+
+80
+  ↓
+Container Port
+</pre>
+
+        <div class="diagram">
+Browser
+   |
+   | http://localhost:8000
+   v
+Host Machine :8000
+   |
+   | Docker Port Mapping
+   v
+GitLab Container :80
+   |
+   v
+GitLab Web Server
+        </div>
+
+    </section>
+
+
+    <!-- FOREGROUND -->
+
+    <section>
+
+        <h2>8. Important: Ye Command Foreground Me Run Hoti Hai</h2>
+
+        <p>
+            Agar aap:
+        </p>
+
+<pre class="command">
+docker run -p 8000:80 gitlab/gitlab-ce
+</pre>
+
+        <p>
+            run karte ho, to container foreground me run hota hai
+            aur terminal GitLab ke logs show kar sakta hai.
+        </p>
+
+        <p>
+            Is situation me doosra terminal open karke Docker commands run kar sakte ho.
+        </p>
+
+        <div class="note">
+            Agar background me run karna ho to <code>-d</code> use kar sakte ho:
+        </div>
+
+<pre class="command">
+docker run -d -p 8000:80 --name gitlab gitlab/gitlab-ce
+</pre>
+
+    </section>
+
+
+    <!-- BROWSER -->
+
+    <section id="browser">
+
+        <h2>9. Step 3 — Chrome Me GitLab Open Karna</h2>
+
+        <p>
+            Container start hone ke baad Chrome me new tab open karo.
+        </p>
+
+        <p>
+            Address bar me:
+        </p>
+
+<pre>
+http://localhost:8000
+</pre>
+
+        <p>
+            Enter press karo.
+        </p>
+
+        <div class="success">
+            Agar GitLab initialization complete ho chuki hai,
+            to GitLab login page available ho sakta hai.
+        </div>
+
+        <div class="warning">
+            GitLab ek large application hai aur first startup me time lag sakta hai.
+            Isliye container start hote hi browser page immediately ready na ho,
+            to thoda wait karke refresh karo.
+        </div>
+
+    </section>
+
+
+    <!-- SECOND TERMINAL -->
+
+    <section>
+
+        <h2>10. Step 4 — New Terminal Open Karna</h2>
+
+        <p>
+            Ab ek <strong>new terminal</strong> open karo.
+        </p>
+
+        <p>
+            Original terminal me GitLab container ke logs chal rahe ho sakte hain.
+            Isliye Docker commands ke liye separate terminal convenient hai.
+        </p>
+
+    </section>
+
+
+    <!-- PS -->
+
+    <section>
+
+        <h2>11. Step 5 — Running Container Check Karna</h2>
+
+        <p>
+            Running containers dekhne ke liye:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            Sirf latest created container dekhne ke liye:
+        </p>
+
+<pre class="command">
+docker ps -l
+</pre>
+
+        <p>
+            <code>-l</code> ka meaning:
+        </p>
+
+<pre>
+Latest created container
+</pre>
+
+        <p>
+            Output me:
+        </p>
+
+<pre>
+CONTAINER ID
+IMAGE
+COMMAND
+CREATED
+STATUS
+PORTS
+NAMES
+</pre>
+
+        <p>
+            GitLab container ka <strong>CONTAINER ID</strong> identify karo.
+        </p>
+
+    </section>
+
+
+    <!-- CONTAINER ID -->
+
+    <section>
+
+        <h2>12. Container ID Kya Hai?</h2>
+
+        <p>
+            Docker har container ko ek unique identifier deta hai,
+            jise container ID kehte hain.
+        </p>
+
+<pre>
+CONTAINER ID
+a1b2c3d4e5f6
+</pre>
+
+        <p>
+            Aap commands me full ID ya generally enough unique short ID
+            use kar sakte ho.
+        </p>
+
+        <div class="note">
+            Example ke liye hum <code>a1b2c3d4e5f6</code> use kar rahe hain.
+            Apne system par actual container ID alag hogi.
+        </div>
+
+    </section>
+
+
+    <!-- PASSWORD -->
+
+    <section id="password">
+
+        <h2>13. Step 6 — GitLab Initial Root Password Nikalna</h2>
+
+        <p>
+            GitLab initial root password container ke andar file me stored hota hai:
+        </p>
+
+<pre>
+/etc/gitlab/initial_root_password
+</pre>
+
+        <p>
+            Container ke andar file read karne ke liye:
+        </p>
+
+<pre class="command">
+docker exec -it CONTAINER_ID cat /etc/gitlab/initial_root_password
+</pre>
+
+        <p>
+            Example:
+        </p>
+
+<pre class="command">
+docker exec -it a1b2c3d4e5f6 cat /etc/gitlab/initial_root_password
+</pre>
+
+        <h3>Command Breakdown</h3>
+
+        <table>
+
+            <tr>
+                <th>Part</th>
+                <th>Meaning</th>
+            </tr>
+
+            <tr>
+                <td><code>docker</code></td>
+                <td>Docker CLI.</td>
+            </tr>
+
+            <tr>
+                <td><code>exec</code></td>
+                <td>Running container ke andar command execute karna.</td>
+            </tr>
+
+            <tr>
+                <td><code>-it</code></td>
+                <td>Interactive terminal mode.</td>
+            </tr>
+
+            <tr>
+                <td><code>CONTAINER_ID</code></td>
+                <td>Target GitLab container.</td>
+            </tr>
+
+            <tr>
+                <td><code>cat</code></td>
+                <td>File ka content display karna.</td>
+            </tr>
+
+            <tr>
+                <td><code>/etc/gitlab/initial_root_password</code></td>
+                <td>Initial root password file.</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- PASSWORD OUTPUT -->
+
+    <section>
+
+        <h2>14. Password Output Ko Samajhna</h2>
+
+        <p>
+            Command run karne par output me kuch is type ki information mil sakti hai:
+        </p>
+
+<pre>
+# WARNING: This value is only valid in the first 24 hours after installation.
+Password: YOUR_INITIAL_PASSWORD
+</pre>
+
+        <div class="warning">
+            Initial root password temporary setup credential hai.
+            Is password ko securely handle karo aur GitLab setup ke baad
+            appropriate password change/security practices follow karo.
+        </div>
+
+        <p>
+            Password ko copy kar lo.
+        </p>
+
+    </section>
+
+
+    <!-- LOGIN -->
+
+    <section id="login">
+
+        <h2>15. Step 7 — GitLab Login</h2>
+
+        <p>
+            Ab Chrome tab par wapas jao:
+        </p>
+
+<pre>
+http://localhost:8000
+</pre>
+
+        <p>
+            Login page par:
+        </p>
+
+        <table>
+
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+
+            <tr>
+                <td>Username</td>
+                <td><code>root</code></td>
+            </tr>
+
+            <tr>
+                <td>Password</td>
+                <td>Container se copied initial root password</td>
+            </tr>
+
+        </table>
+
+        <p>
+            Login button click karo.
+        </p>
+
+        <div class="success">
+            Login successful hone ke baad GitLab dashboard open ho sakta hai.
+        </div>
+
+    </section>
+
+
+    <!-- COMPLETE FLOW -->
+
+    <section>
+
+        <h2>16. Complete Practical Flow</h2>
+
+        <div class="diagram">
+Step 1
+Docker Hub
+    |
+    | docker pull gitlab/gitlab-ce
+    v
+Local Docker Image
+    |
+    | docker run -p 8000:80
+    v
+GitLab Container
+    |
+    | Port Mapping
+    v
+localhost:8000
+    |
+    v
+Chrome
+    |
+    v
+GitLab Login Page
+
+        Separate Terminal
+                |
+                v
+        docker ps -l
+                |
+                v
+          Container ID
+                |
+                v
+docker exec -it CONTAINER_ID 
+cat /etc/gitlab/initial_root_password
+                |
+                v
+        Initial Root Password
+                |
+                v
+Chrome Login
+                |
+                v
+Username: root
+Password: Initial Root Password
+                |
+                v
+          GitLab Dashboard
+        </div>
+
+    </section>
+
+
+    <!-- COMMAND CHEATSHEET -->
+
+    <section id="commands">
+
+        <h2>17. Complete Commands — One Place</h2>
+
+        <h3>Pull GitLab Image</h3>
+
+<pre class="command">
+docker pull gitlab/gitlab-ce
+</pre>
+
+        <h3>Check Image</h3>
+
+<pre class="command">
+docker images
+</pre>
+
+        <h3>Run GitLab</h3>
+
+<pre class="command">
+docker run -p 8000:80 gitlab/gitlab-ce
+</pre>
+
+        <h3>Background Mode</h3>
+
+<pre class="command">
+docker run -d \
+  --name gitlab \
+  -p 8000:80 \
+  gitlab/gitlab-ce
+</pre>
+
+        <h3>Check Running Containers</h3>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <h3>Latest Created Container</h3>
+
+<pre class="command">
+docker ps -l
+</pre>
+
+        <h3>Get Initial Root Password</h3>
+
+<pre class="command">
+docker exec -it CONTAINER_ID cat /etc/gitlab/initial_root_password
+</pre>
+
+        <h3>GitLab Browser</h3>
+
+<pre>
+http://localhost:8000
+</pre>
+
+    </section>
+
+
+    <!-- BETTER RUN COMMAND -->
+
+    <section>
+
+        <h2>18. Recommended Run Command</h2>
+
+        <p>
+            Learning ke liye simple command:
+        </p>
+
+<pre class="command">
+docker run -p 8000:80 gitlab/gitlab-ce
+</pre>
+
+        <p>
+            convenient hai, lekin practical environment me container ko name dena
+            aur detached mode use karna easier ho sakta hai:
+        </p>
+
+<pre class="command">
+docker run -d \
+  --name gitlab \
+  -p 8000:80 \
+  gitlab/gitlab-ce
+</pre>
+
+        <p>
+            Iske baad:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            aur logs:
+        </p>
+
+<pre class="command">
+docker logs -f gitlab
+</pre>
+
+    </section>
+
+
+    <!-- LOGS -->
+
+    <section>
+
+        <h2>19. GitLab Container Logs</h2>
+
+        <p>
+            GitLab startup process ko monitor karne ke liye:
+        </p>
+
+<pre class="command">
+docker logs gitlab
+</pre>
+
+        <p>
+            Live logs:
+        </p>
+
+<pre class="command">
+docker logs -f gitlab
+</pre>
+
+        <p>
+            Ye especially useful hai jab:
+        </p>
+
+        <ul>
+            <li>GitLab page open nahi ho rahi ho.</li>
+            <li>Container startup complete nahi hua ho.</li>
+            <li>Application initialization me problem ho.</li>
+        </ul>
+
+    </section>
+
+
+    <!-- EXEC -->
+
+    <section>
+
+        <h2>20. docker exec Kya Karta Hai?</h2>
+
+        <p>
+            <code>docker exec</code> running container ke andar command execute
+            karne ke liye use hota hai.
+        </p>
+
+        <h3>General Syntax</h3>
+
+<pre>
+docker exec [OPTIONS] CONTAINER COMMAND
+</pre>
+
+        <h3>Example</h3>
+
+<pre class="command">
+docker exec -it gitlab bash
+</pre>
+
+        <p>
+            Isse container ke andar interactive shell open ki ja sakti hai.
+        </p>
+
+        <p>
+            Direct file read:
+        </p>
+
+<pre class="command">
+docker exec -it gitlab cat /etc/gitlab/initial_root_password
+</pre>
+
+    </section>
+
+
+    <!-- IMPORTANT CORRECTION -->
+
+    <section>
+
+        <h2>21. Important Command Correction</h2>
+
+        <div class="danger">
+            <strong>Incorrect:</strong>
+
+<pre>
+docker exex -it container_id cat/etc/gitlab/initial_root_password
+</pre>
+        </div>
+
+        <div class="success">
+            <strong>Correct:</strong>
+
+<pre>
+docker exec -it CONTAINER_ID cat /etc/gitlab/initial_root_password
+</pre>
+        </div>
+
+        <p>
+            Do important corrections:
+        </p>
+
+        <ol>
+            <li><code>exex</code> nahi, <code>exec</code>.</li>
+            <li><code>cat</code> aur file path ke beech space.</li>
+        </ol>
+
+    </section>
+
+
+    <!-- PASSWORD EXPIRY -->
+
+    <section>
+
+        <h2>22. Initial Root Password Ke Baare Me Important Note</h2>
+
+        <p>
+            GitLab ke Docker setup me generated initial root password
+            installation ke initial period me available hota hai.
+        </p>
+
+        <p>
+            Isliye GitLab start karne ke baad initial password ko jaldi retrieve
+            kar lena useful hai.
+        </p>
+
+        <div class="warning">
+            Agar initial password available nahi mil raha hai, to container logs,
+            GitLab initialization status aur container configuration check karo.
+        </div>
+
+    </section>
+
+
+    <!-- DATA -->
+
+    <section>
+
+        <h2>23. GitLab Data Persistence — Important</h2>
+
+        <p>
+            Abhi humne simple command se GitLab run kiya:
+        </p>
+
+<pre class="command">
+docker run -d \
+  --name gitlab \
+  -p 8000:80 \
+  gitlab/gitlab-ce
+</pre>
+
+        <p>
+            Learning ke liye ye fine hai, lekin real usage me GitLab ka
+            configuration, logs aur application data persist karna important hota hai.
+        </p>
+
+        <p>
+            Isliye production-like setup me GitLab ke persistent directories ko
+            Docker volumes/bind mounts ke saath map kiya jata hai.
+        </p>
+
+        <div class="note">
+            Is chapter ka primary focus GitLab image pull → container run →
+            initial password → login workflow hai. Persistent GitLab storage ko
+            next advanced practical me separately configure karna better hai.
+        </div>
+
+    </section>
+
+
+    <!-- STOP REMOVE -->
+
+    <section>
+
+        <h2>24. GitLab Container Stop & Remove</h2>
+
+        <h3>Stop</h3>
+
+<pre class="command">
+docker stop gitlab
+</pre>
+
+        <h3>Start Again</h3>
+
+<pre class="command">
+docker start gitlab
+</pre>
+
+        <h3>Remove</h3>
+
+<pre class="command">
+docker rm gitlab
+</pre>
+
+        <div class="warning">
+            Container remove karne se pehle ensure karo ki required GitLab data
+            persistent storage me safely maintained hai.
+        </div>
+
+    </section>
+
+
+    <!-- TROUBLESHOOT -->
+
+    <section id="errors">
+
+        <h2>25. Common Problems & Solutions</h2>
+
+        <h3>Problem 1 — Port 8000 Already in Use</h3>
+
+        <pre>
+Bind for 0.0.0.0:8000 failed:
+port is already allocated
+        </pre>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            Ya different host port use karo:
+        </p>
+
+<pre class="command">
+docker run -d \
+  --name gitlab \
+  -p 8001:80 \
+  gitlab/gitlab-ce
+</pre>
+
+        <p>
+            Ab browser:
+        </p>
+
+<pre>
+http://localhost:8001
+</pre>
+
+        <h3>Problem 2 — Browser Me Page Nahi Khul Rahi</h3>
+
+        <p>
+            Container check:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            Logs:
+        </p>
+
+<pre class="command">
+docker logs gitlab
+</pre>
+
+        <h3>Problem 3 — GitLab Startup Slow</h3>
+
+        <p>
+            GitLab ek large application hai.
+            First startup me initialization time lag sakta hai.
+        </p>
+
+        <p>
+            Logs monitor karo:
+        </p>
+
+<pre class="command">
+docker logs -f gitlab
+</pre>
+
+        <h3>Problem 4 — Initial Password File Nahi Mil Rahi</h3>
+
+        <p>
+            Pehle check karo ki container running hai:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            Phir:
+        </p>
+
+<pre class="command">
+docker exec -it gitlab cat /etc/gitlab/initial_root_password
+</pre>
+
+        <h3>Problem 5 — Container Name Already Exists</h3>
+
+<pre>
+Conflict. The container name "/gitlab" is already in use.
+</pre>
+
+        <p>
+            Existing container check:
+        </p>
+
+<pre class="command">
+docker ps -a
+</pre>
+
+        <p>
+            Agar old container remove karna safe ho:
+        </p>
+
+<pre class="command">
+docker rm -f gitlab
+</pre>
+
+        <div class="danger">
+            <strong>Warning:</strong>
+            <code>docker rm -f</code> running container ko forcefully remove kar sakta hai.
+            Important data ho to pehle persistence check karo.
+        </div>
+
+    </section>
+
+
+    <!-- INTERVIEW -->
+
+    <section id="interview">
+
+        <h2>26. Interview Questions</h2>
+
+        <h3>Q1. GitLab ko Docker me kaise run kar sakte hain?</h3>
+
+        <p>
+            GitLab ki Docker image pull karke us image se container run kiya ja sakta hai.
+            Example:
+        </p>
+
+<pre>
+docker pull gitlab/gitlab-ce
+</pre>
+
+        <h3>Q2. <code>-p 8000:80</code> ka kya meaning hai?</h3>
+
+        <p>
+            Host machine ke port 8000 ko container ke port 80 se map karta hai.
+        </p>
+
+        <h3>Q3. GitLab ko browser me kaise open karenge?</h3>
+
+<pre>
+http://localhost:8000
+</pre>
+
+        <h3>Q4. <code>docker ps -l</code> kya karta hai?</h3>
+
+        <p>
+            Latest created container ki information show karta hai.
+        </p>
+
+        <h3>Q5. Container ke andar command kaise execute karte hain?</h3>
+
+<pre>
+docker exec -it CONTAINER_ID COMMAND
+</pre>
+
+        <h3>Q6. GitLab initial root password kaise retrieve karenge?</h3>
+
+<pre>
+docker exec -it CONTAINER_ID cat /etc/gitlab/initial_root_password
+</pre>
+
+        <h3>Q7. GitLab default root username kya hai?</h3>
+
+<pre>
+root
+</pre>
+
+        <h3>Q8. GitLab container immediately ready kyu nahi hota?</h3>
+
+        <p>
+            GitLab ek complex application stack hai aur first startup par
+            initialization/configuration processes complete hone me time lag sakta hai.
+        </p>
+
+    </section>
+
+
+    <!-- PRACTICAL ASSIGNMENT -->
+
+    <section>
+
+        <h2>27. Practical Assignment</h2>
+
+        <ol>
+            <li>Docker version check karo.</li>
+            <li><code>gitlab/gitlab-ce</code> image pull karo.</li>
+            <li>Downloaded image verify karo.</li>
+            <li>GitLab container ko port <code>8000:80</code> ke saath run karo.</li>
+            <li><code>docker ps</code> se container verify karo.</li>
+            <li>Chrome me <code>http://localhost:8000</code> open karo.</li>
+            <li>New terminal open karo.</li>
+            <li><code>docker ps -l</code> run karo.</li>
+            <li>Container ID identify karo.</li>
+            <li><code>docker exec</code> se initial root password retrieve karo.</li>
+            <li>Username <code>root</code> se login karo.</li>
+            <li>GitLab dashboard explore karo.</li>
+            <li>Container logs check karo.</li>
+            <li>Container stop/start karke lifecycle observe karo.</li>
+        </ol>
+
+    </section>
+
+
+    <!-- FINAL FLOW -->
+
+    <section>
+
+        <h2>28. Final Complete Flow</h2>
+
+<pre>
+1. Check Docker
+       ↓
+docker --version
+       ↓
+2. Pull GitLab Image
+       ↓
+docker pull gitlab/gitlab-ce
+       ↓
+3. Run Container
+       ↓
+docker run -p 8000:80 gitlab/gitlab-ce
+       ↓
+4. Open Chrome
+       ↓
+http://localhost:8000
+       ↓
+5. Open New Terminal
+       ↓
+6. Find Container
+       ↓
+docker ps -l
+       ↓
+7. Copy Container ID
+       ↓
+8. Get Initial Password
+       ↓
+docker exec -it CONTAINER_ID \
+cat /etc/gitlab/initial_root_password
+       ↓
+9. Copy Password
+       ↓
+10. Chrome
+       ↓
+Username: root
+Password: Initial Root Password
+       ↓
+11. GitLab Dashboard
+</pre>
+
+        <div class="success">
+            <strong>Docker → GitLab → DevOps:</strong><br>
+            Ab tumne ek real DevOps tool ko Docker container ke andar
+            deploy karke access karna seekh liya.
+        </div>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+
+    <section>
+
+        <h2>29. Final Summary</h2>
+
+        <ul>
+            <li>GitLab ko Docker image ke through run kiya ja sakta hai.</li>
+            <li><code>gitlab/gitlab-ce</code> GitLab Community Edition image hai.</li>
+            <li><code>docker pull</code> Docker Hub se image download karta hai.</li>
+            <li><code>docker run</code> image se container create/start karta hai.</li>
+            <li><code>-p 8000:80</code> host port 8000 ko container port 80 se map karta hai.</li>
+            <li><code>http://localhost:8000</code> se local browser me GitLab access kiya ja sakta hai.</li>
+            <li><code>docker ps -l</code> latest created container identify karne me useful hai.</li>
+            <li><code>docker exec</code> running container ke andar command execute karta hai.</li>
+            <li><code>/etc/gitlab/initial_root_password</code> se initial root password retrieve kiya ja sakta hai.</li>
+            <li>GitLab login ke liye initial username <code>root</code> hota hai.</li>
+            <li>First GitLab startup me initialization ke karan wait karna pad sakta hai.</li>
+            <li>Real deployment me persistent storage aur secure configuration important hai.</li>
+        </ul>
+
+    </section>
+
+</div>
+
+<footer>
+    <p>Docker Learning Series — GitLab on Docker</p>
+    <p>Part 6: Setup & Run GitLab Community Edition</p>
+</footer>
+
+</body>
+</html>
