@@ -2,35 +2,65 @@
 
 Welcome to my **Docker Learning Repository**.
 
-This repository contains my **Docker learning notes, practical examples, commands, and Node.js mini-project experiments**.  
-I am building this repository step-by-step while learning Docker and DevOps.
+This repository contains my **Docker theory notes, practical commands, Node.js containerization project, Docker Compose experiments, Play with Docker practice, and GitLab on Docker setup**.
+
+The purpose of this repository is to learn Docker from **beginner level to practical DevOps usage** through hands-on implementation.
 
 ---
 
 ## 📚 About This Repository
 
-The main goal of this repository is to learn Docker from **beginner to practical level** by understanding concepts and implementing them with real examples.
+I am learning Docker by combining:
 
-Topics are documented in HTML pages so that each concept can be easily revised later.
+- 📖 Theory
+- 💻 Docker Commands
+- 🧪 Practical Experiments
+- 🟢 Node.js Containerization
+- 🖼️ Docker Images
+- 📦 Docker Containers
+- 💾 Docker Volumes
+- ⚙️ Docker Compose
+- ☁️ Play with Docker
+- 🦊 GitLab on Docker
 
-### Learning Approach
+The repository is continuously updated as I learn new Docker and DevOps concepts.
+
+---
+
+# 🗺️ Docker Learning Path
 
 ```text
-Docker Theory
-     ↓
-Docker Commands
-     ↓
-Practical Examples
-     ↓
-Node.js Mini Project
-     ↓
+Docker Introduction
+        ↓
 Docker Images
-     ↓
+        ↓
 Docker Containers
-     ↓
-Volumes & Persistent Data
-     ↓
-Advanced Docker Concepts
+        ↓
+Docker Hub
+        ↓
+Docker Desktop
+        ↓
+Pull & Run Images
+        ↓
+Node.js Application
+        ↓
+Dockerfile
+        ↓
+.dockerignore
+        ↓
+Image Creation
+        ↓
+Image Versioning
+        ↓
+Docker Volumes
+        ↓
+Docker Compose
+        ↓
+Play with Docker
+        ↓
+GitLab on Docker
+        ↓
+Advanced Docker & DevOps
 ```
 
 ---
@@ -39,14 +69,14 @@ Advanced Docker Concepts
 
 ## 1. Docker Introduction
 
-Basic Docker concepts and fundamentals:
+Basic Docker fundamentals:
 
 - What is Docker?
 - Why Docker?
 - Problems before Docker
 - Containers
-- Docker Images
-- Docker benefits
+- Images
+- Benefits of Docker
 - Docker workflow
 
 📄 `docker-intro/introduction.html`
@@ -55,7 +85,7 @@ Basic Docker concepts and fundamentals:
 
 ## 2. Docker Hub & Docker Desktop
 
-Understanding Docker ecosystem and local Docker environment.
+Understanding Docker's ecosystem and local Docker environment.
 
 Topics include:
 
@@ -63,7 +93,7 @@ Topics include:
 - Docker Desktop
 - Docker Hub vs Docker Desktop
 - Docker Desktop installation
-- Basic Docker environment setup
+- Docker environment verification
 
 📄 `hub-desktop/hub-desktop.html`
 
@@ -73,25 +103,25 @@ Topics include:
 
 ## 3. Docker Images & Containers
 
-Understanding the difference between Docker Images and Containers.
+Understanding the core concepts of Docker Images and Containers.
 
 Topics include:
 
-- Docker Image
-- Docker Container
+- Docker Images
+- Docker Containers
 - Image vs Container
-- Creating containers
-- Running containers
 - Container lifecycle
 - Basic Docker commands
+- Running containers
+- Managing containers
 
 📄 `images-container/images-container.html`
 
 ---
 
-# 🚀 Docker Image Pull & Run
+# 🚀 Pull & Run Docker Images
 
-Learning how to download images from Docker Hub and run containers.
+Learning how to download images from Docker Hub and run them as containers.
 
 Topics include:
 
@@ -111,9 +141,9 @@ Topics include:
 
 # 🟢 Node.js Docker Mini Project
 
-A Node.js application is used throughout the practical Docker learning process.
+A Node.js application is used as the main practical project throughout this repository.
 
-The mini-project helps understand how a real application can be:
+The project demonstrates how a real application can be containerized using Docker.
 
 ```text
 Node.js Application
@@ -124,37 +154,33 @@ Docker Image
         ↓
 Docker Container
         ↓
-Application Running
+Running Application
 ```
 
-Project files:
+The mini-project is also extended with:
 
-```text
-node-app-mini/
-├── .dockerignore
-├── dockerfile
-├── index.js
-├── p1.txt
-├── p2.txt
-├── p3.txt
-├── package.json
-└── package-lock.json
-```
+- `.dockerignore`
+- Image tagging
+- Image versioning
+- Docker Volumes
+- Docker Compose
+- Docker Hub
+- Play with Docker
 
 ---
 
 # 🧹 .dockerignore
 
-The project also includes practical learning for `.dockerignore`.
+Learning how to control which files are included in the Docker build context.
 
 Topics include:
 
 - What is `.dockerignore`?
-- Why use `.dockerignore`?
-- Excluding unnecessary files from Docker build context
+- Why `.dockerignore` is required
 - Ignoring `node_modules`
-- Ignoring environment/configuration files
+- Ignoring unnecessary files
 - Reducing Docker build context
+- Docker build best practices
 
 📄 `node-app-mini/.dockerignore`
 
@@ -162,7 +188,7 @@ Topics include:
 
 # 🖼️ Docker Image Creation
 
-The Node.js mini-project is used to understand how to create a Docker image.
+Learning how to create a Docker image for the Node.js application.
 
 Topics include:
 
@@ -183,32 +209,15 @@ Example:
 docker build -t node-docker-app:1.0 .
 ```
 
----
+📄 `node-app-mini/dockerfile`
 
-# ▶️ Docker Container Run
-
-After creating the image, the application is run inside a Docker container.
-
-Example:
-
-```bash
-docker run -d \
-  --name node-app-container \
-  -p 3000:3000 \
-  node-docker-app:1.0
-```
-
-The application can then be accessed through:
-
-```text
-http://localhost:3000
-```
+📄 `node-mini-app-html/image-create&run.html`
 
 ---
 
 # 🏷️ Docker Image Versioning
 
-The Node.js mini-project is also used to understand Docker image tags and versions.
+Learning how to maintain different versions of the same application image.
 
 Examples:
 
@@ -226,24 +235,23 @@ docker images
 docker tag node-docker-app:1.0 node-docker-app:stable
 ```
 
-This helps understand how different versions of an application image can be maintained.
+This helps understand image tagging and application version management.
 
 ---
 
 # 💾 Docker Volumes
 
-Persistent storage is another important part of this learning project.
+Learning persistent storage in Docker.
 
 Topics include:
 
 - What is Docker Volume?
-- Why volumes are required
-- Persistent data
-- Creating a volume
-- Mounting a volume
-- Using volume with containers
+- Why persistent storage is required
 - Container vs Volume
-- Volume lifecycle
+- Creating volumes
+- Mounting volumes
+- Using volumes with containers
+- Persistent data
 - Updating volume data
 - Dockerfile and Volume relationship
 
@@ -253,7 +261,7 @@ Example:
 docker volume create node-app-data
 ```
 
-Run a container with volume:
+Run container with volume:
 
 ```bash
 docker run -d \
@@ -265,77 +273,373 @@ docker run -d \
 
 ---
 
+# ⚙️ Docker Compose
+
+Docker Compose is used to define and manage application services using a YAML configuration file.
+
+The Node.js mini-project includes a Compose configuration:
+
+📄 `node-app-mini/compose.yml`
+
+Compose concepts covered:
+
+- `services`
+- `build`
+- `context`
+- `dockerfile`
+- `image`
+- `container_name`
+- `ports`
+- `volumes`
+- `environment`
+- `command`
+- `restart`
+- `depends_on`
+- `networks`
+
+Example:
+
+```yaml
+services:
+
+  app:
+
+    build:
+      context: .
+      dockerfile: dockerfile
+
+    image: node-docker-app:1.0
+
+    container_name: node-app-compose
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - node-app-data:/app/data
+
+    environment:
+      NODE_ENV: production
+
+    restart: unless-stopped
+
+volumes:
+
+  node-app-data:
+```
+
+Important Compose commands:
+
+```bash
+docker compose config
+
+docker compose build
+
+docker compose up -d
+
+docker compose up -d --build
+
+docker compose ps
+
+docker compose logs
+
+docker compose pull
+
+docker compose down
+```
+
+📄 `node-mini-app-html/compose_ymal.html`
+
+---
+
+# ☁️ Play with Docker
+
+Learning how to use Docker in a browser-based Docker playground.
+
+Topics include:
+
+- What is Play with Docker?
+- Why Play with Docker?
+- Docker image hosting
+- Docker Hub integration
+- Pulling Docker images
+- Running containers
+- Running Compose applications
+- Port access
+- Practical Docker experiments
+
+Learning flow:
+
+```text
+Local Node.js Project
+        ↓
+Docker Image
+        ↓
+Docker Hub
+        ↓
+Play with Docker
+        ↓
+docker pull
+        ↓
+Docker Container
+        ↓
+Browser
+```
+
+📄 `play_with_docker/com-image_play_docker.html`
+
+---
+
+# 🦊 GitLab on Docker
+
+Learning how to run GitLab Community Edition inside a Docker container.
+
+Topics include:
+
+- GitLab basics
+- GitLab Docker image
+- Pulling GitLab image
+- Running GitLab container
+- Port mapping
+- Accessing GitLab from browser
+- Finding container ID
+- `docker ps`
+- `docker ps -l`
+- `docker exec`
+- Getting initial root password
+- GitLab login
+- Container logs
+- GitLab container lifecycle
+- Basic troubleshooting
+
+GitLab image:
+
+```text
+gitlab/gitlab-ce
+```
+
+Pull image:
+
+```bash
+docker pull gitlab/gitlab-ce
+```
+
+Run GitLab:
+
+```bash
+docker run -p 8000:80 gitlab/gitlab-ce
+```
+
+Access GitLab:
+
+```text
+http://localhost:8000
+```
+
+Find latest container:
+
+```bash
+docker ps -l
+```
+
+Get initial root password:
+
+```bash
+docker exec -it CONTAINER_ID cat /etc/gitlab/initial_root_password
+```
+
+Login:
+
+```text
+Username: root
+Password: Initial Root Password
+```
+
+📄 `setup-run gitlab-docker/docker-gitlab.html`
+
+---
+
 # 🛠️ Important Docker Commands
 
-Some of the commands used throughout this repository:
-
-### Images
+## Images
 
 ```bash
 docker images
+
 docker pull IMAGE
+
 docker build -t IMAGE:TAG .
+
 docker tag IMAGE:TAG NEW_IMAGE:TAG
+
+docker push IMAGE:TAG
+
 docker rmi IMAGE
 ```
 
-### Containers
+---
+
+## Containers
 
 ```bash
 docker ps
+
 docker ps -a
+
+docker ps -l
+
 docker run IMAGE
-docker stop CONTAINER
+
 docker start CONTAINER
+
+docker stop CONTAINER
+
 docker restart CONTAINER
+
 docker rm CONTAINER
+
 docker logs CONTAINER
+
 docker exec -it CONTAINER sh
 ```
 
-### Volumes
+---
+
+## Volumes
 
 ```bash
 docker volume ls
+
 docker volume create VOLUME
+
 docker volume inspect VOLUME
+
 docker volume rm VOLUME
+
 docker volume prune
 ```
 
 ---
 
-# 🧪 Practical Learning
+## Docker Compose
 
-This repository is not only based on theory.
+```bash
+docker compose config
 
-Each major topic is learned using practical examples.
+docker compose build
 
-The learning process follows:
+docker compose up
 
-```text
-Understand
-    ↓
-Write Notes
-    ↓
-Run Command
-    ↓
-Observe Output
-    ↓
-Create Practical
-    ↓
-Troubleshoot Error
-    ↓
-Document Learning
+docker compose up -d
+
+docker compose up -d --build
+
+docker compose ps
+
+docker compose logs
+
+docker compose pull
+
+docker compose stop
+
+docker compose restart
+
+docker compose down
 ```
 
 ---
 
-# 📂 Repository Structure
+# 🧪 Practical Learning Approach
+
+This repository focuses on **hands-on Docker learning**, not only theory.
+
+```text
+Learn Concept
+      ↓
+Understand Why
+      ↓
+Write Command
+      ↓
+Run Command
+      ↓
+Observe Output
+      ↓
+Build Practical
+      ↓
+Troubleshoot Errors
+      ↓
+Document Learning
+      ↓
+Repeat
+```
+
+---
+
+# 🎯 Learning Goals
+
+Through this repository, I am working toward understanding:
+
+- Docker Fundamentals
+- Docker Images
+- Docker Containers
+- Dockerfile
+- Docker Build
+- Docker Run
+- Docker Hub
+- Docker Desktop
+- `.dockerignore`
+- Image Tagging
+- Image Versioning
+- Docker Volumes
+- Persistent Storage
+- Docker Compose
+- YAML Configuration
+- Container Networking
+- Play with Docker
+- Docker Hub Image Distribution
+- GitLab on Docker
+- Container Troubleshooting
+- Docker Best Practices
+
+---
+
+# 🔮 Upcoming Docker Topics
+
+The learning journey will continue with advanced topics such as:
+
+- Docker Bind Mounts
+- Volumes vs Bind Mounts
+- Docker Networking
+- Bridge Network
+- Host Network
+- Docker Compose Advanced
+- Multi-Container Applications
+- Dockerfile Optimization
+- Multi-Stage Builds
+- Docker Image Optimization
+- Environment Variables
+- `.env` Files
+- Docker Secrets
+- Health Checks
+- Docker Registry
+- Docker Hub
+- Node.js + Database with Docker
+- Docker Compose with Database
+- Docker + CI/CD
+- Docker with GitHub Actions
+- Docker with GitLab CI/CD
+- Docker in Cloud
+- Docker Security
+- Container Monitoring
+
+---
+
+# 📂 Repository
 
 ```text
 .
 ├── .gitignore
+├── README.md
 │
 ├── docker-intro/
 │   └── introduction.html
@@ -349,6 +653,7 @@ Document Learning
 │
 ├── node-app-mini/
 │   ├── .dockerignore
+│   ├── compose.yml
 │   ├── dockerfile
 │   ├── index.js
 │   ├── p1.txt
@@ -359,87 +664,59 @@ Document Learning
 │
 ├── node-mini-app-html/
 │   ├── add_volume_image.html
+│   ├── compose_ymal.html
 │   ├── ignore-multiple_image.html
 │   └── image-create&run.html
 │
-└── pull-run_image/
-    └── pull-run.html
+├── play_with_docker/
+│   └── com-image_play_docker.html
+│
+├── pull-run_image/
+│   └── pull-run.html
+│
+└── setup-run gitlab-docker/
+    └── docker-gitlab.html
 ```
 
 ---
 
-# 🎯 Learning Goals
+# 🚀 Project Focus
 
-Through this repository, I am working toward understanding:
-
-- Docker fundamentals
-- Images
-- Containers
-- Dockerfile
-- Docker Build
-- Docker Run
-- Port Mapping
-- Container Lifecycle
-- Docker Hub
-- Docker Desktop
-- `.dockerignore`
-- Image Tagging & Versioning
-- Docker Volumes
-- Persistent Storage
-- Node.js application containerization
-- Docker troubleshooting
-- Docker best practices
-
----
-
-# 🔮 Upcoming Topics
-
-The Docker learning journey will continue with topics such as:
-
-- Bind Mounts
-- Volumes vs Bind Mounts
-- Docker Networking
-- Docker Compose
-- Dockerfile Optimization
-- Docker Image Optimization
-- Multi-stage Builds
-- Environment Variables
-- Docker Secrets
-- Container Health Checks
-- Docker Registry
-- Docker Hub Push/Pull
-- Docker Compose with Node.js
-- Node.js + Database using Docker
-- Docker + CI/CD
-- Docker in DevOps
+```text
+Docker
+  +
+Node.js
+  +
+Dockerfile
+  +
+Docker Compose
+  +
+Docker Volumes
+  +
+Docker Hub
+  +
+Play with Docker
+  +
+GitLab
+  =
+Practical DevOps Foundation
+```
 
 ---
 
-# 🧑‍💻 Learning Project
-
-**Project:** Docker Learning & Node.js Containerization
-
-**Focus:** Docker + DevOps
-
-**Application:** Node.js
-
-**Purpose:** Learn Docker concepts through practical implementation.
-
----
-
-## ⭐ Learning Philosophy
+# ⭐ Learning Philosophy
 
 > **Learn → Practice → Break → Troubleshoot → Fix → Document → Repeat**
 
-This repository represents my practical journey of learning Docker and building a strong foundation for **DevOps, Cloud, and Containerization**.
+This repository represents my practical journey of learning **Docker, Containerization, and DevOps** through real commands and projects.
 
 ---
 
-## 📌 Status
+# 📌 Current Status
 
-🚧 **Currently Learning Docker**
+🚧 **Docker Learning in Progress**
 
-More practical examples and advanced Docker topics will be added progressively.
+I am continuously adding new concepts, practical examples, commands, and DevOps experiments to this repository.
 
 ---
 
