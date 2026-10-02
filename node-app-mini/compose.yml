@@ -1,0 +1,6 @@
+services:
+  img:
+    build: .
+    container_name: Compose_Container
+    ports:
+      - 3690:4000
