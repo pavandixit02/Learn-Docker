@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Play with Docker - Node.js Mini Project | Part 5</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.7;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a, #1d4ed8);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #dbeafe;
+            font-size: 18px;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #111827;
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 9px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1150px;
+            margin: 30px auto;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            color: #1d4ed8;
+            border-left: 5px solid #2563eb;
+            padding-left: 12px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #111827;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #e5e7eb;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 18px 0;
+            font-family: Consolas, monospace;
+            line-height: 1.6;
+        }
+
+        .command {
+            background: #020617;
+            color: #86efac;
+        }
+
+        .yaml {
+            background: #111827;
+            color: #fde68a;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #f0fdf4;
+            border-left: 5px solid #16a34a;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .danger {
+            background: #fef2f2;
+            border-left: 5px solid #dc2626;
+            padding: 18px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .diagram {
+            background: #020617;
+            color: #e5e7eb;
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            white-space: pre;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .step {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .highlight {
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 30px;
+        }
+
+        @media (max-width: 700px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Play with Docker</h1>
+    <p>Node.js Docker Mini Project — Part 5</p>
+    <p>Docker Hub Image + Compose + Play with Docker</p>
+</header>
+
+<nav>
+    <a href="#pwd">PWD</a>
+    <a href="#why">Why PWD?</a>
+    <a href="#requirements">Requirements</a>
+    <a href="#dockerhub">Docker Hub</a>
+    <a href="#compose">Compose</a>
+    <a href="#host">Host Image</a>
+    <a href="#play">Play</a>
+    <a href="#pull">Pull</a>
+    <a href="#run">Run</a>
+    <a href="#errors">Errors</a>
+    <a href="#interview">Interview</a>
+</nav>
+
+<div class="container">
+
+    <!-- INTRODUCTION -->
+
+    <section id="pwd">
+
+        <h2>1. Play with Docker Kya Hai?</h2>
+
+        <p>
+            <strong>Play with Docker (PWD)</strong> ek browser-based Docker playground
+            hai jahan hum Docker commands aur containers ko cloud environment me
+            practice kar sakte hain.
+        </p>
+
+        <p>
+            Iska main purpose Docker ko practice karna hai bina apne local computer
+            par complete Docker environment configure kiye.
+        </p>
+
+        <div class="success">
+            <strong>Simple Definition:</strong><br>
+            Play with Docker ek temporary online Docker environment hai
+            jahan aap Docker images, containers aur Docker commands ko practically
+            run karke practice kar sakte ho.
+        </div>
+
+        <h3>Real-Life Analogy</h3>
+
+        <p>
+            Maan lo aapke laptop me Docker install nahi hai,
+            lekin aap Docker commands practice karna chahte ho.
+        </p>
+
+        <p>
+            PWD ko aap ek <strong>temporary online Docker laboratory</strong>
+            ki tarah samajh sakte ho.
+        </p>
+
+    </section>
+
+
+    <!-- WHY -->
+
+    <section id="why">
+
+        <h2>2. Play with Docker Ki Zarurat Kyu Hoti Hai?</h2>
+
+        <ul>
+            <li>Docker commands practice karne ke liye.</li>
+            <li>Docker containers run karne ke liye.</li>
+            <li>Docker images test karne ke liye.</li>
+            <li>Docker Hub images pull karne ke liye.</li>
+            <li>Networking concepts practice karne ke liye.</li>
+            <li>Docker Compose practice karne ke liye.</li>
+            <li>Cloud-like temporary environment me Docker seekhne ke liye.</li>
+        </ul>
+
+        <div class="note">
+            PWD learning aur experimentation ke liye useful hai.
+            Production hosting ke replacement ke roop me ise treat nahi karna chahiye.
+        </div>
+
+    </section>
+
+
+    <!-- LOCAL VS PWD -->
+
+    <section>
+
+        <h2>3. Local Docker vs Play with Docker</h2>
+
+        <table>
+
+            <tr>
+                <th>Local Docker</th>
+                <th>Play with Docker</th>
+            </tr>
+
+            <tr>
+                <td>Apne laptop/PC par Docker run hota hai.</td>
+                <td>Browser-based temporary Docker environment.</td>
+            </tr>
+
+            <tr>
+                <td>Local files directly available.</td>
+                <td>Environment remote/temporary hota hai.</td>
+            </tr>
+
+            <tr>
+                <td>Long-term development ke liye useful.</td>
+                <td>Learning/testing ke liye useful.</td>
+            </tr>
+
+            <tr>
+                <td>Resources aapke computer par depend karte hain.</td>
+                <td>Temporary cloud environment provide karta hai.</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- WORKFLOW -->
+
+    <section>
+
+        <h2>4. Hamare Project Ka PWD Workflow</h2>
+
+        <div class="diagram">
+Local Node.js Project
+        |
+        v
+Dockerfile
+        |
+        v
+Docker Compose
+        |
+        v
+Docker Image
+        |
+        v
+Docker Hub
+        |
+        v
+Play with Docker
+        |
+        v
+docker pull
+        |
+        v
+Docker Container
+        |
+        v
+Browser
+        |
+        v
+Node.js Application
+        </div>
+
+    </section>
+
+
+    <!-- REQUIREMENTS -->
+
+    <section id="requirements">
+
+        <h2>5. PWD Practical Ke Liye Requirements</h2>
+
+        <p>
+            Hamare practical ke liye following cheezein ready honi chahiye:
+        </p>
+
+        <ul>
+            <li>Docker installed locally.</li>
+            <li>Node.js mini-project.</li>
+            <li>Dockerfile.</li>
+            <li><code>compose.yaml</code>.</li>
+            <li>Docker Hub account.</li>
+            <li>Docker Hub par pushed image.</li>
+            <li>Play with Docker environment.</li>
+        </ul>
+
+    </section>
+
+
+    <!-- PROJECT -->
+
+    <section>
+
+        <h2>6. Hamara Existing Node.js Mini Project</h2>
+
+<pre>
+node-app-mini/
+│
+├── .dockerignore
+├── dockerfile
+├── index.js
+├── package.json
+├── package-lock.json
+├── p1.txt
+├── p2.txt
+└── p3.txt
+</pre>
+
+        <p>
+            Isi project ko hum PWD par run karenge.
+        </p>
+
+    </section>
+
+
+    <!-- COMPOSE -->
+
+    <section id="compose">
+
+        <h2>7. Local compose.yaml</h2>
+
+        <p>
+            Previous part me humne Compose file banayi thi.
+            Yahan uska simplified version use karenge.
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    build:
+      context: .
+      dockerfile: dockerfile
+
+    image: node-docker-app:1.0
+
+    container_name: node-app-compose
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - node-app-data:/app/data
+
+    environment:
+      NODE_ENV: production
+
+    restart: unless-stopped
+
+volumes:
+
+  node-app-data:
+</pre>
+
+        <p>
+            Ye Compose file local Dockerfile se image build kar sakti hai.
+        </p>
+
+    </section>
+
+
+    <!-- BUILD -->
+
+    <section>
+
+        <h2>8. Compose File Se Image Build Karna</h2>
+
+        <p>
+            Project directory me jao:
+        </p>
+
+<pre class="command">
+cd node-app-mini
+</pre>
+
+        <p>
+            Compose configuration check karo:
+        </p>
+
+<pre class="command">
+docker compose config
+</pre>
+
+        <p>
+            Ab image build karo:
+        </p>
+
+<pre class="command">
+docker compose build
+</pre>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker images
+</pre>
+
+        <p>
+            Image:
+        </p>
+
+<pre>
+node-docker-app:1.0
+</pre>
+
+        <div class="success">
+            Ab hamare paas local Docker image ready hai.
+        </div>
+
+    </section>
+
+
+    <!-- DOCKER HUB -->
+
+    <section id="dockerhub">
+
+        <h2>9. Play with Docker Tak Image Kaise Pahunchegi?</h2>
+
+        <p>
+            PWD ek separate environment hai. Aapke local computer par bani
+            image automatically PWD me available nahi hoti.
+        </p>
+
+        <p>
+            Isliye image ko ek Docker Registry par push karna convenient workflow hai.
+            Learning ke liye hum Docker Hub use karenge.
+        </p>
+
+        <div class="diagram">
+Local Docker
+     |
+     | docker build
+     v
+Local Image
+     |
+     | docker tag
+     v
+Docker Hub Image Name
+     |
+     | docker push
+     v
+Docker Hub
+     |
+     | docker pull
+     v
+Play with Docker
+        </div>
+
+    </section>
+
+
+    <!-- LOGIN -->
+
+    <section>
+
+        <h2>10. Docker Hub Login</h2>
+
+        <p>
+            Terminal me Docker Hub login:
+        </p>
+
+<pre class="command">
+docker login
+</pre>
+
+        <p>
+            Apne Docker Hub credentials ke according authentication complete karo.
+        </p>
+
+        <div class="warning">
+            Password ko source code, README, Dockerfile ya compose.yaml me
+            hard-code mat karo.
+        </div>
+
+    </section>
+
+
+    <!-- TAG -->
+
+    <section>
+
+        <h2>11. Local Image Ko Docker Hub Name Dena</h2>
+
+        <p>
+            Local image:
+        </p>
+
+<pre>
+node-docker-app:1.0
+</pre>
+
+        <p>
+            Docker Hub repository:
+        </p>
+
+<pre>
+pavandixit/node-docker-app
+</pre>
+
+        <p>
+            Tag command:
+        </p>
+
+<pre class="command">
+docker tag node-docker-app:1.0 pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker images
+</pre>
+
+        <p>
+            Ab image ke paas Docker Hub compatible tag hai.
+        </p>
+
+    </section>
+
+
+    <!-- PUSH -->
+
+    <section>
+
+        <h2>12. Docker Hub Par Image Push Karna</h2>
+
+<pre class="command">
+docker push pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            Docker image ke layers Docker Hub registry par upload honge.
+        </p>
+
+        <div class="success">
+            Push complete hone ke baad PWD jaise external Docker environment
+            image ko Docker Hub se pull kar sakte hain.
+        </div>
+
+    </section>
+
+
+    <!-- PWD OPEN -->
+
+    <section id="host">
+
+        <h2>13. Play with Docker Open Karna</h2>
+
+        <p>
+            Browser me Play with Docker open karo aur Docker account ke through
+            sign in karke playground start karo.
+        </p>
+
+        <p>
+            Playground ke andar Docker environment/instance create karo.
+        </p>
+
+        <div class="note">
+            PWD ka interface time ke saath change ho sakta hai,
+            isliye buttons/labels ka exact text version ke according different ho sakta hai.
+        </div>
+
+    </section>
+
+
+    <!-- INSTANCE -->
+
+    <section>
+
+        <h2>14. PWD Instance Kya Hai?</h2>
+
+        <p>
+            PWD playground ke andar aap ek Docker instance start kar sakte ho.
+        </p>
+
+        <p>
+            Simple flow:
+        </p>
+
+<pre>
+Playground
+    |
+    v
+Instance
+    |
+    v
+Docker CLI
+    |
+    v
+Docker Commands
+</pre>
+
+        <p>
+            Instance ke terminal me normal Docker commands execute ki ja sakti hain.
+        </p>
+
+    </section>
+
+
+    <!-- PULL -->
+
+    <section id="pull">
+
+        <h2>15. PWD Me Docker Hub Image Pull Karna</h2>
+
+        <p>
+            Ab PWD terminal me Docker Hub se image pull karo:
+        </p>
+
+<pre class="command">
+docker pull pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            Verify:
+        </p>
+
+<pre class="command">
+docker images
+</pre>
+
+        <p>
+            Ab PWD ke Docker environment me:
+        </p>
+
+<pre>
+pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            available honi chahiye.
+        </p>
+
+    </section>
+
+
+    <!-- RUN -->
+
+    <section id="run">
+
+        <h2>16. PWD Me Image Directly Run Karna</h2>
+
+        <p>
+            Image pull karne ke baad directly container run kar sakte ho:
+        </p>
+
+<pre class="command">
+docker run -d \
+  --name node-app-pwd \
+  -p 3000:3000 \
+  pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            Logs:
+        </p>
+
+<pre class="command">
+docker logs node-app-pwd
+</pre>
+
+    </section>
+
+
+    <!-- PORT -->
+
+    <section>
+
+        <h2>17. PWD Me Port Access</h2>
+
+        <p>
+            Local computer par hum normally:
+        </p>
+
+<pre>
+http://localhost:3000
+</pre>
+
+        <p>
+            use karte hain.
+        </p>
+
+        <p>
+            PWD me container remote playground instance par run ho raha hota hai,
+            isliye PWD ka provided port-access mechanism use karke exposed
+            application ko browser me open karna hota hai.
+        </p>
+
+        <div class="success">
+            <strong>Important Concept:</strong><br>
+            <code>-p 3000:3000</code> container port ko instance ke accessible
+            port se expose karta hai. PWD interface us port ko browser me open
+            karne ka option provide karta hai.
+        </div>
+
+    </section>
+
+
+    <!-- COMPOSE PWD -->
+
+    <section>
+
+        <h2>18. PWD Me Compose Ke Saath Run Karna</h2>
+
+        <p>
+            Agar PWD me Compose use karna hai aur image Docker Hub par available hai,
+            to local <code>build</code> ke instead registry image reference karna convenient hai.
+        </p>
+
+        <p>
+            PWD me <code>compose.yaml</code> create karo:
+        </p>
+
+<pre class="yaml">
+services:
+
+  app:
+
+    image: pavandixit/node-docker-app:1.0
+
+    container_name: node-app-pwd
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - node-app-data:/app/data
+
+    environment:
+      NODE_ENV: production
+
+    restart: unless-stopped
+
+volumes:
+
+  node-app-data:
+</pre>
+
+        <div class="note">
+            Yahan <code>build:</code> intentionally remove kiya gaya hai,
+            kyunki PWD me hum Docker Hub se already-built image use kar rahe hain.
+        </div>
+
+    </section>
+
+
+    <!-- CREATE FILE PWD -->
+
+    <section>
+
+        <h2>19. PWD Me compose.yaml Create Karna</h2>
+
+        <p>
+            PWD terminal me:
+        </p>
+
+<pre class="command">
+mkdir node-app
+cd node-app
+</pre>
+
+        <p>
+            File create:
+        </p>
+
+<pre class="command">
+touch compose.yaml
+</pre>
+
+        <p>
+            File edit:
+        </p>
+
+<pre class="command">
+vi compose.yaml
+</pre>
+
+        <p>
+            Ya PWD environment me available editor ke according file create/edit
+            kar sakte ho.
+        </p>
+
+    </section>
+
+
+    <!-- COMPOSE PULL -->
+
+    <section>
+
+        <h2>20. PWD Me Compose Image Pull</h2>
+
+        <p>
+            Compose file me image:
+        </p>
+
+<pre>
+pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            specified hai.
+        </p>
+
+        <p>
+            Ab:
+        </p>
+
+<pre class="command">
+docker compose pull
+</pre>
+
+        <p>
+            Docker Hub se image pull hogi.
+        </p>
+
+    </section>
+
+
+    <!-- COMPOSE UP -->
+
+    <section>
+
+        <h2>21. PWD Me Compose Se Application Run</h2>
+
+<pre class="command">
+docker compose up -d
+</pre>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker compose ps
+</pre>
+
+        <p>
+            Logs:
+        </p>
+
+<pre class="command">
+docker compose logs
+</pre>
+
+        <p>
+            Live logs:
+        </p>
+
+<pre class="command">
+docker compose logs -f
+</pre>
+
+        <div class="success">
+            Ab same Node.js Docker image PWD environment me
+            Compose ke through run ho rahi hai.
+        </div>
+
+    </section>
+
+
+    <!-- IMPORTANT DIFFERENCE -->
+
+    <section>
+
+        <h2>22. Local Compose vs PWD Compose</h2>
+
+        <table>
+
+            <tr>
+                <th>Local</th>
+                <th>PWD</th>
+            </tr>
+
+            <tr>
+                <td><code>build:</code> use karke local Dockerfile se image build kar sakte ho.</td>
+                <td>Docker Hub se pre-built image pull karna convenient hai.</td>
+            </tr>
+
+            <tr>
+                <td>Source code local available.</td>
+                <td>Registry image available honi chahiye.</td>
+            </tr>
+
+            <tr>
+                <td>Local volume/storage available.</td>
+                <td>Temporary playground environment.</td>
+            </tr>
+
+            <tr>
+                <td>Application localhost se access.</td>
+                <td>PWD instance ke exposed port ke through access.</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- IMAGE HOSTING -->
+
+    <section>
+
+        <h2>23. "Image Host Karna" Actually Kya Meaning Rakhta Hai?</h2>
+
+        <p>
+            Docker image ko internet-accessible registry me store karna
+            generally image publish/push karna kehlata hai.
+        </p>
+
+        <p>
+            Is project me:
+        </p>
+
+<pre>
+Local Image
+    ↓
+Docker Tag
+    ↓
+Docker Hub Repository
+    ↓
+Docker Push
+    ↓
+Image Hosted in Registry
+</pre>
+
+        <p>
+            Phir koi bhi authorized Docker environment us image ko:
+        </p>
+
+<pre class="command">
+docker pull pavandixit/node-docker-app:1.0
+</pre>
+
+        <p>
+            se retrieve kar sakta hai.
+        </p>
+
+    </section>
+
+
+    <!-- COMPLETE COMMAND FLOW -->
+
+    <section>
+
+        <h2>24. Complete Practical Command Flow</h2>
+
+        <h3>Local Machine</h3>
+
+<pre class="command">
+cd node-app-mini
+
+docker compose config
+
+docker compose build
+
+docker images
+
+docker login
+
+docker tag node-docker-app:1.0 \
+pavandixit/node-docker-app:1.0
+
+docker push pavandixit/node-docker-app:1.0
+</pre>
+
+        <h3>Play with Docker</h3>
+
+<pre class="command">
+docker pull pavandixit/node-docker-app:1.0
+
+docker images
+
+docker run -d \
+  --name node-app-pwd \
+  -p 3000:3000 \
+  pavandixit/node-docker-app:1.0
+
+docker ps
+
+docker logs node-app-pwd
+</pre>
+
+        <h3>Or Compose Workflow</h3>
+
+<pre class="command">
+docker compose pull
+
+docker compose up -d
+
+docker compose ps
+
+docker compose logs
+</pre>
+
+    </section>
+
+
+    <!-- STOP -->
+
+    <section>
+
+        <h2>25. PWD Container Stop Karna</h2>
+
+<pre class="command">
+docker stop node-app-pwd
+</pre>
+
+        <p>
+            Container remove:
+        </p>
+
+<pre class="command">
+docker rm node-app-pwd
+</pre>
+
+        <p>
+            Agar Compose use kiya hai:
+        </p>
+
+<pre class="command">
+docker compose down
+</pre>
+
+    </section>
+
+
+    <!-- VOLUME -->
+
+    <section>
+
+        <h2>26. PWD Me Volume Ka Kya Hoga?</h2>
+
+        <p>
+            Agar Compose file me:
+        </p>
+
+<pre class="yaml">
+volumes:
+
+  node-app-data:
+</pre>
+
+        <p>
+            define hai aur service me:
+        </p>
+
+<pre class="yaml">
+volumes:
+  - node-app-data:/app/data
+</pre>
+
+        <p>
+            hai, to PWD environment me Docker volume create/manage ho sakta hai.
+        </p>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker volume ls
+</pre>
+
+        <div class="warning">
+            PWD environment temporary hai, isliye important production data ke
+            permanent storage ke liye PWD ko database/storage solution ke
+            replacement ke roop me use nahi karna chahiye.
+        </div>
+
+    </section>
+
+
+    <!-- BUILD IN PWD -->
+
+    <section>
+
+        <h2>27. Kya PWD Me Dockerfile Se Direct Build Kar Sakte Hain?</h2>
+
+        <p>
+            Haan, agar aapka source code aur Dockerfile PWD instance me available hai,
+            to Docker image locally build ki ja sakti hai.
+        </p>
+
+<pre class="command">
+docker build -t node-docker-app:1.0 .
+</pre>
+
+        <p>
+            Lekin hamare current workflow me:
+        </p>
+
+<pre>
+Local Build
+    ↓
+Docker Hub Push
+    ↓
+PWD Pull
+    ↓
+Run
+</pre>
+
+        <p>
+            use karna easier hai, kyunki PWD ko source project files dene ki
+            zarurat nahi padti.
+        </p>
+
+    </section>
+
+
+    <!-- TROUBLESHOOT -->
+
+    <section id="errors">
+
+        <h2>28. Common Problems</h2>
+
+        <h3>Problem 1 — Image Pull nahi ho rahi</h3>
+
+<pre>
+pull access denied
+</pre>
+
+        <p>
+            Possible reasons:
+        </p>
+
+        <ul>
+            <li>Repository name incorrect.</li>
+            <li>Tag incorrect.</li>
+            <li>Repository private hai.</li>
+            <li>Authentication required hai.</li>
+        </ul>
+
+        <h3>Problem 2 — Port access nahi ho raha</h3>
+
+        <p>
+            Check:
+        </p>
+
+<pre class="command">
+docker ps
+</pre>
+
+        <p>
+            Aur container logs:
+        </p>
+
+<pre class="command">
+docker logs node-app-pwd
+</pre>
+
+        <h3>Problem 3 — Container immediately stop ho gaya</h3>
+
+        <p>
+            Logs check karo:
+        </p>
+
+<pre class="command">
+docker logs node-app-pwd
+</pre>
+
+        <h3>Problem 4 — Compose command issue</h3>
+
+<pre class="command">
+docker compose version
+</pre>
+
+        <p>
+            Docker Compose availability/version check karo.
+        </p>
+
+    </section>
+
+
+    <!-- SECURITY -->
+
+    <section>
+
+        <h2>29. Docker Hub Security</h2>
+
+        <div class="danger">
+            <strong>Never put secrets inside Docker images.</strong>
+        </div>
+
+        <p>
+            Passwords, API keys aur tokens ko Dockerfile me hard-code mat karo.
+        </p>
+
+        <p>
+            Example avoid karo:
+        </p>
+
+<pre>
+ENV PASSWORD=my-secret-password
+</pre>
+
+        <p>
+            Learning ke bahar real credentials ke liye secure secret-management
+            approach use karo.
+        </p>
+
+    </section>
+
+
+    <!-- COMPLETE ARCHITECTURE -->
+
+    <section>
+
+        <h2>30. Complete Architecture</h2>
+
+        <div class="diagram">
+              LOCAL COMPUTER
+        ┌──────────────────────┐
+        │ Node.js Project      │
+        │                      │
+        │ Dockerfile           │
+        │ compose.yaml         │
+        │ index.js             │
+        └──────────┬───────────┘
+                   │
+                   │ docker compose build
+                   ▼
+        ┌──────────────────────┐
+        │ Docker Image         │
+        │ node-docker-app:1.0  │
+        └──────────┬───────────┘
+                   │
+                   │ docker tag
+                   ▼
+        ┌──────────────────────┐
+        │ Docker Hub           │
+        │                      │
+        │ pavandixit/          │
+        │ node-docker-app:1.0  │
+        └──────────┬───────────┘
+                   │
+                   │ docker pull
+                   ▼
+        ┌──────────────────────┐
+        │ Play with Docker     │
+        │                      │
+        │ Docker Instance      │
+        └──────────┬───────────┘
+                   │
+                   │ docker compose up
+                   ▼
+        ┌──────────────────────┐
+        │ Node.js Container    │
+        │ Port 3000            │
+        └──────────┬───────────┘
+                   │
+                   ▼
+                Browser
+        </div>
+
+    </section>
+
+
+    <!-- PRACTICE -->
+
+    <section>
+
+        <h2>31. Your Practical Assignment</h2>
+
+        <ol>
+            <li>Apne Node.js project me <code>compose.yaml</code> verify karo.</li>
+            <li><code>docker compose build</code> se image build karo.</li>
+            <li>Image ko Docker Hub compatible tag do.</li>
+            <li>Docker Hub par image push karo.</li>
+            <li>Play with Docker open karo.</li>
+            <li>Ek Docker instance create karo.</li>
+            <li>Docker Hub image pull karo.</li>
+            <li>Image ko <code>docker run</code> se run karo.</li>
+            <li>Container status check karo.</li>
+            <li>Logs check karo.</li>
+            <li>Application ko PWD ke exposed port se browser me open karo.</li>
+            <li>Ek registry-based <code>compose.yaml</code> create karo.</li>
+            <li><code>docker compose pull</code> run karo.</li>
+            <li><code>docker compose up -d</code> run karo.</li>
+            <li><code>docker compose ps</code> se service verify karo.</li>
+        </ol>
+
+    </section>
+
+
+    <!-- INTERVIEW -->
+
+    <section id="interview">
+
+        <h2>32. Play with Docker Interview Questions</h2>
+
+        <h3>Q1. Play with Docker kya hai?</h3>
+
+        <p>
+            Play with Docker ek browser-based temporary Docker playground hai
+            jahan Docker commands aur container-based workloads ko practice kiya ja sakta hai.
+        </p>
+
+        <h3>Q2. Kya local Docker image directly PWD me available hoti hai?</h3>
+
+        <p>
+            Nahi. Local machine ki Docker image aur PWD ka Docker environment
+            separate hote hain. Image ko registry jaise Docker Hub par push karke
+            PWD se pull karna common workflow hai.
+        </p>
+
+        <h3>Q3. Docker Hub ka role kya hai?</h3>
+
+        <p>
+            Docker Hub ek container image registry hai jahan Docker images ko
+            store aur distribute kiya ja sakta hai.
+        </p>
+
+        <h3>Q4. docker pull kya karta hai?</h3>
+
+        <p>
+            Registry se Docker image ko local Docker environment me download karta hai.
+        </p>
+
+        <h3>Q5. docker push kya karta hai?</h3>
+
+        <p>
+            Local Docker image ko registry repository me upload karta hai.
+        </p>
+
+        <h3>Q6. PWD me Compose kaise use kar sakte hain?</h3>
+
+        <p>
+            PWD instance me Compose file available honi chahiye.
+            Registry image ke case me <code>docker compose pull</code> ke baad
+            <code>docker compose up -d</code> se services start ki ja sakti hain.
+        </p>
+
+        <h3>Q7. PWD production hosting ke liye hai?</h3>
+
+        <p>
+            PWD primarily learning, practice aur experimentation ke liye designed
+            playground environment hai; permanent production hosting ke liye
+            dedicated infrastructure use karna chahiye.
+        </p>
+
+    </section>
+
+
+    <!-- SUMMARY -->
+
+    <section>
+
+        <h2>33. Final Summary</h2>
+
+        <ul>
+            <li>Play with Docker ek browser-based Docker playground hai.</li>
+            <li>Iska use Docker learning aur experimentation ke liye kiya ja sakta hai.</li>
+            <li>Local Docker image PWD me automatically available nahi hoti.</li>
+            <li>Docker Hub registry ke through image distribute ki ja sakti hai.</li>
+            <li><code>docker tag</code> image ko registry-compatible name deta hai.</li>
+            <li><code>docker push</code> image ko Docker Hub par upload karta hai.</li>
+            <li><code>docker pull</code> PWD me image download karta hai.</li>
+            <li><code>docker run</code> image se container start karta hai.</li>
+            <li>Compose file me Docker Hub image ko <code>image:</code> ke through reference kar sakte hain.</li>
+            <li><code>docker compose pull</code> Compose-defined images pull karta hai.</li>
+            <li><code>docker compose up -d</code> Compose services ko background me start karta hai.</li>
+            <li>PWD temporary environment hai; production hosting ke liye dedicated infrastructure better hai.</li>
+        </ul>
+
+        <div class="success">
+            <strong>Complete Learning Flow:</strong><br><br>
+
+            Node.js Project →
+            Dockerfile →
+            compose.yaml →
+            Docker Image →
+            Docker Hub →
+            Play with Docker →
+            docker pull →
+            docker compose up →
+            Node.js Container
+        </div>
+
+    </section>
+
+</div>
+
+<footer>
+    <p>Docker Learning Series — Node.js Mini Project</p>
+    <p>Part 5: Play with Docker</p>
+</footer>
+
+</body>
+</html>
