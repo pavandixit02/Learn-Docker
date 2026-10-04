@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitLab Server with Docker Compose</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #fc6d26, #e24329);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            font-size: 18px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1150px;
+            margin: 35px auto;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            color: #e24329;
+            margin-bottom: 18px;
+            border-left: 5px solid #fc6d26;
+            padding-left: 12px;
+        }
+
+        h3 {
+            color: #374151;
+            margin-top: 22px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 14px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #eef2f7;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 22px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 18px 0;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .keyword {
+            background: #fff4ed;
+            border-left: 5px solid #fc6d26;
+            padding: 18px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .note {
+            background: #fff8db;
+            border-left: 5px solid #f59e0b;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .danger {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .diagram {
+            background: #f8fafc;
+            border: 2px dashed #94a3b8;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: Consolas, monospace;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f97316;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .command {
+            color: #86efac;
+        }
+
+        footer {
+            background: #111827;
+            color: #d1d5db;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 700px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>GitLab Server with Docker Compose</h1>
+    <p>
+        Learn how to run a complete GitLab CE Server using Docker Compose
+        and understand every important Compose keyword used in the configuration.
+    </p>
+</header>
+
+<div class="container">
+
+    <!-- INTRODUCTION -->
+    <section>
+        <h2>1. What Are We Going to Learn?</h2>
+
+        <p>
+            Is lesson me hum <strong>GitLab Community Edition (GitLab CE)</strong>
+            ko manually <code>docker run</code> command se run karne ke instead
+            <strong>Docker Compose</strong> ka use karke run karenge.
+        </p>
+
+        <p>
+            Docker Compose ka main benefit ye hai ki container ki complete
+            configuration ek YAML file me define ho jati hai.
+        </p>
+
+        <div class="diagram">
+            compose.yml
+            <br>
+            ↓
+            <br>
+            Docker Compose
+            <br>
+            ↓
+            <br>
+            GitLab Container
+            <br>
+            ↓
+            <br>
+            GitLab Server
+            <br>
+            ↓
+            <br>
+            Browser → http://localhost:8000
+        </div>
+    </section>
+
+    <!-- WHY COMPOSE -->
+    <section>
+        <h2>2. Why Use Docker Compose?</h2>
+
+        <p>
+            Agar hum Docker CLI se GitLab run karein to ek long command likhni pad sakti hai:
+        </p>
+
+<pre><span class="command">docker run -d \
+--name my-gitlab-server \
+-p 8000:80 \
+gitlab/gitlab-ce</span></pre>
+
+        <p>
+            Problem ye hai ki configuration yaad rakhni padti hai.
+            Docker Compose me hum ye configuration ek file me save kar dete hain.
+        </p>
+
+<pre>docker compose up -d</pre>
+
+        <div class="success">
+            <strong>Simple idea:</strong>
+            Compose file = Container ki configuration ka blueprint.
+        </div>
+    </section>
+
+    <!-- PROJECT DIRECTORY -->
+    <section>
+        <h2>3. Step 1 — Project Directory Create Karein</h2>
+
+<pre><span class="command">mkdir gitlab-compose
+cd gitlab-compose</span></pre>
+
+        <p>
+            Ab isi directory ke andar hum Compose file create karenge.
+        </p>
+
+<pre><span class="command">nano compose.yml</span></pre>
+
+        <p>
+            Ya VS Code se directly <code>compose.yml</code> file create kar sakte hain.
+        </p>
+    </section>
+
+    <!-- COMPOSE FILE -->
+    <section>
+        <h2>4. Step 2 — GitLab Compose File</h2>
+
+        <p>
+            Basic learning configuration:
+        </p>
+
+<pre>services:
+
+  gitlab-server:
+
+    image: 'gitlab/gitlab-ce'
+
+    container_name: my-gitlab-server
+
+    ports:
+      - '8000:80'
+
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['initial_root_password'] = 'YOUR_PASSWORD'
+        puma['worker_processes'] = 0</pre>
+
+        <div class="note">
+            <strong>Security:</strong>
+            Real project me password ko directly Compose file me hard-code nahi karna chahiye.
+            Environment file, Docker secrets, ya another secure secret-management approach use karein.
+        </div>
+    </section>
+
+    <!-- IMPORTANT VERSION NOTE -->
+    <section>
+        <h2>5. Important: version: '5.5.1' ka Kya Meaning Hai?</h2>
+
+        <p>
+            Bahut beginners ko ye confusion hota hai ki:
+        </p>
+
+<pre>version: '5.5.1'</pre>
+
+        <p>
+            kya ye GitLab ka version hai?
+        </p>
+
+        <p>
+            <strong>Answer: Nahi.</strong>
+        </p>
+
+        <p>
+            Ye GitLab application version nahi hai. Ye historically Docker Compose
+            file format/schema version ko indicate karta tha.
+        </p>
+
+        <div class="note">
+            <strong>Modern Docker Compose:</strong>
+            Current Compose implementations me top-level <code>version</code>
+            field obsolete/ignored ho sakti hai. Isliye naye projects me
+            normally is field ko omit karna better hai.
+        </div>
+
+        <p>
+            Agar aapko GitLab ka specific version run karna hai, image tag specify karein:
+        </p>
+
+<pre>image: 'gitlab/gitlab-ce:18.4.1-ce.0'</pre>
+
+        <p>
+            Yahan <code>18.4.1-ce.0</code> GitLab image ka version/tag hai.
+        </p>
+    </section>
+
+    <!-- SERVICES -->
+    <section>
+        <h2>6. services Keyword</h2>
+
+<pre>services:</pre>
+
+        <p>
+            <code>services</code> Docker Compose ka main section hai.
+            Iske andar hum batate hain ki application ke kaun-kaun se containers/services run honge.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+<pre>services:
+
+  gitlab-server:</pre>
+
+        <p>
+            Yahan <code>gitlab-server</code> service ka naam hai.
+        </p>
+
+        <div class="keyword">
+            <strong>Remember:</strong>
+            <br>
+            services → containers/applications define karne ke liye use hota hai.
+        </div>
+    </section>
+
+    <!-- SERVICE NAME -->
+    <section>
+        <h2>7. gitlab-server Keyword / Service Name</h2>
+
+<pre>services:
+
+  gitlab-server:</pre>
+
+        <p>
+            <code>gitlab-server</code> humara custom service name hai.
+        </p>
+
+        <p>
+            Ye naam aap apni requirement ke according change kar sakte hain:
+        </p>
+
+<pre>services:
+
+  gitlab:
+  
+  # or
+  
+  gitlab-server:</pre>
+
+        <p>
+            Compose commands me service name useful hota hai:
+        </p>
+
+<pre>docker compose up gitlab-server
+docker compose logs gitlab-server</pre>
+    </section>
+
+    <!-- IMAGE -->
+    <section>
+        <h2>8. image Keyword</h2>
+
+<pre>image: 'gitlab/gitlab-ce'</pre>
+
+        <p>
+            <code>image</code> batata hai ki container kis Docker image se create hoga.
+        </p>
+
+        <p>
+            Yahan:
+        </p>
+
+<pre>gitlab/gitlab-ce</pre>
+
+        <p>
+            official GitLab Community Edition image ka reference hai.
+        </p>
+
+        <h3>Specific Version</h3>
+
+<pre>image: 'gitlab/gitlab-ce:18.4.1-ce.0'</pre>
+
+        <p>
+            Tag specify karne se specific image version use ki ja sakti hai.
+        </p>
+    </section>
+
+    <!-- CONTAINER NAME -->
+    <section>
+        <h2>9. container_name Keyword</h2>
+
+<pre>container_name: my-gitlab-server</pre>
+
+        <p>
+            Ye container ko custom name deta hai.
+        </p>
+
+        <p>
+            Agar ye name nahi diya hota to Compose automatically generated name bana sakta hai.
+        </p>
+
+        <p>
+            Custom name hone ke baad:
+        </p>
+
+<pre>docker ps
+
+docker logs my-gitlab-server
+
+docker exec -it my-gitlab-server bash</pre>
+
+        <div class="keyword">
+            <strong>Work:</strong>
+            container_name → Docker container ko readable/custom name dena.
+        </div>
+    </section>
+
+    <!-- PORTS -->
+    <section>
+        <h2>10. ports Keyword</h2>
+
+<pre>ports:
+  - '8000:80'</pre>
+
+        <p>
+            Ye host machine ke port ko container ke port se connect karta hai.
+        </p>
+
+        <div class="diagram">
+            HOST
+            <br>
+            localhost:8000
+            <br>
+            ↓
+            <br>
+            Docker Port Mapping
+            <br>
+            ↓
+            <br>
+            CONTAINER
+            <br>
+            port 80
+            <br>
+            ↓
+            <br>
+            GitLab Web Server
+        </div>
+
+        <p>
+            Format:
+        </p>
+
+<pre>HOST_PORT:CONTAINER_PORT</pre>
+
+        <p>
+            Is case me:
+        </p>
+
+<pre>8000:80</pre>
+
+        <ul>
+            <li><strong>8000</strong> → Ubuntu host machine ka port</li>
+            <li><strong>80</strong> → GitLab container ka HTTP port</li>
+        </ul>
+
+        <p>
+            Browser me:
+        </p>
+
+<pre>http://localhost:8000</pre>
+    </section>
+
+    <!-- ENVIRONMENT -->
+    <section>
+        <h2>11. environment Keyword</h2>
+
+<pre>environment:
+  GITLAB_OMNIBUS_CONFIG: |</pre>
+
+        <p>
+            <code>environment</code> ke andar hum container ke environment variables
+            define kar sakte hain.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+<pre>environment:
+  APP_ENV: production</pre>
+
+        <p>
+            Container ke andar ye variable available hoga:
+        </p>
+
+<pre>APP_ENV=production</pre>
+    </section>
+
+    <!-- OMNIBUS -->
+    <section>
+        <h2>12. GITLAB_OMNIBUS_CONFIG</h2>
+
+<pre>GITLAB_OMNIBUS_CONFIG: |</pre>
+
+        <p>
+            Ye GitLab Omnibus image ko configuration instructions pass karne ke liye
+            use hota hai.
+        </p>
+
+        <p>
+            GitLab Omnibus ke andar GitLab ki services aur configuration ko
+            configure kiya ja sakta hai.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+<pre>GITLAB_OMNIBUS_CONFIG: |
+  gitlab_rails['initial_root_password'] = 'YOUR_PASSWORD'
+  puma['worker_processes'] = 0</pre>
+    </section>
+
+    <!-- PIPE -->
+    <section>
+        <h2>13. YAML me | ka Kya Meaning Hai?</h2>
+
+<pre>GITLAB_OMNIBUS_CONFIG: |</pre>
+
+        <p>
+            YAML me <code>|</code> ko <strong>literal block scalar</strong> kaha jata hai.
+        </p>
+
+        <p>
+            Iska matlab hai ki next multiple lines ko ek multiline value ke form me pass karo.
+        </p>
+
+<p><strong>Without |:</strong></p>
+
+<pre>KEY: one line value</pre>
+
+<p><strong>With |:</strong></p>
+
+<pre>KEY: |
+  line one
+  line two
+  line three</pre>
+
+        <p>
+            GitLab configuration ke case me ye multiple Omnibus configuration lines
+            ko ek environment variable value ke form me pass karta hai.
+        </p>
+    </section>
+
+    <!-- PASSWORD -->
+    <section>
+        <h2>14. gitlab_rails['initial_root_password']</h2>
+
+<pre>gitlab_rails['initial_root_password'] = 'YOUR_PASSWORD'</pre>
+
+        <p>
+            Ye GitLab ke initial <strong>root/admin account</strong> ka password
+            configure karne ke liye use kiya ja sakta hai.
+        </p>
+
+        <p>
+            Login ke time:
+        </p>
+
+<pre>Username:
+root
+
+Password:
+YOUR_PASSWORD</pre>
+
+        <div class="danger">
+            <strong>Important Security Rule:</strong>
+            Password ko GitHub/GitLab repository me plain text ke form me commit mat karein.
+            Learning ke liye bhi real password ki jagah placeholder use karna better hai.
+        </div>
+    </section>
+
+    <!-- PUMA -->
+    <section>
+        <h2>15. puma['worker_processes']</h2>
+
+<pre>puma['worker_processes'] = 0</pre>
+
+        <p>
+            GitLab ka web application server <strong>Puma</strong> hai.
+            <code>worker_processes</code> Puma ke worker processes ko configure karta hai.
+        </p>
+
+        <p>
+            Learning/lab environment me:
+        </p>
+
+<pre>puma['worker_processes'] = 0</pre>
+
+        <p>
+            ka use resource consumption ko reduce karne ke liye kiya ja sakta hai,
+            especially jab aap limited RAM wali local machine par GitLab test kar rahe ho.
+        </p>
+
+        <div class="note">
+            Production environment ke liye worker/process configuration blindly copy nahi karni chahiye.
+            Server resources aur GitLab recommendations ke according tune karna chahiye.
+        </div>
+    </section>
+
+    <!-- COMPLETE FILE -->
+    <section>
+        <h2>16. Complete compose.yml</h2>
+
+<pre>services:
+
+  gitlab-server:
+
+    image: 'gitlab/gitlab-ce'
+
+    container_name: my-gitlab-server
+
+    ports:
+      - '8000:80'
+
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['initial_root_password'] = 'YOUR_PASSWORD'
+        puma['worker_processes'] = 0</pre>
+
+        <p>
+            Ye basic learning/lab configuration hai.
+        </p>
+    </section>
+
+    <!-- CONFIG CHECK -->
+    <section>
+        <h2>17. Step 3 — Compose File Validate Karein</h2>
+
+        <p>
+            Container start karne se pehle configuration validate karna useful hai:
+        </p>
+
+<pre>docker compose config</pre>
+
+        <p>
+            Agar YAML/configuration valid hai to Compose rendered configuration show karega.
+            Agar indentation ya syntax error hai to error milega.
+        </p>
+    </section>
+
+    <!-- PULL -->
+    <section>
+        <h2>18. Step 4 — GitLab Image Pull Karein</h2>
+
+<pre>docker compose pull</pre>
+
+        <p>
+            Ye Compose file me specified image ko registry se pull karega.
+        </p>
+
+        <p>
+            Is case me:
+        </p>
+
+<pre>gitlab/gitlab-ce</pre>
+    </section>
+
+    <!-- START -->
+    <section>
+        <h2>19. Step 5 — GitLab Container Start Karein</h2>
+
+<pre>docker compose up -d</pre>
+
+        <p>
+            Yahan:
+        </p>
+
+        <ul>
+            <li><code>up</code> → services create/start karta hai</li>
+            <li><code>-d</code> → detached/background mode</li>
+        </ul>
+
+        <p>
+            Agar image locally available nahi hai to Compose automatically image pull
+            kar sakta hai.
+        </p>
+    </section>
+
+    <!-- PS -->
+    <section>
+        <h2>20. Step 6 — Container Check Karein</h2>
+
+<pre>docker compose ps</pre>
+
+        <p>
+            Ya:
+        </p>
+
+<pre>docker ps</pre>
+
+        <p>
+            Aapko <code>my-gitlab-server</code> container running state me dikhna chahiye.
+        </p>
+    </section>
+
+    <!-- LOGS -->
+    <section>
+        <h2>21. Step 7 — GitLab Logs Check Karein</h2>
+
+<pre>docker compose logs -f gitlab-server</pre>
+
+        <p>
+            <code>-f</code> ka meaning hai logs ko continuously follow karna.
+        </p>
+
+        <p>
+            GitLab heavy application hai, isliye first startup me time lag sakta hai.
+        </p>
+
+        <p>
+            Exit karne ke liye:
+        </p>
+
+<pre>Ctrl + C</pre>
+
+        <div class="note">
+            Container ko stop karne ke liye Ctrl+C use karna zaroori nahi hai
+            jab Compose detached mode me run hua ho. Logs follow karte waqt
+            Ctrl+C sirf log viewing ko stop karta hai.
+        </div>
+    </section>
+
+    <!-- BROWSER -->
+    <section>
+        <h2>22. Step 8 — Browser Se GitLab Open Karein</h2>
+
+        <p>
+            Browser me open karein:
+        </p>
+
+<pre>http://localhost:8000</pre>
+
+        <p>
+            GitLab login page open hona chahiye.
+        </p>
+
+        <p>
+            Initial root credentials aapke Compose configuration ke according honge.
+        </p>
+    </section>
+
+    <!-- LOGIN -->
+    <section>
+        <h2>23. Step 9 — GitLab Login</h2>
+
+<pre>Username:
+root
+
+Password:
+YOUR_PASSWORD</pre>
+
+        <p>
+            Login successful hone ke baad aap GitLab dashboard access kar sakte hain.
+        </p>
+    </section>
+
+    <!-- EXEC -->
+    <section>
+        <h2>24. Container ke Andar Command Run Karna</h2>
+
+        <p>
+            Container ke andar shell open karne ke liye:
+        </p>
+
+<pre>docker exec -it my-gitlab-server bash</pre>
+
+        <p>
+            Isse aap GitLab container ke andar enter kar sakte hain.
+        </p>
+
+        <p>
+            Exit:
+        </p>
+
+<pre>exit</pre>
+    </section>
+
+    <!-- STOP -->
+    <section>
+        <h2>25. GitLab Stop Karna</h2>
+
+<pre>docker compose stop</pre>
+
+        <p>
+            Ye container ko stop karta hai, lekin Compose resources ko remove nahi karta.
+        </p>
+    </section>
+
+    <!-- START -->
+    <section>
+        <h2>26. GitLab Dobara Start Karna</h2>
+
+<pre>docker compose start</pre>
+
+        <p>
+            Pehle se created/stopped services ko dobara start karta hai.
+        </p>
+    </section>
+
+    <!-- DOWN -->
+    <section>
+        <h2>27. GitLab Remove Karna</h2>
+
+<pre>docker compose down</pre>
+
+        <p>
+            Ye Compose-created containers aur networks ko remove karta hai.
+        </p>
+
+        <div class="danger">
+            <strong>Important:</strong>
+            GitLab jaisi stateful application ke liye persistent volumes use karna
+            important hai. Simple lab configuration me data persistence properly
+            configure na ho to container removal ke baad important data lose ho sakta hai.
+        </div>
+    </section>
+
+    <!-- KEYWORD TABLE -->
+    <section>
+        <h2>28. Compose File Keywords — Quick Reference</h2>
+
+        <table>
+            <tr>
+                <th>Keyword</th>
+                <th>Purpose</th>
+            </tr>
+
+            <tr>
+                <td><code>services</code></td>
+                <td>Application/container services define karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>gitlab-server</code></td>
+                <td>Custom service name.</td>
+            </tr>
+
+            <tr>
+                <td><code>image</code></td>
+                <td>Container kis Docker image se create hoga.</td>
+            </tr>
+
+            <tr>
+                <td><code>container_name</code></td>
+                <td>Container ko custom name deta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>ports</code></td>
+                <td>Host aur container ke ports map karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>environment</code></td>
+                <td>Environment variables/configuration provide karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>GITLAB_OMNIBUS_CONFIG</code></td>
+                <td>GitLab Omnibus configuration instructions pass karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>|</code></td>
+                <td>YAML multiline value define karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>gitlab_rails['initial_root_password']</code></td>
+                <td>Initial GitLab root password configure karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>puma['worker_processes']</code></td>
+                <td>Puma web-server worker processes configure karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>version</code></td>
+                <td>Historical Compose file format field; modern Compose me generally omit kiya jata hai.</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- COMMAND TABLE -->
+    <section>
+        <h2>29. Important Docker Compose Commands</h2>
+
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Work</th>
+            </tr>
+
+            <tr>
+                <td><code>docker compose config</code></td>
+                <td>Compose configuration validate/render karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose pull</code></td>
+                <td>Required images pull karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose up</code></td>
+                <td>Services start karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose up -d</code></td>
+                <td>Services background me start karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose ps</code></td>
+                <td>Services ki status show karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose logs</code></td>
+                <td>Service logs show karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose logs -f</code></td>
+                <td>Logs continuously follow karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose stop</code></td>
+                <td>Services stop karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose start</code></td>
+                <td>Stopped services start karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose restart</code></td>
+                <td>Services restart karta hai.</td>
+            </tr>
+
+            <tr>
+                <td><code>docker compose down</code></td>
+                <td>Compose resources ko remove karta hai.</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- FLOW -->
+    <section>
+        <h2>30. Complete Flow</h2>
+
+        <div class="diagram">
+            Create Project Directory
+            <br>↓<br>
+            Create compose.yml
+            <br>↓<br>
+            Define GitLab Image
+            <br>↓<br>
+            Configure Ports
+            <br>↓<br>
+            Configure Environment
+            <br>↓<br>
+            docker compose config
+            <br>↓<br>
+            docker compose pull
+            <br>↓<br>
+            docker compose up -d
+            <br>↓<br>
+            docker compose ps
+            <br>↓<br>
+            docker compose logs -f
+            <br>↓<br>
+            http://localhost:8000
+            <br>↓<br>
+            GitLab Login
+        </div>
+    </section>
+
+    <!-- COMMON MISTAKES -->
+    <section>
+        <h2>31. Common Mistakes</h2>
+
+        <h3>1. YAML indentation error</h3>
+
+<pre>services:
+gitlab-server:</pre>
+
+        <p>
+            Ye incorrect indentation ho sakti hai.
+        </p>
+
+        <p>Correct:</p>
+
+<pre>services:
+  gitlab-server:</pre>
+
+        <h3>2. Wrong port</h3>
+
+<pre>ports:
+  - '8000:80'</pre>
+
+        <p>
+            Browser me <code>localhost:8000</code> open karna hoga.
+        </p>
+
+        <h3>3. GitLab startup ko immediately ready samajhna</h3>
+
+        <p>
+            GitLab first startup me considerable time le sakta hai.
+            Logs check karein.
+        </p>
+
+<pre>docker compose logs -f gitlab-server</pre>
+
+        <h3>4. Password GitHub par push karna</h3>
+
+        <p>
+            Real password ko Compose file me hard-code karke public/private repository
+            me commit karna security risk hai.
+        </p>
+
+        <h3>5. Data persistence ignore karna</h3>
+
+        <p>
+            Production-like GitLab setup me configuration, logs aur application data
+            ke liye persistent storage configure karna chahiye.
+        </p>
+    </section>
+
+    <!-- INTERVIEW -->
+    <section>
+        <h2>32. Docker + GitLab Interview Questions</h2>
+
+        <h3>Q1. Docker Compose kya hai?</h3>
+        <p>
+            Docker Compose ek tool hai jo YAML file ke through multi-container
+            applications/services ko define aur manage karta hai.
+        </p>
+
+        <h3>Q2. services keyword ka kya use hai?</h3>
+        <p>
+            Compose file me application ke services/containers define karne ke liye.
+        </p>
+
+        <h3>Q3. image aur container me difference?</h3>
+        <p>
+            Image ek read-only template/package hota hai, jabki container us image
+            ka running instance hota hai.
+        </p>
+
+        <h3>Q4. ports: 8000:80 ka meaning?</h3>
+        <p>
+            Host port 8000 ko container port 80 ke saath map karta hai.
+        </p>
+
+        <h3>Q5. GITLAB_OMNIBUS_CONFIG kya hai?</h3>
+        <p>
+            GitLab Omnibus Docker image ko GitLab configuration instructions pass
+            karne ke liye environment variable.
+        </p>
+
+        <h3>Q6. YAML me | ka use?</h3>
+        <p>
+            Multiple lines ko ek multiline string/value ke roop me define karne ke liye.
+        </p>
+
+        <h3>Q7. docker compose up -d ka meaning?</h3>
+        <p>
+            Services ko create/start karke detached/background mode me run karna.
+        </p>
+
+        <h3>Q8. docker compose down aur stop me difference?</h3>
+        <p>
+            <code>stop</code> services ko stop karta hai, jabki
+            <code>down</code> Compose-managed containers aur networks ko remove karta hai.
+        </p>
+
+        <h3>Q9. GitLab container me bash kaise open karenge?</h3>
+
+<pre>docker exec -it my-gitlab-server bash</pre>
+
+        <h3>Q10. GitLab ko browser se kaise access karenge?</h3>
+
+<pre>http://localhost:8000</pre>
+    </section>
+
+    <!-- SUMMARY -->
+    <section>
+        <h2>33. Final Summary</h2>
+
+        <p>
+            Is lesson me humne GitLab Community Edition ko Docker Compose ke through
+            run karna seekha.
+        </p>
+
+        <p>
+            Sabse important concepts:
+        </p>
+
+        <ul>
+            <li><code>services</code> → services define karta hai</li>
+            <li><code>image</code> → GitLab image select karta hai</li>
+            <li><code>container_name</code> → custom container name</li>
+            <li><code>ports</code> → host/container port mapping</li>
+            <li><code>environment</code> → environment configuration</li>
+            <li><code>GITLAB_OMNIBUS_CONFIG</code> → GitLab configuration</li>
+            <li><code>gitlab_rails['initial_root_password']</code> → initial root password</li>
+            <li><code>puma['worker_processes']</code> → Puma worker configuration</li>
+            <li><code>|</code> → multiline YAML value</li>
+            <li><code>docker compose up -d</code> → GitLab start</li>
+            <li><code>docker compose ps</code> → status check</li>
+            <li><code>docker compose logs -f</code> → logs check</li>
+            <li><code>docker compose down</code> → Compose resources remove</li>
+        </ul>
+
+        <div class="success">
+            <strong>DevOps Concept:</strong>
+            Docker Compose ka main advantage ye hai ki infrastructure/container
+            configuration ko code ke form me define karke repeatable aur manageable
+            banaya ja sakta hai.
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p>Learn-Docker | GitLab Server with Docker Compose</p>
+    <p>Docker • GitLab • Docker Compose • DevOps</p>
+</footer>
+
+</body>
+</html>
