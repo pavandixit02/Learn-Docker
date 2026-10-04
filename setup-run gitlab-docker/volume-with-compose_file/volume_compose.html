@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GitLab Server with Docker Compose + Volumes</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+        header {
+            background: linear-gradient(135deg, #fc6d26, #e24329);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        header p {
+            max-width: 900px;
+            margin: auto;
+            font-size: 18px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1150px;
+            margin: 35px auto;
+        }
+
+        section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            color: #e24329;
+            margin-bottom: 18px;
+            border-left: 5px solid #fc6d26;
+            padding-left: 12px;
+        }
+
+        h3 {
+            color: #374151;
+            margin-top: 22px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 14px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #eef2f7;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 22px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 18px 0;
+            font-family: Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .keyword {
+            background: #fff4ed;
+            border-left: 5px solid #fc6d26;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .note {
+            background: #fff8db;
+            border-left: 5px solid #f59e0b;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .success {
+            background: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .danger {
+            background: #fef2f2;
+            border-left: 5px solid #ef4444;
+            padding: 18px;
+            margin: 18px 0;
+            border-radius: 8px;
+        }
+
+        .diagram {
+            background: #f8fafc;
+            border: 2px dashed #94a3b8;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: Consolas, monospace;
+            margin: 20px 0;
+            white-space: pre-line;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f97316;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .command {
+            color: #86efac;
+        }
+
+        .highlight {
+            color: #fb923c;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #111827;
+            color: #d1d5db;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 700px) {
+            header h1 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>GitLab Server with Docker Compose + Volumes</h1>
+
+    <p>
+        Continue the previous GitLab Docker Compose setup by adding
+        persistent storage using Bind Mount Volumes.
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- INTRODUCTION -->
+
+    <section>
+
+        <h2>1. Previous Setup Se Continue</h2>
+
+        <p>
+            Previous lesson me humne Docker Compose ka use karke
+            <strong>GitLab Server</strong> ka container create aur run kiya tha.
+        </p>
+
+        <p>
+            Lekin ek important problem thi:
+            <strong>GitLab ka data container ke andar stored tha.</strong>
+        </p>
+
+        <p>
+            Agar container remove ho jaye, to container ke andar stored
+            important data lose ho sakta hai.
+        </p>
+
+        <p>
+            Is problem ko solve karne ke liye hum
+            <strong>Volumes / Persistent Storage</strong> use karenge.
+        </p>
+
+    </section>
+
+
+    <!-- PROBLEM -->
+
+    <section>
+
+        <h2>2. Problem Without Volume</h2>
+
+        <div class="diagram">
+
+GitLab Container
+
+        ↓
+
+/etc/gitlab
+/var/log/gitlab
+/var/opt/gitlab
+
+        ↓
+
+Container ke andar data
+
+        ↓
+
+Container remove
+
+        ↓
+
+Data loss ka risk
+
+        </div>
+
+        <p>
+            Docker container ko generally temporary/replaceable unit ki tarah
+            treat kiya jata hai.
+        </p>
+
+        <p>
+            Isliye databases, Git repositories, configuration aur logs jaise
+            important data ko container lifecycle se independent rakhna
+            better practice hai.
+        </p>
+
+    </section>
+
+
+    <!-- SOLUTION -->
+
+    <section>
+
+        <h2>3. Solution — Volumes</h2>
+
+        <p>
+            Docker volume ya bind mount ka purpose container ke important data
+            ko container ke bahar store karna hai.
+        </p>
+
+        <div class="diagram">
+
+Host Machine
+
+./gitlab/data
+./gitlab/logs
+./gitlab/config
+
+        ↓
+
+Docker Mount
+
+        ↓
+
+GitLab Container
+
+/var/opt/gitlab
+/var/log/gitlab
+/etc/gitlab
+
+        </div>
+
+        <div class="success">
+
+            <strong>Main Concept:</strong>
+
+            Container delete ho sakta hai,
+            lekin host machine par stored data ko preserve kiya ja sakta hai.
+
+        </div>
+
+    </section>
+
+
+    <!-- COMPLETE FILE -->
+
+    <section>
+
+        <h2>4. Complete Docker Compose File</h2>
+
+        <p>
+            Ab previous Compose configuration me volumes add karenge.
+        </p>
+
+<pre>services:
+
+  gitlab-server:
+
+    image: 'gitlab/gitlab-ce'
+
+    container_name: my-gitlab-server-volume
+
+    ports:
+      - '8000:80'
+
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['initial_root_password'] = 'YOUR_PASSWORD'
+        puma['worker_processes'] = 0
+
+    volumes:
+      - ./gitlab/data:/var/opt/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/config:/etc/gitlab</pre>
+
+        <div class="note">
+
+            <strong>Security:</strong>
+
+            Real password ko Compose file me plain text ke form me
+            Git repository me commit nahi karna chahiye.
+            Learning example me placeholder use karein.
+
+        </div>
+
+    </section>
+
+
+    <!-- VERSION -->
+
+    <section>
+
+        <h2>5. version Keyword</h2>
+
+<pre>version: '5.5.1'</pre>
+
+        <p>
+            Ye GitLab version nahi hai.
+        </p>
+
+        <p>
+            Historically Docker Compose file format/schema version
+            specify karne ke liye <code>version</code> field use hoti thi.
+        </p>
+
+        <div class="note">
+
+            Modern Docker Compose me top-level
+            <code>version</code> field generally obsolete/ignored hai.
+
+            New Compose files me ise normally omit karna better hai.
+
+        </div>
+
+        <p>
+            Agar GitLab ka specific version select karna ho to image tag use karein:
+        </p>
+
+<pre>image: 'gitlab/gitlab-ce:SPECIFIC_TAG'</pre>
+
+    </section>
+
+
+    <!-- SERVICES -->
+
+    <section>
+
+        <h2>6. services Keyword</h2>
+
+<pre>services:</pre>
+
+        <p>
+            <code>services</code> ke andar Docker Compose ke containers/services
+            define kiye jate hain.
+        </p>
+
+<pre>services:
+
+  gitlab-server:</pre>
+
+        <p>
+            Yahan <code>gitlab-server</code> ek service ka naam hai.
+        </p>
+
+    </section>
+
+
+    <!-- IMAGE -->
+
+    <section>
+
+        <h2>7. image Keyword</h2>
+
+<pre>image: 'gitlab/gitlab-ce'</pre>
+
+        <p>
+            <code>image</code> batata hai ki container kis Docker image
+            se create hoga.
+        </p>
+
+        <p>
+            Yahan GitLab Community Edition image use ho rahi hai.
+        </p>
+
+    </section>
+
+
+    <!-- CONTAINER NAME -->
+
+    <section>
+
+        <h2>8. container_name Keyword</h2>
+
+<pre>container_name: my-gitlab-server-volume</pre>
+
+        <p>
+            Ye container ko custom readable name deta hai.
+        </p>
+
+<pre>docker ps</pre>
+
+        <p>
+            Output me container ka naam:
+        </p>
+
+<pre>my-gitlab-server-volume</pre>
+
+        <p>
+            Is naam ka use karke commands run kar sakte hain:
+        </p>
+
+<pre>docker logs my-gitlab-server-volume
+
+docker exec -it my-gitlab-server-volume bash</pre>
+
+    </section>
+
+
+    <!-- PORTS -->
+
+    <section>
+
+        <h2>9. ports Keyword</h2>
+
+<pre>ports:
+  - '8000:80'</pre>
+
+        <p>
+            Format:
+        </p>
+
+<pre>HOST_PORT:CONTAINER_PORT</pre>
+
+        <p>
+            Is case me:
+        </p>
+
+        <ul>
+            <li><strong>8000</strong> → Host machine port</li>
+            <li><strong>80</strong> → GitLab container HTTP port</li>
+        </ul>
+
+        <p>
+            Browser:
+        </p>
+
+<pre>http://localhost:8000</pre>
+
+    </section>
+
+
+    <!-- ENVIRONMENT -->
+
+    <section>
+
+        <h2>10. environment Keyword</h2>
+
+<pre>environment:</pre>
+
+        <p>
+            Container ke environment variables define karne ke liye
+            <code>environment</code> use hota hai.
+        </p>
+
+<pre>environment:
+  GITLAB_OMNIBUS_CONFIG: |</pre>
+
+    </section>
+
+
+    <!-- OMNIBUS -->
+
+    <section>
+
+        <h2>11. GITLAB_OMNIBUS_CONFIG</h2>
+
+<pre>GITLAB_OMNIBUS_CONFIG: |</pre>
+
+        <p>
+            Ye GitLab Omnibus Docker image ko configuration instructions
+            provide karta hai.
+        </p>
+
+<pre>gitlab_rails['initial_root_password'] = 'YOUR_PASSWORD'
+puma['worker_processes'] = 0</pre>
+
+    </section>
+
+
+    <!-- VOLUMES -->
+
+    <section>
+
+        <h2>12. volumes Keyword — Main Topic</h2>
+
+<pre>volumes:</pre>
+
+        <p>
+            <code>volumes</code> section ka purpose container ke andar ke
+            important data ko container ke bahar persistent storage ke saath
+            connect karna hai.
+        </p>
+
+        <p>
+            Hamare example me teen mounts hain:
+        </p>
+
+<pre>volumes:
+
+  - ./gitlab/data:/var/opt/gitlab
+
+  - ./gitlab/logs:/var/log/gitlab
+
+  - ./gitlab/config:/etc/gitlab</pre>
+
+        <div class="success">
+
+            Ye teen different host directories ko GitLab container ke
+            different directories ke saath map kar rahe hain.
+
+        </div>
+
+    </section>
+
+
+    <!-- SYNTAX -->
+
+    <section>
+
+        <h2>13. Volume Syntax Samjho</h2>
+
+<pre>- HOST_PATH:CONTAINER_PATH</pre>
+
+        <p>
+            Isko yaad rakhne ka easiest method:
+        </p>
+
+        <div class="diagram">
+
+HOST
+
+:
+
+CONTAINER
+
+        </div>
+
+        <p>
+            Example:
+        </p>
+
+<pre>- ./gitlab/data:/var/opt/gitlab</pre>
+
+        <p>
+            Iska meaning:
+        </p>
+
+        <div class="diagram">
+
+./gitlab/data
+      ↓
+      ↓
+/var/opt/gitlab
+
+        </div>
+
+        <p>
+            Host machine ke <code>./gitlab/data</code> directory ko
+            container ke <code>/var/opt/gitlab</code> directory par mount karo.
+        </p>
+
+    </section>
+
+
+    <!-- DOT -->
+
+    <section>
+
+        <h2>14. ./ ka Kya Meaning Hai?</h2>
+
+<pre>./gitlab/data</pre>
+
+        <p>
+            <code>./</code> ka meaning hai:
+            <strong>current directory</strong>.
+        </p>
+
+        <p>
+            Agar Compose file yahan hai:
+        </p>
+
+<pre>/home/pavan/Desktop/Learn-Docker/
+setup-run gitlab-docker/
+volume-with-compose_file/
+compose.yml</pre>
+
+        <p>
+            To:
+        </p>
+
+<pre>./gitlab/data</pre>
+
+        <p>
+            approximately is directory ko refer karega:
+        </p>
+
+<pre>/home/pavan/Desktop/Learn-Docker/
+setup-run gitlab-docker/
+volume-with-compose_file/
+gitlab/data</pre>
+
+        <div class="keyword">
+
+            <strong>Important:</strong>
+
+            Relative bind-mount paths normally Compose project/Compose file
+            context ke relative resolve hote hain.
+
+        </div>
+
+    </section>
+
+
+    <!-- FIRST VOLUME -->
+
+    <section>
+
+        <h2>15. First Volume — GitLab Application Data</h2>
+
+<pre>- ./gitlab/data:/var/opt/gitlab</pre>
+
+        <p>
+            Ye GitLab ke important application/data directory ko host machine
+            ke directory ke saath map karta hai.
+        </p>
+
+        <table>
+
+            <tr>
+                <th>Part</th>
+                <th>Meaning</th>
+            </tr>
+
+            <tr>
+                <td><code>./gitlab/data</code></td>
+                <td>Host machine ka directory</td>
+            </tr>
+
+            <tr>
+                <td><code>:</code></td>
+                <td>Host aur container ke beech mapping separator</td>
+            </tr>
+
+            <tr>
+                <td><code>/var/opt/gitlab</code></td>
+                <td>Container ke andar GitLab application data location</td>
+            </tr>
+
+        </table>
+
+        <p>
+            Simple language me:
+        </p>
+
+        <div class="diagram">
+
+Host:
+./gitlab/data
+
+        ↕
+        
+Container:
+/var/opt/gitlab
+
+        </div>
+
+        <p>
+            GitLab ka important application data host machine ke
+            <code>./gitlab/data</code> directory ke through persist kiya ja sakta hai.
+        </p>
+
+    </section>
+
+
+    <!-- SECOND VOLUME -->
+
+    <section>
+
+        <h2>16. Second Volume — GitLab Logs</h2>
+
+<pre>- ./gitlab/logs:/var/log/gitlab</pre>
+
+        <p>
+            Ye GitLab ke logs ko host machine par persist karne ke liye
+            directory mapping provide karta hai.
+        </p>
+
+        <table>
+
+            <tr>
+                <th>Part</th>
+                <th>Meaning</th>
+            </tr>
+
+            <tr>
+                <td><code>./gitlab/logs</code></td>
+                <td>Host machine ka logs directory</td>
+            </tr>
+
+            <tr>
+                <td><code>/var/log/gitlab</code></td>
+                <td>Container ke andar GitLab logs directory</td>
+            </tr>
+
+        </table>
+
+        <div class="diagram">
+
+Host
+
+./gitlab/logs
+
+        ↓
+
+Container
+
+/var/log/gitlab
+
+        ↓
+
+GitLab Logs
+
+        </div>
+
+        <p>
+            Isse container lifecycle ke bahar bhi logs ko host side par
+            preserve karna easier hota hai.
+        </p>
+
+    </section>
+
+
+    <!-- THIRD VOLUME -->
+
+    <section>
+
+        <h2>17. Third Volume — GitLab Configuration</h2>
+
+<pre>- ./gitlab/config:/etc/gitlab</pre>
+
+        <p>
+            Ye GitLab configuration directory ko host machine par persist
+            karne ke liye mount karta hai.
+        </p>
+
+        <table>
+
+            <tr>
+                <th>Part</th>
+                <th>Meaning</th>
+            </tr>
+
+            <tr>
+                <td><code>./gitlab/config</code></td>
+                <td>Host machine ka configuration directory</td>
+            </tr>
+
+            <tr>
+                <td><code>/etc/gitlab</code></td>
+                <td>Container ke andar GitLab configuration location</td>
+            </tr>
+
+        </table>
+
+        <div class="diagram">
+
+Host
+
+./gitlab/config
+
+        ↓
+
+Container
+
+/etc/gitlab
+
+        ↓
+
+GitLab Configuration
+
+        </div>
+
+    </section>
+
+
+    <!-- THREE VOLUMES -->
+
+    <section>
+
+        <h2>18. Teen Volumes Ek Saath Samjho</h2>
+
+        <table>
+
+            <tr>
+                <th>Host Directory</th>
+                <th>Container Directory</th>
+                <th>Purpose</th>
+            </tr>
+
+            <tr>
+                <td><code>./gitlab/data</code></td>
+                <td><code>/var/opt/gitlab</code></td>
+                <td>GitLab application/data</td>
+            </tr>
+
+            <tr>
+                <td><code>./gitlab/logs</code></td>
+                <td><code>/var/log/gitlab</code></td>
+                <td>GitLab logs</td>
+            </tr>
+
+            <tr>
+                <td><code>./gitlab/config</code></td>
+                <td><code>/etc/gitlab</code></td>
+                <td>GitLab configuration</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- DIRECTORY STRUCTURE -->
+
+    <section>
+
+        <h2>19. Host Machine Par Directory Structure</h2>
+
+        <p>
+            Compose start hone ke baad host machine par approximately ye
+            structure create/use hoga:
+        </p>
+
+<pre>volume-with-compose_file/
+│
+├── compose.yml
+│
+└── gitlab/
+    │
+    ├── data/
+    │
+    ├── logs/
+    │
+    └── config/</pre>
+
+        <p>
+            GitLab ka persistent data in directories ke through host filesystem
+            par available rahega.
+        </p>
+
+    </section>
+
+
+    <!-- STEP 1 -->
+
+    <section>
+
+        <h2>20. Step 1 — Old GitLab Container Check Karein</h2>
+
+        <p>
+            Agar previous lesson ka GitLab container already running hai,
+            pehle check karein:
+        </p>
+
+<pre>docker ps -a</pre>
+
+        <p>
+            Agar same port <code>8000</code> already occupied hai to old
+            container ko stop/remove karna padega ya new Compose setup ke
+            liye different host port choose karna padega.
+        </p>
+
+    </section>
+
+
+    <!-- STEP 2 -->
+
+    <section>
+
+        <h2>21. Step 2 — Project Directory Me Jayein</h2>
+
+<pre>cd "setup-run gitlab-docker/volume-with-compose_file"</pre>
+
+        <p>
+            Apni actual project location ke according path change kar sakte hain.
+        </p>
+
+    </section>
+
+
+    <!-- STEP 3 -->
+
+    <section>
+
+        <h2>22. Step 3 — compose.yml Create Karein</h2>
+
+<pre>nano compose.yml</pre>
+
+        <p>
+            Is file ke andar complete configuration paste karein.
+        </p>
+
+    </section>
+
+
+    <!-- STEP 4 -->
+
+    <section>
+
+        <h2>23. Step 4 — Compose Configuration Validate Karein</h2>
+
+<pre>docker compose config</pre>
+
+        <p>
+            Ye command YAML configuration ko parse karke rendered Compose
+            configuration show karti hai.
+        </p>
+
+        <div class="success">
+            Agar error nahi aata, to configuration syntax level par valid hai.
+        </div>
+
+    </section>
+
+
+    <!-- STEP 5 -->
+
+    <section>
+
+        <h2>24. Step 5 — GitLab Start Karein</h2>
+
+<pre>docker compose up -d</pre>
+
+        <p>
+            Ye:
+        </p>
+
+        <ol>
+            <li>GitLab image ensure karega</li>
+            <li>Container create karega</li>
+            <li>Volumes/bind mounts create/use karega</li>
+            <li>Port mapping configure karega</li>
+            <li>GitLab container start karega</li>
+        </ol>
+
+    </section>
+
+
+    <!-- STEP 6 -->
+
+    <section>
+
+        <h2>25. Step 6 — Container Status Check Karein</h2>
+
+<pre>docker compose ps</pre>
+
+        <p>
+            Ya:
+        </p>
+
+<pre>docker ps</pre>
+
+        <p>
+            Expected container name:
+        </p>
+
+<pre>my-gitlab-server-volume</pre>
+
+    </section>
+
+
+    <!-- STEP 7 -->
+
+    <section>
+
+        <h2>26. Step 7 — Logs Check Karein</h2>
+
+<pre>docker compose logs -f gitlab-server</pre>
+
+        <p>
+            GitLab first startup me time le sakta hai.
+            Isliye immediately browser me page na aaye to panic na karein.
+        </p>
+
+    </section>
+
+
+    <!-- STEP 8 -->
+
+    <section>
+
+        <h2>27. Step 8 — Host Directories Check Karein</h2>
+
+<pre>ls -la</pre>
+
+        <p>
+            GitLab directory:
+        </p>
+
+<pre>ls -la gitlab</pre>
+
+        <p>
+            Aapko directories dikh sakti hain:
+        </p>
+
+<pre>data
+logs
+config</pre>
+
+        <p>
+            Detailed check:
+        </p>
+
+<pre>ls -la gitlab/data
+ls -la gitlab/logs
+ls -la gitlab/config</pre>
+
+    </section>
+
+
+    <!-- BROWSER -->
+
+    <section>
+
+        <h2>28. Step 9 — Browser Se GitLab Open Karein</h2>
+
+<pre>http://localhost:8000</pre>
+
+        <p>
+            GitLab login page open hone ke baad root credentials se login karein.
+        </p>
+
+    </section>
+
+
+    <!-- PERSISTENCE TEST -->
+
+    <section>
+
+        <h2>29. Step 10 — Volume Persistence Test</h2>
+
+        <p>
+            Ab hum verify karenge ki volume actually kaam kar raha hai.
+        </p>
+
+        <h3>Container Stop</h3>
+
+<pre>docker compose stop</pre>
+
+        <p>
+            Phir:
+        </p>
+
+<pre>docker compose start</pre>
+
+        <p>
+            GitLab ko dobara access karein:
+        </p>
+
+<pre>http://localhost:8000</pre>
+
+        <p>
+            Host directory same hone ki wajah se mounted data container lifecycle
+            se independent remain karta hai.
+        </p>
+
+    </section>
+
+
+    <!-- REMOVE RECREATE -->
+
+    <section>
+
+        <h2>30. Container Remove/Recreate Concept</h2>
+
+        <p>
+            Bind mount ka main benefit tab aur clearly samajh aata hai jab
+            container recreate hota hai.
+        </p>
+
+<pre>docker compose down</pre>
+
+        <p>
+            Phir:
+        </p>
+
+<pre>docker compose up -d</pre>
+
+        <p>
+            Naya container create hone ke baad bhi host ke mounted directories
+            available rehti hain.
+        </p>
+
+        <div class="diagram">
+
+Container #1
+
+        ↓
+        deleted
+
+        ↓
+
+Host directories remain
+
+./gitlab/data
+./gitlab/logs
+./gitlab/config
+
+        ↓
+
+Container #2
+
+        ↓
+
+Same mounted data
+
+        </div>
+
+    </section>
+
+
+    <!-- BIND MOUNT -->
+
+    <section>
+
+        <h2>31. Ye Named Volume Hai Ya Bind Mount?</h2>
+
+        <p>
+            Hamari configuration:
+        </p>
+
+<pre>- ./gitlab/data:/var/opt/gitlab</pre>
+
+        <p>
+            <strong>Named Docker volume nahi hai.</strong>
+        </p>
+
+        <p>
+            Ye <strong>Bind Mount</strong> hai.
+        </p>
+
+        <p>
+            Kyunki left side par humne directly host filesystem path diya hai:
+        </p>
+
+<pre>./gitlab/data</pre>
+
+        <h3>Named Volume Example</h3>
+
+<pre>volumes:
+  gitlab-data:
+
+services:
+  gitlab-server:
+    volumes:
+      - gitlab-data:/var/opt/gitlab</pre>
+
+        <h3>Bind Mount Example</h3>
+
+<pre>services:
+  gitlab-server:
+    volumes:
+      - ./gitlab/data:/var/opt/gitlab</pre>
+
+    </section>
+
+
+    <!-- COMPARISON -->
+
+    <section>
+
+        <h2>32. Bind Mount vs Named Volume</h2>
+
+        <table>
+
+            <tr>
+                <th>Feature</th>
+                <th>Bind Mount</th>
+                <th>Named Volume</th>
+            </tr>
+
+            <tr>
+                <td>Host path directly specify?</td>
+                <td>Yes</td>
+                <td>No</td>
+            </tr>
+
+            <tr>
+                <td>Example</td>
+                <td><code>./gitlab/data:/var/opt/gitlab</code></td>
+                <td><code>gitlab-data:/var/opt/gitlab</code></td>
+            </tr>
+
+            <tr>
+                <td>Files easily visible on project directory?</td>
+                <td>Yes</td>
+                <td>Not normally in project directory</td>
+            </tr>
+
+            <tr>
+                <td>Developer control</td>
+                <td>High</td>
+                <td>Docker manages volume location</td>
+            </tr>
+
+        </table>
+
+    </section>
+
+
+    <!-- READ ONLY -->
+
+    <section>
+
+        <h2>33. Read-Only Volume Option</h2>
+
+        <p>
+            Docker mounts ko read-only bhi banaya ja sakta hai:
+        </p>
+
+<pre>- ./config:/etc/app:ro</pre>
+
+        <p>
+            Yahan <code>:ro</code> ka meaning:
+            <strong>read-only</strong>.
+        </p>
+
+        <p>
+            Container mounted data ko read kar sakta hai lekin write nahi kar sakta.
+        </p>
+
+        <p>
+            GitLab ke writable data/config/log mounts ke liye blindly
+            <code>:ro</code> use nahi karna chahiye.
+        </p>
+
+    </section>
+
+
+    <!-- IMPORTANT VOLUME KEYWORD -->
+
+    <section>
+
+        <h2>34. volumes Keyword Ko Ek Baar Properly Samjho</h2>
+
+<pre>volumes:
+  - ./gitlab/data:/var/opt/gitlab
+  - ./gitlab/logs:/var/log/gitlab
+  - ./gitlab/config:/etc/gitlab</pre>
+
+        <p>
+            Yahan <code>volumes</code> service-level configuration hai.
+            Iske andar list items define karte hain ki kaun sa host path
+            container ke kis path ke saath mount hoga.
+        </p>
+
+        <div class="keyword">
+
+            <strong>Formula:</strong>
+
+<pre>volumes:
+  - HOST_PATH:CONTAINER_PATH</pre>
+
+        </div>
+
+        <p>
+            Is formula ko yaad rakhna Docker/DevOps interviews aur practical
+            work dono ke liye important hai.
+        </p>
+
+    </section>
+
+
+    <!-- FULL FLOW -->
+
+    <section>
+
+        <h2>35. Complete Working Flow</h2>
+
+        <div class="diagram">
+
+compose.yml
+
+        ↓
+
+docker compose config
+
+        ↓
+
+Docker Compose
+
+        ↓
+
+GitLab Image
+
+        ↓
+
+GitLab Container
+
+        ↓
+
+        ┌─────────────────────────────┐
+        │      Volume / Bind Mount    │
+        └─────────────────────────────┘
+
+        ↓              ↓              ↓
+
+./gitlab/data    ./gitlab/logs    ./gitlab/config
+
+        ↓              ↓              ↓
+
+/var/opt/gitlab   /var/log/gitlab   /etc/gitlab
+
+        ↓
+
+Persistent GitLab Storage
+
+        ↓
+
+http://localhost:8000
+
+        </div>
+
+    </section>
+
+
+    <!-- COMMON MISTAKES -->
+
+    <section>
+
+        <h2>36. Common Mistakes</h2>
+
+        <h3>1. Wrong indentation</h3>
+
+<pre>volumes:
+- ./gitlab/data:/var/opt/gitlab</pre>
+
+        <p>
+            Better indentation:
+        </p>
+
+<pre>volumes:
+  - ./gitlab/data:/var/opt/gitlab</pre>
+
+
+        <h3>2. Host and container path reverse karna</h3>
+
+        <p>
+            Correct:
+        </p>
+
+<pre>HOST:CONTAINER</pre>
+
+        <p>
+            Example:
+        </p>
+
+<pre>./gitlab/data:/var/opt/gitlab</pre>
+
+
+        <h3>3. Same host port already occupied</h3>
+
+<pre>ports:
+  - '8000:80'</pre>
+
+        <p>
+            Agar port 8000 already kisi aur container/application ne use kiya hai,
+            to new port use kar sakte hain:
+        </p>
+
+<pre>ports:
+  - '8001:80'</pre>
+
+
+        <h3>4. GitLab startup time ignore karna</h3>
+
+        <p>
+            GitLab ek lightweight container nahi hai. First startup me time lag sakta hai.
+        </p>
+
+
+        <h3>5. Password repository me commit karna</h3>
+
+        <p>
+            Real credentials ko GitHub/GitLab repository me push nahi karna chahiye.
+        </p>
+
+    </section>
+
+
+    <!-- INTERVIEW -->
+
+    <section>
+
+        <h2>37. Interview Questions</h2>
+
+        <h3>Q1. Docker volume kya hota hai?</h3>
+
+        <p>
+            Docker volume/container storage mechanism hai jo container ke
+            lifecycle se data ko independent rakhne me help karta hai.
+        </p>
+
+
+        <h3>Q2. Bind mount kya hota hai?</h3>
+
+        <p>
+            Bind mount host machine ke specific filesystem path ko
+            container ke specific path par mount karta hai.
+        </p>
+
+
+        <h3>Q3. <code>./gitlab/data:/var/opt/gitlab</code> ka meaning?</h3>
+
+        <p>
+            Host ke <code>./gitlab/data</code> path ko container ke
+            <code>/var/opt/gitlab</code> path par mount karna.
+        </p>
+
+
+        <h3>Q4. HOST:CONTAINER order kya hota hai?</h3>
+
+<pre>HOST_PATH:CONTAINER_PATH</pre>
+
+
+        <h3>Q5. GitLab me multiple mounts kyu use karte hain?</h3>
+
+        <p>
+            GitLab ke application data, logs aur configuration ko separately
+            persist/manage karne ke liye.
+        </p>
+
+
+        <h3>Q6. Bind mount aur named volume me difference?</h3>
+
+        <p>
+            Bind mount me host ka explicit path diya jata hai, jabki named
+            volume ko Docker manage karta hai.
+        </p>
+
+
+        <h3>Q7. <code>:ro</code> ka meaning?</h3>
+
+        <p>
+            Read-only mount.
+        </p>
+
+
+        <h3>Q8. Container delete hone par bind-mounted host data ka kya hota hai?</h3>
+
+        <p>
+            Normal container removal se host directory automatically delete nahi hoti.
+        </p>
+
+
+        <h3>Q9. Compose volume configuration kaise check karenge?</h3>
+
+<pre>docker compose config</pre>
+
+
+        <h3>Q10. GitLab ko browser se kaise access karenge?</h3>
+
+<pre>http://localhost:8000</pre>
+
+    </section>
+
+
+    <!-- COMMAND CHEATSHEET -->
+
+    <section>
+
+        <h2>38. Command Cheat Sheet</h2>
+
+<pre>
+# Configuration validate
+docker compose config
+
+# Start
+docker compose up -d
+
+# Status
+docker compose ps
+
+# All containers
+docker ps -a
+
+# Logs
+docker compose logs -f gitlab-server
+
+# Stop
+docker compose stop
+
+# Start again
+docker compose start
+
+# Restart
+docker compose restart
+
+# Remove Compose containers/network
+docker compose down
+
+# Container shell
+docker exec -it my-gitlab-server-volume bash
+
+# Host directories
+ls -la gitlab
+
+# Data directory
+ls -la gitlab/data
+
+# Logs directory
+ls -la gitlab/logs
+
+# Config directory
+ls -la gitlab/config
+</pre>
+
+    </section>
+
+
+    <!-- FINAL SUMMARY -->
+
+    <section>
+
+        <h2>39. Final Summary</h2>
+
+        <p>
+            Previous lesson me humne GitLab Server ko Docker Compose se run kiya tha.
+            Is lesson me humne usi setup ko continue karke persistent storage add ki.
+        </p>
+
+        <p>
+            Sabse important configuration:
+        </p>
+
+<pre>volumes:
+  - ./gitlab/data:/var/opt/gitlab
+  - ./gitlab/logs:/var/log/gitlab
+  - ./gitlab/config:/etc/gitlab</pre>
+
+        <p>
+            Iska basic formula:
+        </p>
+
+<pre>HOST_PATH:CONTAINER_PATH</pre>
+
+        <div class="success">
+
+            <strong>Remember:</strong>
+
+            <br><br>
+
+            <code>./gitlab/data</code>
+            →
+            GitLab data
+
+            <br><br>
+
+            <code>./gitlab/logs</code>
+            →
+            GitLab logs
+
+            <br><br>
+
+            <code>./gitlab/config</code>
+            →
+            GitLab configuration
+
+        </div>
+
+        <p>
+            Docker/DevOps me ek important principle hai:
+            <strong>Containers can be replaced, but important application data should persist.</strong>
+        </p>
+
+    </section>
+
+</div>
+
+
+<footer>
+
+    <p>Learn-Docker | GitLab Server + Docker Compose + Volumes</p>
+
+    <p>Docker • Docker Compose • GitLab • Bind Mount • Persistent Storage</p>
+
+</footer>
+
+
+</body>
+</html>
