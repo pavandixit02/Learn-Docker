@@ -167,6 +167,94 @@ The mini-project is also extended with:
 - Docker Hub
 - Play with Docker
 
+## Actual project code
+
+This project currently contains the following implementation files:
+
+### `node-app-mini/.dockerignore`
+
+```gitignore
+node_modules/
+index.html
+*.txt
+```
+
+### `node-app-mini/dockerfile`
+
+```dockerfile
+FROM node:latest
+RUN npm install -g nodemon
+WORKDIR /app
+COPY . .
+RUN npm install
+EXPOSE 4000
+CMD [ "npm", "run", "dev" ]
+```
+
+### `node-app-mini/compose.yml`
+
+```yaml
+services:
+  img:
+    build: .
+    container_name: Compose_Container
+    ports:
+      - "3690:4000"
+```
+
+### `node-app-mini/index.js`
+
+```javascript
+const express = require('express');
+const app = express();
+
+app.get("/", (req, res) => {
+    res.json(
+        [
+            {
+                id: 1,
+                employeeName: "Pavan",
+                employeeSalary: 100000
+            },
+            {
+                id: 2,
+                employeeName: "Priyanshu",
+                employeeSalary: 90000
+            },
+            {
+                id: 3,
+                employeeName: "Pankaj",
+                employeeSalary: 80000
+            },
+            {
+                id: 4,
+                employeeName: "Priya",
+                employeeSalary: 70000
+            },
+            {
+                id: 5,
+                employeeName: "Payal",
+                employeeSalary: 60000
+            }
+        ]
+    );
+});
+
+app.listen(4000, () => {
+    console.log("App is Running on port No: 4000");
+});
+```
+
+### Run the app
+
+```bash
+docker build -t node-docker-app:1.0 .
+docker run -p 3690:4000 node-docker-app:1.0
+# or
+cd node-app-mini
+docker compose up --build
+```
+
 ---
 
 # 🧹 .dockerignore
@@ -266,7 +354,7 @@ Run container with volume:
 ```bash
 docker run -d \
   --name node-app-volume \
-  -p 3000:3000 \
+  -p 3690:4000 \
   -v node-app-data:/app/data \
   node-docker-app:1.0
 ```
@@ -301,31 +389,11 @@ Example:
 
 ```yaml
 services:
-
-  app:
-
-    build:
-      context: .
-      dockerfile: dockerfile
-
-    image: node-docker-app:1.0
-
-    container_name: node-app-compose
-
+  img:
+    build: .
+    container_name: Compose_Container
     ports:
-      - "3000:3000"
-
-    volumes:
-      - node-app-data:/app/data
-
-    environment:
-      NODE_ENV: production
-
-    restart: unless-stopped
-
-volumes:
-
-  node-app-data:
+      - "3690:4000"
 ```
 
 Important Compose commands:
