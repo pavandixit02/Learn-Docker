@@ -4,7 +4,7 @@ services:
     image: 'gitlab/gitlab-ce'
     container_name: my-gitlab-server
     ports:
-      - '8000:80'
+      - '8001:80'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         gitlab_rails['initial_root_password'] = 'P@v@n@252004'
